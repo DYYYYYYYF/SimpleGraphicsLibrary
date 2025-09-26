@@ -76,6 +76,7 @@ int TestSingleWindows() {
 	}
 
 	std::cout << "Program finished successfully!" << std::endl;
+	return 0;
 }
 
 int TestMultipleWindows() {
