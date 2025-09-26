@@ -42,4 +42,4 @@
 
 # visual studio files
 .vs
-.out
+out
