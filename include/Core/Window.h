@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Core/Event.h"
 #include <string>
 #include <cstdint>
 #include <memory>
@@ -36,6 +37,9 @@ public:
 	// 消息处理和事件循环
 	void ProcessMessages();
 	bool ShouldClose() const;
+
+	// 事件系统集成
+	void SetEventCallback(const EventCallbackFn& callback);
 
 	// 属性获取
 	uint32_t GetWidth() const;

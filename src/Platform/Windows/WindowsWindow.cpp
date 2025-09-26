@@ -1,6 +1,8 @@
 #ifdef _WIN32
 
-#include "../../Core/WindowImpl.h"
+#include "../../Core/WindowImpl.h"  // 修正包含路径
+#include "Core/Event.h"       // 包含事件定义
+#include "Core/EventManager.h" // 包含事件管理器
 #include <iostream>
 #include <stdexcept>
 #include <unordered_map>
@@ -39,6 +41,10 @@ public:
 
 	void* GetNativeHandle() const override;
 
+	// 事件系统集成
+	void SetEventCallback(const EventCallbackFn& callback) override;
+	void SetEventDispatchMode(bool useGlobalQueue, bool useDirectCallback = true) override;
+
 private:
 	// Windows API相关
 	static LRESULT CALLBACK StaticWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -48,6 +54,13 @@ private:
 	void UnregisterWindowClass();
 	std::wstring StringToWString(const std::string& str);
 	std::string WStringToString(const std::wstring& wstr);
+
+	// 事件转换辅助函数
+	KeyCode VirtualKeyToKeyCode(WPARAM vkCode);
+	MouseButton VirtualButtonToMouseButton(UINT message, WPARAM wParam);
+	ModifierKeys GetCurrentModifiers();
+	void DispatchEvent(Event& event);
+	std::unique_ptr<Event> CreateEventCopy(const Event& event);  // 创建事件副本
 
 private:
 	// 窗口属性
@@ -65,6 +78,11 @@ private:
 	HDC hdc_;
 	HINSTANCE hInstance_;
 
+	// 事件系统
+	EventCallbackFn eventCallback_;
+	bool useGlobalEventQueue_;
+	bool useDirectCallback_;
+
 	// 静态成员
 	static const wchar_t* WINDOW_CLASS_NAME;
 	static bool classRegistered_;
@@ -80,7 +98,8 @@ std::unordered_map<HWND, WindowsWindowImpl*> WindowsWindowImpl::windowMap_;
 WindowsWindowImpl::WindowsWindowImpl(const std::string& title, uint32_t width, uint32_t height)
 	: title_(title), width_(width), height_(height), x_(CW_USEDEFAULT), y_(CW_USEDEFAULT)
 	, shouldClose_(false), isVisible_(false), isResizable_(true)
-	, hwnd_(nullptr), hdc_(nullptr), hInstance_(GetModuleHandle(nullptr)) {
+	, hwnd_(nullptr), hdc_(nullptr), hInstance_(GetModuleHandle(nullptr))
+	, useGlobalEventQueue_(true), useDirectCallback_(true) {  // 默认同时使用两种方式
 }
 
 // 析构函数
@@ -251,6 +270,17 @@ void WindowsWindowImpl::SetResizable(bool resizable) {
 	}
 }
 
+// 事件系统集成
+void WindowsWindowImpl::SetEventCallback(const EventCallbackFn& callback) {
+	eventCallback_ = callback;
+}
+
+// 设置事件分发模式
+void WindowsWindowImpl::SetEventDispatchMode(bool useGlobalQueue, bool useDirectCallback) {
+	useGlobalEventQueue_ = useGlobalQueue;
+	useDirectCallback_ = useDirectCallback;
+}
+
 // 处理消息
 void WindowsWindowImpl::ProcessMessages() {
 	MSG msg;
@@ -258,6 +288,188 @@ void WindowsWindowImpl::ProcessMessages() {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+}
+
+// 事件分发辅助函数 - 修改为同时支持两种分发方式
+void WindowsWindowImpl::DispatchEvent(Event& event) {
+	// 方式1: 直接回调 (立即处理)
+	if (useDirectCallback_ && eventCallback_) {
+		eventCallback_(event);
+	}
+
+	// 方式2: 放入全局事件队列 (延迟处理)
+	if (useGlobalEventQueue_) {
+		// 创建事件的副本并放入队列
+		std::unique_ptr<Event> eventCopy = CreateEventCopy(event);
+		if (eventCopy) {
+			EventManager::Instance().PostEvent(std::move(eventCopy));
+		}
+	}
+}
+
+// 创建事件副本的辅助函数
+std::unique_ptr<Event> WindowsWindowImpl::CreateEventCopy(const Event& event) {
+	switch (event.GetEventType()) {
+	case EventType::WindowClose:
+		return std::make_unique<WindowCloseEvent>();
+
+	case EventType::WindowResize: {
+		const auto& e = static_cast<const WindowResizeEvent&>(event);
+		return std::make_unique<WindowResizeEvent>(e.GetWidth(), e.GetHeight());
+	}
+
+	case EventType::WindowMove: {
+		const auto& e = static_cast<const WindowMoveEvent&>(event);
+		return std::make_unique<WindowMoveEvent>(e.GetX(), e.GetY());
+	}
+
+	case EventType::WindowFocus:
+		return std::make_unique<WindowFocusEvent>();
+
+	case EventType::WindowLostFocus:
+		return std::make_unique<WindowLostFocusEvent>();
+
+	case EventType::KeyPressed: {
+		const auto& e = static_cast<const KeyPressedEvent&>(event);
+		return std::make_unique<KeyPressedEvent>(e.GetKeyCode(), e.GetModifiers(), e.IsRepeat());
+	}
+
+	case EventType::KeyReleased: {
+		const auto& e = static_cast<const KeyReleasedEvent&>(event);
+		return std::make_unique<KeyReleasedEvent>(e.GetKeyCode(), e.GetModifiers());
+	}
+
+	case EventType::CharInput: {
+		const auto& e = static_cast<const CharInputEvent&>(event);
+		return std::make_unique<CharInputEvent>(e.GetCharacter());
+	}
+
+	case EventType::MouseButtonPressed: {
+		const auto& e = static_cast<const MouseButtonPressedEvent&>(event);
+		return std::make_unique<MouseButtonPressedEvent>(e.GetMouseButton(), e.GetModifiers());
+	}
+
+	case EventType::MouseButtonReleased: {
+		const auto& e = static_cast<const MouseButtonReleasedEvent&>(event);
+		return std::make_unique<MouseButtonReleasedEvent>(e.GetMouseButton(), e.GetModifiers());
+	}
+
+	case EventType::MouseMoved: {
+		const auto& e = static_cast<const MouseMovedEvent&>(event);
+		return std::make_unique<MouseMovedEvent>(e.GetX(), e.GetY());
+	}
+
+	case EventType::MouseScrolled: {
+		const auto& e = static_cast<const MouseScrolledEvent&>(event);
+		return std::make_unique<MouseScrolledEvent>(e.GetXOffset(), e.GetYOffset());
+	}
+
+	default:
+		return nullptr;
+	}
+}
+
+// 虚拟键码转换为我们的KeyCode
+KeyCode WindowsWindowImpl::VirtualKeyToKeyCode(WPARAM vkCode) {
+	switch (vkCode) {
+		// 字母键
+	case 'A': return KeyCode::A; case 'B': return KeyCode::B; case 'C': return KeyCode::C;
+	case 'D': return KeyCode::D; case 'E': return KeyCode::E; case 'F': return KeyCode::F;
+	case 'G': return KeyCode::G; case 'H': return KeyCode::H; case 'I': return KeyCode::I;
+	case 'J': return KeyCode::J; case 'K': return KeyCode::K; case 'L': return KeyCode::L;
+	case 'M': return KeyCode::M; case 'N': return KeyCode::N; case 'O': return KeyCode::O;
+	case 'P': return KeyCode::P; case 'Q': return KeyCode::Q; case 'R': return KeyCode::R;
+	case 'S': return KeyCode::S; case 'T': return KeyCode::T; case 'U': return KeyCode::U;
+	case 'V': return KeyCode::V; case 'W': return KeyCode::W; case 'X': return KeyCode::X;
+	case 'Y': return KeyCode::Y; case 'Z': return KeyCode::Z;
+
+		// 数字键
+	case '0': return KeyCode::D0; case '1': return KeyCode::D1; case '2': return KeyCode::D2;
+	case '3': return KeyCode::D3; case '4': return KeyCode::D4; case '5': return KeyCode::D5;
+	case '6': return KeyCode::D6; case '7': return KeyCode::D7; case '8': return KeyCode::D8;
+	case '9': return KeyCode::D9;
+
+		// 功能键
+	case VK_F1: return KeyCode::F1;   case VK_F2: return KeyCode::F2;
+	case VK_F3: return KeyCode::F3;   case VK_F4: return KeyCode::F4;
+	case VK_F5: return KeyCode::F5;   case VK_F6: return KeyCode::F6;
+	case VK_F7: return KeyCode::F7;   case VK_F8: return KeyCode::F8;
+	case VK_F9: return KeyCode::F9;   case VK_F10: return KeyCode::F10;
+	case VK_F11: return KeyCode::F11; case VK_F12: return KeyCode::F12;
+
+		// 特殊键
+	case VK_SPACE: return KeyCode::Space;
+	case VK_RETURN: return KeyCode::Enter;
+	case VK_ESCAPE: return KeyCode::Escape;
+	case VK_TAB: return KeyCode::Tab;
+	case VK_BACK: return KeyCode::Backspace;
+	case VK_DELETE: return KeyCode::Delete;
+	case VK_INSERT: return KeyCode::Insert;
+	case VK_HOME: return KeyCode::Home;
+	case VK_END: return KeyCode::End;
+	case VK_PRIOR: return KeyCode::PageUp;
+	case VK_NEXT: return KeyCode::PageDown;
+
+		// 箭头键
+	case VK_LEFT: return KeyCode::Left;
+	case VK_UP: return KeyCode::Up;
+	case VK_RIGHT: return KeyCode::Right;
+	case VK_DOWN: return KeyCode::Down;
+
+		// 修饰键
+	case VK_LSHIFT: return KeyCode::LeftShift;
+	case VK_RSHIFT: return KeyCode::RightShift;
+	case VK_LCONTROL: return KeyCode::LeftControl;
+	case VK_RCONTROL: return KeyCode::RightControl;
+	case VK_LMENU: return KeyCode::LeftAlt;
+	case VK_RMENU: return KeyCode::RightAlt;
+
+		// 小键盘
+	case VK_NUMPAD0: return KeyCode::NumPad0; case VK_NUMPAD1: return KeyCode::NumPad1;
+	case VK_NUMPAD2: return KeyCode::NumPad2; case VK_NUMPAD3: return KeyCode::NumPad3;
+	case VK_NUMPAD4: return KeyCode::NumPad4; case VK_NUMPAD5: return KeyCode::NumPad5;
+	case VK_NUMPAD6: return KeyCode::NumPad6; case VK_NUMPAD7: return KeyCode::NumPad7;
+	case VK_NUMPAD8: return KeyCode::NumPad8; case VK_NUMPAD9: return KeyCode::NumPad9;
+
+		// 其他键
+	case VK_CAPITAL: return KeyCode::CapsLock;
+	case VK_NUMLOCK: return KeyCode::NumLock;
+	case VK_SCROLL: return KeyCode::ScrollLock;
+	case VK_SNAPSHOT: return KeyCode::PrintScreen;
+	case VK_PAUSE: return KeyCode::Pause;
+
+	default: return KeyCode::A; // 默认返回A键，实际应用中可以定义Unknown键
+	}
+}
+
+// 鼠标按钮转换
+MouseButton WindowsWindowImpl::VirtualButtonToMouseButton(UINT message, WPARAM wParam) {
+	switch (message) {
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONUP:
+		return MouseButton::Left;
+	case WM_RBUTTONDOWN:
+	case WM_RBUTTONUP:
+		return MouseButton::Right;
+	case WM_MBUTTONDOWN:
+	case WM_MBUTTONUP:
+		return MouseButton::Middle;
+	case WM_XBUTTONDOWN:
+	case WM_XBUTTONUP:
+		return (HIWORD(wParam) == XBUTTON1) ? MouseButton::Button4 : MouseButton::Button5;
+	default:
+		return MouseButton::Left;
+	}
+}
+
+// 获取当前修饰键状态
+ModifierKeys WindowsWindowImpl::GetCurrentModifiers() {
+	ModifierKeys modifiers;
+	modifiers.shift = (GetKeyState(VK_SHIFT) & 0x8000) != 0;
+	modifiers.control = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
+	modifiers.alt = (GetKeyState(VK_MENU) & 0x8000) != 0;
+	modifiers.super = (GetKeyState(VK_LWIN) & 0x8000) != 0 || (GetKeyState(VK_RWIN) & 0x8000) != 0;
+	return modifiers;
 }
 
 // 属性获取函数
@@ -348,24 +560,143 @@ LRESULT CALLBACK WindowsWindowImpl::StaticWindowProc(HWND hwnd, UINT uMsg, WPARA
 // 实例窗口过程
 LRESULT WindowsWindowImpl::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
-	case WM_CLOSE:
+	case WM_CLOSE: {
 		shouldClose_ = true;
+		WindowCloseEvent event;
+		DispatchEvent(event);
 		return 0;
+	}
 
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
 
-	case WM_SIZE:
-		width_ = LOWORD(lParam);
-		height_ = HIWORD(lParam);
-		std::cout << "Window resized to: " << width_ << "x" << height_ << std::endl;
-		return 0;
+	case WM_SIZE: {
+		uint32_t newWidth = LOWORD(lParam);
+		uint32_t newHeight = HIWORD(lParam);
 
-	case WM_MOVE:
-		x_ = static_cast<int>(static_cast<short>(LOWORD(lParam)));
-		y_ = static_cast<int>(static_cast<short>(HIWORD(lParam)));
+		if (newWidth != width_ || newHeight != height_) {
+			width_ = newWidth;
+			height_ = newHeight;
+
+			WindowResizeEvent event(width_, height_);
+			DispatchEvent(event);
+		}
 		return 0;
+	}
+
+	case WM_MOVE: {
+		int newX = static_cast<int>(static_cast<short>(LOWORD(lParam)));
+		int newY = static_cast<int>(static_cast<short>(HIWORD(lParam)));
+
+		if (newX != x_ || newY != y_) {
+			x_ = newX;
+			y_ = newY;
+
+			WindowMoveEvent event(x_, y_);
+			DispatchEvent(event);
+		}
+		return 0;
+	}
+
+	case WM_SETFOCUS: {
+		WindowFocusEvent event;
+		DispatchEvent(event);
+		return 0;
+	}
+
+	case WM_KILLFOCUS: {
+		WindowLostFocusEvent event;
+		DispatchEvent(event);
+		return 0;
+	}
+
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN: {
+		KeyCode keyCode = VirtualKeyToKeyCode(wParam);
+		ModifierKeys modifiers = GetCurrentModifiers();
+		bool isRepeat = (lParam & 0x40000000) != 0;
+
+		KeyPressedEvent event(keyCode, modifiers, isRepeat);
+		DispatchEvent(event);
+		return 0;
+	}
+
+	case WM_KEYUP:
+	case WM_SYSKEYUP: {
+		KeyCode keyCode = VirtualKeyToKeyCode(wParam);
+		ModifierKeys modifiers = GetCurrentModifiers();
+
+		KeyReleasedEvent event(keyCode, modifiers);
+		DispatchEvent(event);
+		return 0;
+	}
+
+	case WM_CHAR: {
+		uint32_t character = static_cast<uint32_t>(wParam);
+
+		// 过滤掉控制字符
+		if (character >= 32 && character != 127) {
+			CharInputEvent event(character);
+			DispatchEvent(event);
+		}
+		return 0;
+	}
+
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_XBUTTONDOWN: {
+		MouseButton button = VirtualButtonToMouseButton(uMsg, wParam);
+		ModifierKeys modifiers = GetCurrentModifiers();
+
+		MouseButtonPressedEvent event(button, modifiers);
+		DispatchEvent(event);
+
+		// 捕获鼠标以接收鼠标释放事件
+		SetCapture(hwnd);
+		return (uMsg == WM_XBUTTONDOWN) ? TRUE : 0;
+	}
+
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_XBUTTONUP: {
+		MouseButton button = VirtualButtonToMouseButton(uMsg, wParam);
+		ModifierKeys modifiers = GetCurrentModifiers();
+
+		MouseButtonReleasedEvent event(button, modifiers);
+		DispatchEvent(event);
+
+		// 释放鼠标捕获
+		ReleaseCapture();
+		return (uMsg == WM_XBUTTONUP) ? TRUE : 0;
+	}
+
+	case WM_MOUSEMOVE: {
+		float x = static_cast<float>(static_cast<short>(LOWORD(lParam)));
+		float y = static_cast<float>(static_cast<short>(HIWORD(lParam)));
+
+		MouseMovedEvent event(x, y);
+		DispatchEvent(event);
+		return 0;
+	}
+
+	case WM_MOUSEWHEEL: {
+		float delta = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wParam)) / WHEEL_DELTA;
+
+		MouseScrolledEvent event(0.0f, delta);
+		DispatchEvent(event);
+		return 0;
+	}
+
+	case WM_MOUSEHWHEEL: {
+		float delta = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wParam)) / WHEEL_DELTA;
+
+		MouseScrolledEvent event(delta, 0.0f);
+		DispatchEvent(event);
+		return 0;
+	}
 
 	case WM_PAINT: {
 		PAINTSTRUCT ps;
@@ -374,7 +705,7 @@ LRESULT WindowsWindowImpl::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 		// 简单的绘制示例 - 填充背景色
 		RECT clientRect;
 		GetClientRect(hwnd, &clientRect);
-		HBRUSH brush = CreateSolidBrush(RGB(0, 0, 0));
+		HBRUSH brush = CreateSolidBrush(RGB(50, 50, 100));
 		FillRect(hdc, &clientRect, brush);
 		DeleteObject(brush);
 

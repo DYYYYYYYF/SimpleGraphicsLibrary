@@ -102,6 +102,13 @@ bool Window::ShouldClose() const {
 	return Instance ? Instance->ShouldClose() : true;
 }
 
+// 事件系统集成
+void Window::SetEventCallback(const EventCallbackFn& callback) {
+	if (Instance) {
+		Instance->SetEventCallback(callback);
+	}
+}
+
 // 属性获取函数
 uint32_t Window::GetWidth() const {
 	return Instance ? Instance->GetWidth() : 0;

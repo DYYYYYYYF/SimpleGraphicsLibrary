@@ -45,6 +45,7 @@ endfunction()
 
 # 添加各个示例
 add_example(BasicWindow "${CMAKE_CURRENT_SOURCE_DIR}/BasicWindow")
+add_example(SimpleEvent "${CMAKE_CURRENT_SOURCE_DIR}/SimpleEvent")
 
 # 可选：为每个示例创建独立的项目文件
 option(GAMEENGINE_EXAMPLES_SEPARATE_PROJECTS "Create separate project files for each example" OFF)

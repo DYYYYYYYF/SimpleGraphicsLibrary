@@ -2,6 +2,13 @@
 #include <string>
 #include <cstdint>
 #include <memory>
+#include <functional>
+
+// 前向声明
+class Event;
+
+// 事件回调函数类型
+using EventCallbackFn = std::function<void(Event&)>;
 
 // WindowImpl 抽象基类 - 只在实现文件中使用，不暴露给用户
 class WindowImpl {
@@ -31,6 +38,10 @@ public:
 	virtual bool IsResizable() const = 0;
 
 	virtual void* GetNativeHandle() const = 0;
+
+	// 事件系统集成
+	virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
+	virtual void SetEventDispatchMode(bool useGlobalQueue, bool useDirectCallback = true) = 0;
 };
 
 // 平台特定工厂函数声明 - 在各自的平台文件中实现
