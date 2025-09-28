@@ -19,8 +19,10 @@ if(WIN32)
     )
 elseif(APPLE)
     list(APPEND CORE_SOURCES 
-        ${CMAKE_SOURCE_DIR}/src/Platform/Apple/AppleWindow.cpp
+        ${CMAKE_SOURCE_DIR}/src/Platform/Apple/AppleWindow.mm
     )
+
+    set_source_files_properties(${CMAKE_SOURCE_DIR}/src/Platform/Apple/AppleWindow.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
 endif()
 
 # 创建Core库
@@ -28,6 +30,14 @@ add_library(SGL_Core STATIC ${CORE_SOURCES} ${CORE_HEADERS})
 
 # 设置别名
 add_library(SimpleGraphicsLibrary::Core ALIAS SGL_Core)
+
+# 链接Cocoa库
+if(APPLE)
+    target_link_libraries(SGL_Core 
+        "-framework Cocoa"
+        "-framework Foundation"
+    )
+endif()
 
 # 设置属性
 target_include_directories(SGL_Core PUBLIC

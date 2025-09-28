@@ -292,12 +292,12 @@ void WindowsWindowImpl::ProcessMessages() {
 
 // 事件分发辅助函数 - 修改为同时支持两种分发方式
 void WindowsWindowImpl::DispatchEvent(Event& event) {
-	// 方式1: 直接回调 (立即处理)
+	// 直接回调 (立即处理)
 	if (useDirectCallback_ && eventCallback_) {
 		eventCallback_(event);
 	}
 
-	// 方式2: 放入全局事件队列 (延迟处理)
+	// 放入全局事件队列 (延迟处理)
 	if (useGlobalEventQueue_) {
 		// 创建事件的副本并放入队列
 		std::unique_ptr<Event> eventCopy = CreateEventCopy(event);

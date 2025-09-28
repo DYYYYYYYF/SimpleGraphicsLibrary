@@ -16,7 +16,7 @@ public:
 
 		// 创建并显示窗口
 		if (!window_.Create()) {
-			std::cerr << "❌ 窗口创建失败!" << std::endl;
+			std::cerr << "窗口创建失败!" << std::endl;
 			return false;
 		}
 
@@ -29,7 +29,7 @@ public:
 		SetupEventListeners();
 
 		window_.Show();
-		std::cout << "✅ 窗口创建成功!" << std::endl;
+		std::cout << "窗口创建成功!" << std::endl;
 
 		running_ = true;
 		return true;

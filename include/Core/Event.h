@@ -228,7 +228,7 @@ public:
 	}
 
 	EVENT_CLASS_TYPE(WindowMove)
-		EVENT_CLASS_CATEGORY(EventCategory::Window)
+	EVENT_CLASS_CATEGORY(EventCategory::Window)
 
 private:
 	int x_, y_;
@@ -239,7 +239,7 @@ public:
 	WindowFocusEvent() = default;
 
 	EVENT_CLASS_TYPE(WindowFocus)
-		EVENT_CLASS_CATEGORY(EventCategory::Window)
+	EVENT_CLASS_CATEGORY(EventCategory::Window)
 };
 
 class WindowLostFocusEvent : public Event {
@@ -247,7 +247,7 @@ public:
 	WindowLostFocusEvent() = default;
 
 	EVENT_CLASS_TYPE(WindowLostFocus)
-		EVENT_CLASS_CATEGORY(EventCategory::Window)
+	EVENT_CLASS_CATEGORY(EventCategory::Window)
 };
 
 // 键盘事件基类
@@ -307,7 +307,7 @@ public:
 	}
 
 	EVENT_CLASS_TYPE(CharInput)
-		EVENT_CLASS_CATEGORY(EventCategory::Keyboard | EventCategory::Input)
+	EVENT_CLASS_CATEGORY(EventCategory::Keyboard | EventCategory::Input)
 
 private:
 	uint32_t character_;
