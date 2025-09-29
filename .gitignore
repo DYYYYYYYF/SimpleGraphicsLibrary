@@ -43,3 +43,6 @@
 # visual studio files
 .vs
 out
+
+# MacOS
+/build
