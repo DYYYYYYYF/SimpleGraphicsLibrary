@@ -61,7 +61,6 @@ public:
     void OnMouseMoved(float x, float y);
     void OnMouseScrolled(float xOffset, float yOffset);
 
-private:
     // 事件转换辅助函数
     KeyCode CocoaKeyToKeyCode(unsigned short keyCode);
     MouseButton CocoaButtonToMouseButton(NSInteger buttonNumber);
