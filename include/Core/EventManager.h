@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Event.h"
 #include <functional>
 #include <vector>
@@ -7,14 +7,14 @@
 #include <unordered_map>
 #include <typeindex>
 
-// ÊÂ¼ş¼àÌıÆ÷»ùÀà
+// äº‹ä»¶ç›‘å¬å™¨åŸºç±»
 class EventListener {
 public:
 	virtual ~EventListener() = default;
 	virtual bool OnEvent(Event& event) = 0;
 };
 
-// º¯ÊıÊ½ÊÂ¼ş¼àÌıÆ÷
+// å‡½æ•°å¼äº‹ä»¶ç›‘å¬å™¨
 template<typename T>
 class FunctionEventListener : public EventListener {
 public:
@@ -33,7 +33,7 @@ private:
 	EventFunction function_;
 };
 
-// ÊÂ¼ş·Ö·¢Æ÷ - ÓÃÓÚ´¦Àí²»Í¬ÀàĞÍµÄÊÂ¼ş
+// äº‹ä»¶åˆ†å‘å™¨ - ç”¨äºå¤„ç†ä¸åŒç±»å‹çš„äº‹ä»¶
 class EventDispatcher {
 public:
 	EventDispatcher(Event& event) : event_(event) {}
@@ -51,60 +51,60 @@ private:
 	Event& event_;
 };
 
-// Ö÷ÊÂ¼ş¹ÜÀíÆ÷
+// ä¸»äº‹ä»¶ç®¡ç†å™¨
 class EventManager {
 public:
 	EventManager() = default;
 	~EventManager() = default;
 
-	// ½ûÓÃ¿½±´ºÍ¸³Öµ
+	// ç¦ç”¨æ‹·è´å’Œèµ‹å€¼
 	EventManager(const EventManager&) = delete;
 	EventManager& operator=(const EventManager&) = delete;
 
-	// µ¥ÀıÄ£Ê½
+	// å•ä¾‹æ¨¡å¼
 	static EventManager& Instance() {
 		static EventManager instance;
 		return instance;
 	}
 
-	// ·¢²¼ÊÂ¼ş
+	// å‘å¸ƒäº‹ä»¶
 	void PostEvent(std::unique_ptr<Event> event);
 
-	// Á¢¼´·Ö·¢ÊÂ¼ş£¨²»¼ÓÈë¶ÓÁĞ£©
+	// ç«‹å³åˆ†å‘äº‹ä»¶ï¼ˆä¸åŠ å…¥é˜Ÿåˆ—ï¼‰
 	void DispatchEvent(Event& event);
 
-	// ´¦ÀíÊÂ¼ş¶ÓÁĞÖĞµÄËùÓĞÊÂ¼ş
+	// å¤„ç†äº‹ä»¶é˜Ÿåˆ—ä¸­çš„æ‰€æœ‰äº‹ä»¶
 	void ProcessEvents();
 
-	// Çå¿ÕÊÂ¼ş¶ÓÁĞ
+	// æ¸…ç©ºäº‹ä»¶é˜Ÿåˆ—
 	void ClearEvents();
 
-	// ×¢²áÊÂ¼ş¼àÌıÆ÷
+	// æ³¨å†Œäº‹ä»¶ç›‘å¬å™¨
 	template<typename EventType>
 	void Subscribe(std::function<bool(EventType&)> callback) {
 		auto listener = std::make_shared<FunctionEventListener<EventType>>(callback);
 		listeners_[std::type_index(typeid(EventType))].push_back(listener);
 	}
 
-	// ×¢²áÊÂ¼ş¼àÌıÆ÷ (lambda¼ò»¯°æ±¾)
+	// æ³¨å†Œäº‹ä»¶ç›‘å¬å™¨ (lambdaç®€åŒ–ç‰ˆæœ¬)
 	template<typename EventType, typename Func>
 	void On(Func&& func) {
 		Subscribe<EventType>(std::forward<Func>(func));
 	}
 
-	// ÒÆ³ıÌØ¶¨ÀàĞÍµÄËùÓĞ¼àÌıÆ÷
+	// ç§»é™¤ç‰¹å®šç±»å‹çš„æ‰€æœ‰ç›‘å¬å™¨
 	template<typename EventType>
 	void Unsubscribe() {
 		listeners_[std::type_index(typeid(EventType))].clear();
 	}
 
-	// ÒÆ³ıËùÓĞ¼àÌıÆ÷
+	// ç§»é™¤æ‰€æœ‰ç›‘å¬å™¨
 	void UnsubscribeAll();
 
-	// »ñÈ¡¶ÓÁĞÖĞÊÂ¼şÊıÁ¿
+	// è·å–é˜Ÿåˆ—ä¸­äº‹ä»¶æ•°é‡
 	size_t GetEventCount() const { return eventQueue_.size(); }
 
-	// ¼ì²éÊÇ·ñÓĞÌØ¶¨ÀàĞÍµÄÊÂ¼şÔÚ¶ÓÁĞÖĞ
+	// æ£€æŸ¥æ˜¯å¦æœ‰ç‰¹å®šç±»å‹çš„äº‹ä»¶åœ¨é˜Ÿåˆ—ä¸­
 	template<typename EventType>
 	bool HasEvent() const {
 		std::queue<std::unique_ptr<Event>> tempQueue = eventQueue_;
@@ -117,15 +117,15 @@ public:
 		return false;
 	}
 
-	// ÆôÓÃ/½ûÓÃÊÂ¼şÈÕÖ¾
+	// å¯ç”¨/ç¦ç”¨äº‹ä»¶æ—¥å¿—
 	void SetLogging(bool enabled) { loggingEnabled_ = enabled; }
 	bool IsLoggingEnabled() const { return loggingEnabled_; }
 
 private:
-	// ·Ö·¢ÊÂ¼ş¸ø¼àÌıÆ÷
+	// åˆ†å‘äº‹ä»¶ç»™ç›‘å¬å™¨
 	void DispatchToListeners(Event& event);
 
-	// ¼ÇÂ¼ÊÂ¼şÈÕÖ¾
+	// è®°å½•äº‹ä»¶æ—¥å¿—
 	void LogEvent(const Event& event);
 
 private:
@@ -134,16 +134,16 @@ private:
 	bool loggingEnabled_ = false;
 };
 
-// ±ãÀûºê - ¼ò»¯ÊÂ¼ş¼àÌıÆ÷×¢²á
+// ä¾¿åˆ©å® - ç®€åŒ–äº‹ä»¶ç›‘å¬å™¨æ³¨å†Œ
 #define EVENT_BIND_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
-// ÊÂ¼ş´¦ÀíÆ÷»ùÀà - ¿ÉÒÔ±»¼Ì³ĞÀ´´´½¨ÊÂ¼ş´¦Àí¶ÔÏó
+// äº‹ä»¶å¤„ç†å™¨åŸºç±» - å¯ä»¥è¢«ç»§æ‰¿æ¥åˆ›å»ºäº‹ä»¶å¤„ç†å¯¹è±¡
 class EventHandler {
 public:
 	virtual ~EventHandler() = default;
 
 protected:
-	// ±ãÀûº¯Êı - ×¢²áÊÂ¼ş¼àÌı
+	// ä¾¿åˆ©å‡½æ•° - æ³¨å†Œäº‹ä»¶ç›‘å¬
 	template<typename EventType>
 	void Subscribe(std::function<bool(EventType&)> callback) {
 		EventManager::Instance().Subscribe<EventType>(callback);

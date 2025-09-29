@@ -1,13 +1,13 @@
-#pragma once
+ï»¿#pragma once
 #include <cstdint>
 #include <string>
 #include <functional>
 
-// ÊÂ¼şÀàĞÍÃ¶¾Ù
+// äº‹ä»¶ç±»å‹æšä¸¾
 enum class EventType {
 	None = 0,
 
-	// ´°¿ÚÊÂ¼ş
+	// çª—å£äº‹ä»¶
 	WindowClose,
 	WindowResize,
 	WindowMove,
@@ -16,13 +16,13 @@ enum class EventType {
 	WindowMinimize,
 	WindowRestore,
 
-	// ¼üÅÌÊÂ¼ş
+	// é”®ç›˜äº‹ä»¶
 	KeyPressed,
 	KeyReleased,
 	KeyRepeated,
 	CharInput,
 
-	// Êó±êÊÂ¼ş
+	// é¼ æ ‡äº‹ä»¶
 	MouseButtonPressed,
 	MouseButtonReleased,
 	MouseMoved,
@@ -30,13 +30,13 @@ enum class EventType {
 	MouseEntered,
 	MouseLeft,
 
-	// Ó¦ÓÃ³ÌĞòÊÂ¼ş
+	// åº”ç”¨ç¨‹åºäº‹ä»¶
 	AppTick,
 	AppUpdate,
 	AppRender
 };
 
-// ÊÂ¼şÀà±ğ±êÖ¾ (¿ÉÒÔ×éºÏ)
+// äº‹ä»¶ç±»åˆ«æ ‡å¿— (å¯ä»¥ç»„åˆ)
 enum class EventCategory : uint32_t {
 	None = 0,
 	Application = 1 << 0,
@@ -47,7 +47,7 @@ enum class EventCategory : uint32_t {
 	Window = 1 << 5
 };
 
-// EventCategoryÎ»ÔËËã·ûÖØÔØ
+// EventCategoryä½è¿ç®—ç¬¦é‡è½½
 inline EventCategory operator|(EventCategory lhs, EventCategory rhs) {
 	return static_cast<EventCategory>(
 		static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs)
@@ -87,18 +87,18 @@ inline EventCategory& operator^=(EventCategory& lhs, EventCategory rhs) {
 	return lhs;
 }
 
-// °´¼ü´úÂë¶¨Òå (»ùÓÚVirtual Key Codes)
+// æŒ‰é”®ä»£ç å®šä¹‰ (åŸºäºVirtual Key Codes)
 enum class KeyCode : uint16_t {
-	// ×ÖÄ¸¼ü
+	// å­—æ¯é”®
 	A = 65, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
 
-	// Êı×Ö¼ü
+	// æ•°å­—é”®
 	D0 = 48, D1, D2, D3, D4, D5, D6, D7, D8, D9,
 
-	// ¹¦ÄÜ¼ü
+	// åŠŸèƒ½é”®
 	F1 = 112, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
 
-	// ÌØÊâ¼ü
+	// ç‰¹æ®Šé”®
 	Space = 32,
 	Enter = 13,
 	Escape = 27,
@@ -111,13 +111,13 @@ enum class KeyCode : uint16_t {
 	PageUp = 33,
 	PageDown = 34,
 
-	// ¼ıÍ·¼ü
+	// ç®­å¤´é”®
 	Left = 37,
 	Up = 38,
 	Right = 39,
 	Down = 40,
 
-	// ĞŞÊÎ¼ü
+	// ä¿®é¥°é”®
 	LeftShift = 160,
 	RightShift = 161,
 	LeftControl = 162,
@@ -125,11 +125,11 @@ enum class KeyCode : uint16_t {
 	LeftAlt = 164,
 	RightAlt = 165,
 
-	// Ğ¡¼üÅÌ
+	// å°é”®ç›˜
 	NumPad0 = 96, NumPad1, NumPad2, NumPad3, NumPad4,
 	NumPad5, NumPad6, NumPad7, NumPad8, NumPad9,
 
-	// ÆäËû³£ÓÃ¼ü
+	// å…¶ä»–å¸¸ç”¨é”®
 	CapsLock = 20,
 	NumLock = 144,
 	ScrollLock = 145,
@@ -137,7 +137,7 @@ enum class KeyCode : uint16_t {
 	Pause = 19
 };
 
-// Êó±ê°´Å¥´úÂë
+// é¼ æ ‡æŒ‰é’®ä»£ç 
 enum class MouseButton : uint8_t {
 	Left = 0,
 	Right = 1,
@@ -146,19 +146,19 @@ enum class MouseButton : uint8_t {
 	Button5 = 4
 };
 
-// ĞŞÊÎ¼ü×´Ì¬
+// ä¿®é¥°é”®çŠ¶æ€
 struct ModifierKeys {
 	bool shift = false;
 	bool control = false;
 	bool alt = false;
-	bool super = false;  // Windows¼ü»òCmd¼ü
+	bool super = false;  // Windowsé”®æˆ–Cmdé”®
 
 	ModifierKeys() = default;
 	ModifierKeys(bool s, bool c, bool a, bool sup = false)
 		: shift(s), control(c), alt(a), super(sup) {}
 };
 
-// »ù´¡ÊÂ¼şÀà
+// åŸºç¡€äº‹ä»¶ç±»
 class Event {
 public:
 	virtual ~Event() = default;
@@ -179,7 +179,7 @@ protected:
 	bool handled_ = false;
 };
 
-// ÊÂ¼şºê¶¨Òå - ¼ò»¯ÊÂ¼şÀàµÄ´´½¨
+// äº‹ä»¶å®å®šä¹‰ - ç®€åŒ–äº‹ä»¶ç±»çš„åˆ›å»º
 #define EVENT_CLASS_TYPE(type) \
     static EventType GetStaticType() { return EventType::type; } \
     virtual EventType GetEventType() const override { return GetStaticType(); } \
@@ -188,7 +188,7 @@ protected:
 #define EVENT_CLASS_CATEGORY(category) \
     virtual uint32_t GetCategoryFlags() const override { return static_cast<uint32_t>(category); }
 
-// ´°¿ÚÊÂ¼şÀà
+// çª—å£äº‹ä»¶ç±»
 class WindowCloseEvent : public Event {
 public:
 	WindowCloseEvent() = default;
@@ -250,7 +250,7 @@ public:
 	EVENT_CLASS_CATEGORY(EventCategory::Window)
 };
 
-// ¼üÅÌÊÂ¼ş»ùÀà
+// é”®ç›˜äº‹ä»¶åŸºç±»
 class KeyEvent : public Event {
 public:
 	KeyCode GetKeyCode() const { return keyCode_; }
@@ -313,7 +313,7 @@ private:
 	uint32_t character_;
 };
 
-// Êó±êÊÂ¼ş»ùÀà
+// é¼ æ ‡äº‹ä»¶åŸºç±»
 class MouseEvent : public Event {
 public:
 	EVENT_CLASS_CATEGORY(EventCategory::Mouse | EventCategory::Input)
@@ -393,5 +393,5 @@ private:
 	float xOffset_, yOffset_;
 };
 
-// ÊÂ¼ş»Øµ÷º¯ÊıÀàĞÍ
+// äº‹ä»¶å›è°ƒå‡½æ•°ç±»å‹
 using EventCallbackFn = std::function<void(Event&)>;

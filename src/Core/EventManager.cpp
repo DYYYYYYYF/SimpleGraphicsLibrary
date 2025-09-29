@@ -1,4 +1,4 @@
-#include "Core/EventManager.h"
+ï»¿#include "Core/EventManager.h"
 #include <iostream>
 #include <chrono>
 #include <iomanip>
@@ -24,7 +24,7 @@ void EventManager::DispatchEvent(Event& event) {
 }
 
 void EventManager::ProcessEvents() {
-	// ´¦Àí¶ÓÁĞÖĞµÄËùÓĞÊÂ¼ş
+	// å¤„ç†é˜Ÿåˆ—ä¸­çš„æ‰€æœ‰äº‹ä»¶
 	while (!eventQueue_.empty()) {
 		auto event = std::move(eventQueue_.front());
 		eventQueue_.pop();
@@ -36,7 +36,7 @@ void EventManager::ProcessEvents() {
 }
 
 void EventManager::ClearEvents() {
-	// Çå¿ÕÊÂ¼ş¶ÓÁĞ
+	// æ¸…ç©ºäº‹ä»¶é˜Ÿåˆ—
 	std::queue<std::unique_ptr<Event>> empty;
 	eventQueue_.swap(empty);
 }
@@ -46,22 +46,22 @@ void EventManager::UnsubscribeAll() {
 }
 
 void EventManager::DispatchToListeners(Event& event) {
-	// »ñÈ¡ÊÂ¼şÀàĞÍ¶ÔÓ¦µÄ¼àÌıÆ÷
+	// è·å–äº‹ä»¶ç±»å‹å¯¹åº”çš„ç›‘å¬å™¨
 	auto eventType = std::type_index(typeid(event));
 	auto it = listeners_.find(eventType);
 
 	if (it != listeners_.end()) {
-		// ±éÀúËùÓĞ¼àÌıÆ÷
+		// éå†æ‰€æœ‰ç›‘å¬å™¨
 		for (auto& listener : it->second) {
 			if (listener && listener->OnEvent(event)) {
-				// Èç¹û¼àÌıÆ÷´¦ÀíÁËÊÂ¼ş£¬±ê¼ÇÎªÒÑ´¦Àí
+				// å¦‚æœç›‘å¬å™¨å¤„ç†äº†äº‹ä»¶ï¼Œæ ‡è®°ä¸ºå·²å¤„ç†
 				event.SetHandled(true);
 				break;
 			}
 		}
 	}
 
-	// ¼ì²éÊÇ·ñÓĞÍ¨ÓÃ¼àÌıÆ÷£¨Õë¶ÔËùÓĞÊÂ¼şÀàĞÍ£©
+	// æ£€æŸ¥æ˜¯å¦æœ‰é€šç”¨ç›‘å¬å™¨ï¼ˆé’ˆå¯¹æ‰€æœ‰äº‹ä»¶ç±»å‹ï¼‰
 	auto allEventsIt = listeners_.find(std::type_index(typeid(Event)));
 	if (allEventsIt != listeners_.end()) {
 		for (auto& listener : allEventsIt->second) {
@@ -74,20 +74,20 @@ void EventManager::DispatchToListeners(Event& event) {
 }
 
 void EventManager::LogEvent(const Event& event) {
-	// »ñÈ¡µ±Ç°Ê±¼ä
+	// è·å–å½“å‰æ—¶é—´
 	auto now = std::chrono::system_clock::now();
 	auto time_t = std::chrono::system_clock::to_time_t(now);
 	auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
 		now.time_since_epoch()) % 1000;
 
-	// ¸ñÊ½»¯Ê±¼ä´Á
+	// æ ¼å¼åŒ–æ—¶é—´æˆ³
 	std::cout << "[" << std::put_time(std::localtime(&time_t), "%H:%M:%S");
 	std::cout << "." << std::setfill('0') << std::setw(3) << ms.count() << "] ";
 
-	// Êä³öÊÂ¼şĞÅÏ¢
+	// è¾“å‡ºäº‹ä»¶ä¿¡æ¯
 	std::cout << "EVENT: " << event.ToString();
 
-	// ÏÔÊ¾ÊÂ¼şÀà±ğ
+	// æ˜¾ç¤ºäº‹ä»¶ç±»åˆ«
 	std::cout << " [";
 	bool first = true;
 	uint32_t categories = event.GetCategoryFlags();

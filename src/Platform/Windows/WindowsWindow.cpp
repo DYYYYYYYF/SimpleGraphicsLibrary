@@ -1,8 +1,8 @@
-#ifdef _WIN32
+ï»¿#ifdef _WIN32
 
-#include "../../Core/WindowImpl.h"  // ĞŞÕı°üº¬Â·¾¶
-#include "Core/Event.h"       // °üº¬ÊÂ¼ş¶¨Òå
-#include "Core/EventManager.h" // °üº¬ÊÂ¼ş¹ÜÀíÆ÷
+#include "../../Core/WindowImpl.h"  // ä¿®æ­£åŒ…å«è·¯å¾„
+#include "Core/Event.h"       // åŒ…å«äº‹ä»¶å®šä¹‰
+#include "Core/EventManager.h" // åŒ…å«äº‹ä»¶ç®¡ç†å™¨
 #include <iostream>
 #include <stdexcept>
 #include <unordered_map>
@@ -17,7 +17,7 @@ public:
 	WindowsWindowImpl(const std::string& title, uint32_t width, uint32_t height);
 	~WindowsWindowImpl() override;
 
-	// WindowImpl½Ó¿ÚÊµÏÖ
+	// WindowImplæ¥å£å®ç°
 	bool Create() override;
 	void Destroy() override;
 	void Show() override;
@@ -41,12 +41,12 @@ public:
 
 	void* GetNativeHandle() const override;
 
-	// ÊÂ¼şÏµÍ³¼¯³É
+	// äº‹ä»¶ç³»ç»Ÿé›†æˆ
 	void SetEventCallback(const EventCallbackFn& callback) override;
 	void SetEventDispatchMode(bool useGlobalQueue, bool useDirectCallback = true) override;
 
 private:
-	// Windows APIÏà¹Ø
+	// Windows APIç›¸å…³
 	static LRESULT CALLBACK StaticWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -55,15 +55,15 @@ private:
 	std::wstring StringToWString(const std::string& str);
 	std::string WStringToString(const std::wstring& wstr);
 
-	// ÊÂ¼ş×ª»»¸¨Öúº¯Êı
+	// äº‹ä»¶è½¬æ¢è¾…åŠ©å‡½æ•°
 	KeyCode VirtualKeyToKeyCode(WPARAM vkCode);
 	MouseButton VirtualButtonToMouseButton(UINT message, WPARAM wParam);
 	ModifierKeys GetCurrentModifiers();
 	void DispatchEvent(Event& event);
-	std::unique_ptr<Event> CreateEventCopy(const Event& event);  // ´´½¨ÊÂ¼ş¸±±¾
+	std::unique_ptr<Event> CreateEventCopy(const Event& event);  // åˆ›å»ºäº‹ä»¶å‰¯æœ¬
 
 private:
-	// ´°¿ÚÊôĞÔ
+	// çª—å£å±æ€§
 	std::string title_;
 	uint32_t width_;
 	uint32_t height_;
@@ -73,54 +73,54 @@ private:
 	bool isVisible_;
 	bool isResizable_;
 
-	// WindowsÌØ¶¨³ÉÔ±
+	// Windowsç‰¹å®šæˆå‘˜
 	HWND hwnd_;
 	HDC hdc_;
 	HINSTANCE hInstance_;
 
-	// ÊÂ¼şÏµÍ³
+	// äº‹ä»¶ç³»ç»Ÿ
 	EventCallbackFn eventCallback_;
 	bool useGlobalEventQueue_;
 	bool useDirectCallback_;
 
-	// ¾²Ì¬³ÉÔ±
+	// é™æ€æˆå‘˜
 	static const wchar_t* WINDOW_CLASS_NAME;
 	static bool classRegistered_;
 	static std::unordered_map<HWND, WindowsWindowImpl*> windowMap_;
 };
 
-// ¾²Ì¬³ÉÔ±¶¨Òå
+// é™æ€æˆå‘˜å®šä¹‰
 const wchar_t* WindowsWindowImpl::WINDOW_CLASS_NAME = L"SimpleGraphicsLibraryWindow";
 bool WindowsWindowImpl::classRegistered_ = false;
 std::unordered_map<HWND, WindowsWindowImpl*> WindowsWindowImpl::windowMap_;
 
-// ¹¹Ôìº¯Êı
+// æ„é€ å‡½æ•°
 WindowsWindowImpl::WindowsWindowImpl(const std::string& title, uint32_t width, uint32_t height)
 	: title_(title), width_(width), height_(height), x_(CW_USEDEFAULT), y_(CW_USEDEFAULT)
 	, shouldClose_(false), isVisible_(false), isResizable_(true)
 	, hwnd_(nullptr), hdc_(nullptr), hInstance_(GetModuleHandle(nullptr))
-	, useGlobalEventQueue_(true), useDirectCallback_(true) {  // Ä¬ÈÏÍ¬Ê±Ê¹ÓÃÁ½ÖÖ·½Ê½
+	, useGlobalEventQueue_(true), useDirectCallback_(true) {  // é»˜è®¤åŒæ—¶ä½¿ç”¨ä¸¤ç§æ–¹å¼
 }
 
-// Îö¹¹º¯Êı
+// ææ„å‡½æ•°
 WindowsWindowImpl::~WindowsWindowImpl() {
 	Destroy();
 }
 
-// ´´½¨´°¿Ú
+// åˆ›å»ºçª—å£
 bool WindowsWindowImpl::Create() {
 	if (hwnd_) {
 		std::cout << "Window already created" << std::endl;
 		return true;
 	}
 
-	// ×¢²á´°¿ÚÀà
+	// æ³¨å†Œçª—å£ç±»
 	if (!RegisterWindowClass()) {
 		std::cerr << "Failed to register window class" << std::endl;
 		return false;
 	}
 
-	// ¼ÆËã´°¿Ú´óĞ¡£¨°üº¬±ß¿ò£©
+	// è®¡ç®—çª—å£å¤§å°ï¼ˆåŒ…å«è¾¹æ¡†ï¼‰
 	RECT windowRect = { 0, 0, static_cast<LONG>(width_), static_cast<LONG>(height_) };
 	DWORD windowStyle = WS_OVERLAPPEDWINDOW;
 
@@ -133,23 +133,23 @@ bool WindowsWindowImpl::Create() {
 	int windowWidth = windowRect.right - windowRect.left;
 	int windowHeight = windowRect.bottom - windowRect.top;
 
-	// ×ª»»±êÌâÎª¿í×Ö·û
+	// è½¬æ¢æ ‡é¢˜ä¸ºå®½å­—ç¬¦
 	std::wstring wTitle = StringToWString(title_);
 
-	// ´´½¨´°¿Ú
+	// åˆ›å»ºçª—å£
 	hwnd_ = CreateWindowExW(
-		0,                          // À©Õ¹ÑùÊ½
-		WINDOW_CLASS_NAME,          // ´°¿ÚÀàÃû
-		wTitle.c_str(),            // ´°¿Ú±êÌâ
-		windowStyle,               // ´°¿ÚÑùÊ½
-		x_,                        // XÎ»ÖÃ
-		y_,                        // YÎ»ÖÃ
-		windowWidth,               // ¿í¶È
-		windowHeight,              // ¸ß¶È
-		nullptr,                   // ¸¸´°¿Ú
-		nullptr,                   // ²Ëµ¥
-		hInstance_,                // ÊµÀı¾ä±ú
-		this                       // ´«µİthisÖ¸Õë
+		0,                          // æ‰©å±•æ ·å¼
+		WINDOW_CLASS_NAME,          // çª—å£ç±»å
+		wTitle.c_str(),            // çª—å£æ ‡é¢˜
+		windowStyle,               // çª—å£æ ·å¼
+		x_,                        // Xä½ç½®
+		y_,                        // Yä½ç½®
+		windowWidth,               // å®½åº¦
+		windowHeight,              // é«˜åº¦
+		nullptr,                   // çˆ¶çª—å£
+		nullptr,                   // èœå•
+		hInstance_,                // å®ä¾‹å¥æŸ„
+		this                       // ä¼ é€’thisæŒ‡é’ˆ
 	);
 
 	if (!hwnd_) {
@@ -158,7 +158,7 @@ bool WindowsWindowImpl::Create() {
 		return false;
 	}
 
-	// »ñÈ¡Éè±¸ÉÏÏÂÎÄ
+	// è·å–è®¾å¤‡ä¸Šä¸‹æ–‡
 	hdc_ = GetDC(hwnd_);
 	if (!hdc_) {
 		std::cerr << "Failed to get device context" << std::endl;
@@ -167,26 +167,26 @@ bool WindowsWindowImpl::Create() {
 		return false;
 	}
 
-	// ½«´°¿Ú¾ä±úºÍÊµÀı¹ØÁª
+	// å°†çª—å£å¥æŸ„å’Œå®ä¾‹å…³è”
 	windowMap_[hwnd_] = this;
 
 	std::cout << "Window created successfully: " << title_ << " (" << width_ << "x" << height_ << ")" << std::endl;
 	return true;
 }
 
-// Ïú»Ù´°¿Ú
+// é”€æ¯çª—å£
 void WindowsWindowImpl::Destroy() {
 	if (hwnd_) {
-		// ´ÓÓ³ÉäÖĞÒÆ³ı
+		// ä»æ˜ å°„ä¸­ç§»é™¤
 		windowMap_.erase(hwnd_);
 
-		// ÊÍ·ÅÉè±¸ÉÏÏÂÎÄ
+		// é‡Šæ”¾è®¾å¤‡ä¸Šä¸‹æ–‡
 		if (hdc_) {
 			ReleaseDC(hwnd_, hdc_);
 			hdc_ = nullptr;
 		}
 
-		// Ïú»Ù´°¿Ú
+		// é”€æ¯çª—å£
 		DestroyWindow(hwnd_);
 		hwnd_ = nullptr;
 
@@ -194,7 +194,7 @@ void WindowsWindowImpl::Destroy() {
 	}
 }
 
-// ÏÔÊ¾´°¿Ú
+// æ˜¾ç¤ºçª—å£
 void WindowsWindowImpl::Show() {
 	if (hwnd_) {
 		ShowWindow(hwnd_, SW_SHOW);
@@ -204,7 +204,7 @@ void WindowsWindowImpl::Show() {
 	}
 }
 
-// Òş²Ø´°¿Ú
+// éšè—çª—å£
 void WindowsWindowImpl::Hide() {
 	if (hwnd_) {
 		ShowWindow(hwnd_, SW_HIDE);
@@ -213,7 +213,7 @@ void WindowsWindowImpl::Hide() {
 	}
 }
 
-// ÉèÖÃ´°¿Ú±êÌâ
+// è®¾ç½®çª—å£æ ‡é¢˜
 void WindowsWindowImpl::SetTitle(const std::string& title) {
 	title_ = title;
 	if (hwnd_) {
@@ -222,13 +222,13 @@ void WindowsWindowImpl::SetTitle(const std::string& title) {
 	}
 }
 
-// ÉèÖÃ´°¿Ú´óĞ¡
+// è®¾ç½®çª—å£å¤§å°
 void WindowsWindowImpl::SetSize(uint32_t width, uint32_t height) {
 	width_ = width;
 	height_ = height;
 
 	if (hwnd_) {
-		// ¼ÆËã°üº¬±ß¿òµÄ´°¿Ú´óĞ¡
+		// è®¡ç®—åŒ…å«è¾¹æ¡†çš„çª—å£å¤§å°
 		RECT windowRect = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
 		DWORD windowStyle = static_cast<DWORD>(GetWindowLong(hwnd_, GWL_STYLE));
 		AdjustWindowRect(&windowRect, windowStyle, FALSE);
@@ -240,7 +240,7 @@ void WindowsWindowImpl::SetSize(uint32_t width, uint32_t height) {
 	}
 }
 
-// ÉèÖÃ´°¿ÚÎ»ÖÃ
+// è®¾ç½®çª—å£ä½ç½®
 void WindowsWindowImpl::SetPosition(int x, int y) {
 	x_ = x;
 	y_ = y;
@@ -250,7 +250,7 @@ void WindowsWindowImpl::SetPosition(int x, int y) {
 	}
 }
 
-// ÉèÖÃÊÇ·ñ¿Éµ÷Õû´óĞ¡
+// è®¾ç½®æ˜¯å¦å¯è°ƒæ•´å¤§å°
 void WindowsWindowImpl::SetResizable(bool resizable) {
 	isResizable_ = resizable;
 
@@ -270,18 +270,18 @@ void WindowsWindowImpl::SetResizable(bool resizable) {
 	}
 }
 
-// ÊÂ¼şÏµÍ³¼¯³É
+// äº‹ä»¶ç³»ç»Ÿé›†æˆ
 void WindowsWindowImpl::SetEventCallback(const EventCallbackFn& callback) {
 	eventCallback_ = callback;
 }
 
-// ÉèÖÃÊÂ¼ş·Ö·¢Ä£Ê½
+// è®¾ç½®äº‹ä»¶åˆ†å‘æ¨¡å¼
 void WindowsWindowImpl::SetEventDispatchMode(bool useGlobalQueue, bool useDirectCallback) {
 	useGlobalEventQueue_ = useGlobalQueue;
 	useDirectCallback_ = useDirectCallback;
 }
 
-// ´¦ÀíÏûÏ¢
+// å¤„ç†æ¶ˆæ¯
 void WindowsWindowImpl::ProcessMessages() {
 	MSG msg;
 	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
@@ -290,16 +290,16 @@ void WindowsWindowImpl::ProcessMessages() {
 	}
 }
 
-// ÊÂ¼ş·Ö·¢¸¨Öúº¯Êı - ĞŞ¸ÄÎªÍ¬Ê±Ö§³ÖÁ½ÖÖ·Ö·¢·½Ê½
+// äº‹ä»¶åˆ†å‘è¾…åŠ©å‡½æ•° - ä¿®æ”¹ä¸ºåŒæ—¶æ”¯æŒä¸¤ç§åˆ†å‘æ–¹å¼
 void WindowsWindowImpl::DispatchEvent(Event& event) {
-	// Ö±½Ó»Øµ÷ (Á¢¼´´¦Àí)
+	// ç›´æ¥å›è°ƒ (ç«‹å³å¤„ç†)
 	if (useDirectCallback_ && eventCallback_) {
 		eventCallback_(event);
 	}
 
-	// ·ÅÈëÈ«¾ÖÊÂ¼ş¶ÓÁĞ (ÑÓ³Ù´¦Àí)
+	// æ”¾å…¥å…¨å±€äº‹ä»¶é˜Ÿåˆ— (å»¶è¿Ÿå¤„ç†)
 	if (useGlobalEventQueue_) {
-		// ´´½¨ÊÂ¼şµÄ¸±±¾²¢·ÅÈë¶ÓÁĞ
+		// åˆ›å»ºäº‹ä»¶çš„å‰¯æœ¬å¹¶æ”¾å…¥é˜Ÿåˆ—
 		std::unique_ptr<Event> eventCopy = CreateEventCopy(event);
 		if (eventCopy) {
 			EventManager::Instance().PostEvent(std::move(eventCopy));
@@ -307,7 +307,7 @@ void WindowsWindowImpl::DispatchEvent(Event& event) {
 	}
 }
 
-// ´´½¨ÊÂ¼ş¸±±¾µÄ¸¨Öúº¯Êı
+// åˆ›å»ºäº‹ä»¶å‰¯æœ¬çš„è¾…åŠ©å‡½æ•°
 std::unique_ptr<Event> WindowsWindowImpl::CreateEventCopy(const Event& event) {
 	switch (event.GetEventType()) {
 	case EventType::WindowClose:
@@ -369,10 +369,10 @@ std::unique_ptr<Event> WindowsWindowImpl::CreateEventCopy(const Event& event) {
 	}
 }
 
-// ĞéÄâ¼üÂë×ª»»ÎªÎÒÃÇµÄKeyCode
+// è™šæ‹Ÿé”®ç è½¬æ¢ä¸ºæˆ‘ä»¬çš„KeyCode
 KeyCode WindowsWindowImpl::VirtualKeyToKeyCode(WPARAM vkCode) {
 	switch (vkCode) {
-		// ×ÖÄ¸¼ü
+		// å­—æ¯é”®
 	case 'A': return KeyCode::A; case 'B': return KeyCode::B; case 'C': return KeyCode::C;
 	case 'D': return KeyCode::D; case 'E': return KeyCode::E; case 'F': return KeyCode::F;
 	case 'G': return KeyCode::G; case 'H': return KeyCode::H; case 'I': return KeyCode::I;
@@ -383,13 +383,13 @@ KeyCode WindowsWindowImpl::VirtualKeyToKeyCode(WPARAM vkCode) {
 	case 'V': return KeyCode::V; case 'W': return KeyCode::W; case 'X': return KeyCode::X;
 	case 'Y': return KeyCode::Y; case 'Z': return KeyCode::Z;
 
-		// Êı×Ö¼ü
+		// æ•°å­—é”®
 	case '0': return KeyCode::D0; case '1': return KeyCode::D1; case '2': return KeyCode::D2;
 	case '3': return KeyCode::D3; case '4': return KeyCode::D4; case '5': return KeyCode::D5;
 	case '6': return KeyCode::D6; case '7': return KeyCode::D7; case '8': return KeyCode::D8;
 	case '9': return KeyCode::D9;
 
-		// ¹¦ÄÜ¼ü
+		// åŠŸèƒ½é”®
 	case VK_F1: return KeyCode::F1;   case VK_F2: return KeyCode::F2;
 	case VK_F3: return KeyCode::F3;   case VK_F4: return KeyCode::F4;
 	case VK_F5: return KeyCode::F5;   case VK_F6: return KeyCode::F6;
@@ -397,7 +397,7 @@ KeyCode WindowsWindowImpl::VirtualKeyToKeyCode(WPARAM vkCode) {
 	case VK_F9: return KeyCode::F9;   case VK_F10: return KeyCode::F10;
 	case VK_F11: return KeyCode::F11; case VK_F12: return KeyCode::F12;
 
-		// ÌØÊâ¼ü
+		// ç‰¹æ®Šé”®
 	case VK_SPACE: return KeyCode::Space;
 	case VK_RETURN: return KeyCode::Enter;
 	case VK_ESCAPE: return KeyCode::Escape;
@@ -410,13 +410,13 @@ KeyCode WindowsWindowImpl::VirtualKeyToKeyCode(WPARAM vkCode) {
 	case VK_PRIOR: return KeyCode::PageUp;
 	case VK_NEXT: return KeyCode::PageDown;
 
-		// ¼ıÍ·¼ü
+		// ç®­å¤´é”®
 	case VK_LEFT: return KeyCode::Left;
 	case VK_UP: return KeyCode::Up;
 	case VK_RIGHT: return KeyCode::Right;
 	case VK_DOWN: return KeyCode::Down;
 
-		// ĞŞÊÎ¼ü
+		// ä¿®é¥°é”®
 	case VK_LSHIFT: return KeyCode::LeftShift;
 	case VK_RSHIFT: return KeyCode::RightShift;
 	case VK_LCONTROL: return KeyCode::LeftControl;
@@ -424,25 +424,25 @@ KeyCode WindowsWindowImpl::VirtualKeyToKeyCode(WPARAM vkCode) {
 	case VK_LMENU: return KeyCode::LeftAlt;
 	case VK_RMENU: return KeyCode::RightAlt;
 
-		// Ğ¡¼üÅÌ
+		// å°é”®ç›˜
 	case VK_NUMPAD0: return KeyCode::NumPad0; case VK_NUMPAD1: return KeyCode::NumPad1;
 	case VK_NUMPAD2: return KeyCode::NumPad2; case VK_NUMPAD3: return KeyCode::NumPad3;
 	case VK_NUMPAD4: return KeyCode::NumPad4; case VK_NUMPAD5: return KeyCode::NumPad5;
 	case VK_NUMPAD6: return KeyCode::NumPad6; case VK_NUMPAD7: return KeyCode::NumPad7;
 	case VK_NUMPAD8: return KeyCode::NumPad8; case VK_NUMPAD9: return KeyCode::NumPad9;
 
-		// ÆäËû¼ü
+		// å…¶ä»–é”®
 	case VK_CAPITAL: return KeyCode::CapsLock;
 	case VK_NUMLOCK: return KeyCode::NumLock;
 	case VK_SCROLL: return KeyCode::ScrollLock;
 	case VK_SNAPSHOT: return KeyCode::PrintScreen;
 	case VK_PAUSE: return KeyCode::Pause;
 
-	default: return KeyCode::A; // Ä¬ÈÏ·µ»ØA¼ü£¬Êµ¼ÊÓ¦ÓÃÖĞ¿ÉÒÔ¶¨ÒåUnknown¼ü
+	default: return KeyCode::A; // é»˜è®¤è¿”å›Aé”®ï¼Œå®é™…åº”ç”¨ä¸­å¯ä»¥å®šä¹‰Unknowné”®
 	}
 }
 
-// Êó±ê°´Å¥×ª»»
+// é¼ æ ‡æŒ‰é’®è½¬æ¢
 MouseButton WindowsWindowImpl::VirtualButtonToMouseButton(UINT message, WPARAM wParam) {
 	switch (message) {
 	case WM_LBUTTONDOWN:
@@ -462,7 +462,7 @@ MouseButton WindowsWindowImpl::VirtualButtonToMouseButton(UINT message, WPARAM w
 	}
 }
 
-// »ñÈ¡µ±Ç°ĞŞÊÎ¼ü×´Ì¬
+// è·å–å½“å‰ä¿®é¥°é”®çŠ¶æ€
 ModifierKeys WindowsWindowImpl::GetCurrentModifiers() {
 	ModifierKeys modifiers;
 	modifiers.shift = (GetKeyState(VK_SHIFT) & 0x8000) != 0;
@@ -472,7 +472,7 @@ ModifierKeys WindowsWindowImpl::GetCurrentModifiers() {
 	return modifiers;
 }
 
-// ÊôĞÔ»ñÈ¡º¯Êı
+// å±æ€§è·å–å‡½æ•°
 bool WindowsWindowImpl::ShouldClose() const {
 	return shouldClose_;
 }
@@ -532,18 +532,18 @@ void* WindowsWindowImpl::GetNativeHandle() const {
 	return static_cast<void*>(hwnd_);
 }
 
-// ¾²Ì¬´°¿Ú¹ı³Ì
+// é™æ€çª—å£è¿‡ç¨‹
 LRESULT CALLBACK WindowsWindowImpl::StaticWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	WindowsWindowImpl* window = nullptr;
 
 	if (uMsg == WM_NCCREATE) {
-		// ´°¿Ú´´½¨Ê±£¬´ÓlParam»ñÈ¡thisÖ¸Õë
+		// çª—å£åˆ›å»ºæ—¶ï¼Œä»lParamè·å–thisæŒ‡é’ˆ
 		CREATESTRUCT* createStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
 		window = static_cast<WindowsWindowImpl*>(createStruct->lpCreateParams);
 		windowMap_[hwnd] = window;
 	}
 	else {
-		// ´ÓÓ³ÉäÖĞ²éÕÒ´°¿ÚÊµÀı
+		// ä»æ˜ å°„ä¸­æŸ¥æ‰¾çª—å£å®ä¾‹
 		auto it = windowMap_.find(hwnd);
 		if (it != windowMap_.end()) {
 			window = it->second;
@@ -557,7 +557,7 @@ LRESULT CALLBACK WindowsWindowImpl::StaticWindowProc(HWND hwnd, UINT uMsg, WPARA
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-// ÊµÀı´°¿Ú¹ı³Ì
+// å®ä¾‹çª—å£è¿‡ç¨‹
 LRESULT WindowsWindowImpl::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
 	case WM_CLOSE: {
@@ -635,7 +635,7 @@ LRESULT WindowsWindowImpl::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 	case WM_CHAR: {
 		uint32_t character = static_cast<uint32_t>(wParam);
 
-		// ¹ıÂËµô¿ØÖÆ×Ö·û
+		// è¿‡æ»¤æ‰æ§åˆ¶å­—ç¬¦
 		if (character >= 32 && character != 127) {
 			CharInputEvent event(character);
 			DispatchEvent(event);
@@ -653,7 +653,7 @@ LRESULT WindowsWindowImpl::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 		MouseButtonPressedEvent event(button, modifiers);
 		DispatchEvent(event);
 
-		// ²¶»ñÊó±êÒÔ½ÓÊÕÊó±êÊÍ·ÅÊÂ¼ş
+		// æ•è·é¼ æ ‡ä»¥æ¥æ”¶é¼ æ ‡é‡Šæ”¾äº‹ä»¶
 		SetCapture(hwnd);
 		return (uMsg == WM_XBUTTONDOWN) ? TRUE : 0;
 	}
@@ -668,7 +668,7 @@ LRESULT WindowsWindowImpl::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 		MouseButtonReleasedEvent event(button, modifiers);
 		DispatchEvent(event);
 
-		// ÊÍ·ÅÊó±ê²¶»ñ
+		// é‡Šæ”¾é¼ æ ‡æ•è·
 		ReleaseCapture();
 		return (uMsg == WM_XBUTTONUP) ? TRUE : 0;
 	}
@@ -702,7 +702,7 @@ LRESULT WindowsWindowImpl::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 		PAINTSTRUCT ps;
 		HDC hdc = BeginPaint(hwnd, &ps);
 
-		// ¼òµ¥µÄ»æÖÆÊ¾Àı - Ìî³ä±³¾°É«
+		// ç®€å•çš„ç»˜åˆ¶ç¤ºä¾‹ - å¡«å……èƒŒæ™¯è‰²
 		RECT clientRect;
 		GetClientRect(hwnd, &clientRect);
 		HBRUSH brush = CreateSolidBrush(RGB(50, 50, 100));
@@ -718,7 +718,7 @@ LRESULT WindowsWindowImpl::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 	}
 }
 
-// ×¢²á´°¿ÚÀà
+// æ³¨å†Œçª—å£ç±»
 bool WindowsWindowImpl::RegisterWindowClass() {
 	if (classRegistered_) {
 		return true;
@@ -747,7 +747,7 @@ bool WindowsWindowImpl::RegisterWindowClass() {
 	return true;
 }
 
-// ×Ö·û´®×ª»»¸¨Öúº¯Êı
+// å­—ç¬¦ä¸²è½¬æ¢è¾…åŠ©å‡½æ•°
 std::wstring WindowsWindowImpl::StringToWString(const std::string& str) {
 	if (str.empty()) return std::wstring();
 
@@ -766,7 +766,7 @@ std::string WindowsWindowImpl::WStringToString(const std::wstring& wstr) {
 	return result;
 }
 
-// ÊµÏÖWindowsÆ½Ì¨ÌØ¶¨µÄ¹¤³§º¯Êı
+// å®ç°Windowså¹³å°ç‰¹å®šçš„å·¥å‚å‡½æ•°
 std::unique_ptr<WindowImpl> CreateWindowsWindow(const std::string& title, uint32_t width, uint32_t height) {
 	return std::make_unique<WindowsWindowImpl>(title, width, height);
 }

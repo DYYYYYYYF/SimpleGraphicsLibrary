@@ -1,21 +1,21 @@
-#pragma once
+ï»¿#pragma once
 #include <string>
 #include <cstdint>
 #include <memory>
 #include <functional>
 
-// Ç°ÏòÉùÃ÷
+// å‰å‘å£°æ˜
 class Event;
 
-// ÊÂ¼ş»Øµ÷º¯ÊıÀàĞÍ
+// äº‹ä»¶å›è°ƒå‡½æ•°ç±»å‹
 using EventCallbackFn = std::function<void(Event&)>;
 
-// WindowImpl ³éÏó»ùÀà - Ö»ÔÚÊµÏÖÎÄ¼şÖĞÊ¹ÓÃ£¬²»±©Â¶¸øÓÃ»§
+// WindowImpl æŠ½è±¡åŸºç±» - åªåœ¨å®ç°æ–‡ä»¶ä¸­ä½¿ç”¨ï¼Œä¸æš´éœ²ç»™ç”¨æˆ·
 class WindowImpl {
 public:
 	virtual ~WindowImpl() = default;
 
-	// ´¿Ğéº¯Êı½Ó¿Ú - ËùÓĞÆ½Ì¨¶¼±ØĞëÊµÏÖ
+	// çº¯è™šå‡½æ•°æ¥å£ - æ‰€æœ‰å¹³å°éƒ½å¿…é¡»å®ç°
 	virtual bool Create() = 0;
 	virtual void Destroy() = 0;
 	virtual void Show() = 0;
@@ -39,12 +39,12 @@ public:
 
 	virtual void* GetNativeHandle() const = 0;
 
-	// ÊÂ¼şÏµÍ³¼¯³É
+	// äº‹ä»¶ç³»ç»Ÿé›†æˆ
 	virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
 	virtual void SetEventDispatchMode(bool useGlobalQueue, bool useDirectCallback = true) = 0;
 };
 
-// Æ½Ì¨ÌØ¶¨¹¤³§º¯ÊıÉùÃ÷ - ÔÚ¸÷×ÔµÄÆ½Ì¨ÎÄ¼şÖĞÊµÏÖ
+// å¹³å°ç‰¹å®šå·¥å‚å‡½æ•°å£°æ˜ - åœ¨å„è‡ªçš„å¹³å°æ–‡ä»¶ä¸­å®ç°
 #ifdef _WIN32
 std::unique_ptr<WindowImpl> CreateWindowsWindow(const std::string& title, uint32_t width, uint32_t height);
 #elif defined(__linux__)

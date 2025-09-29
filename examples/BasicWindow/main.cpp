@@ -1,4 +1,4 @@
-#include "Core/Window.h"
+ï»¿#include "Core/Window.h"
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -7,7 +7,7 @@ int TestSingleWindows();
 int TestMultipleWindows();
 
 int main() {
-	// ¿ÉÑ¡£º²âÊÔµ¥/¶à´°¿Ú¹¦ÄÜ
+	// å¯é€‰ï¼šæµ‹è¯•å•/å¤šçª—å£åŠŸèƒ½
 	TestSingleWindows();
 	//TestMultipleWindows();
 
@@ -16,18 +16,18 @@ int main() {
 
 int TestSingleWindows() {
 	try {
-		std::cout << "=== ¿çÆ½Ì¨´°¿ÚÏµÍ³²âÊÔ ===" << std::endl;
+		std::cout << "=== è·¨å¹³å°çª—å£ç³»ç»Ÿæµ‹è¯• ===" << std::endl;
 
-		// ´´½¨´°¿Ú
+		// åˆ›å»ºçª—å£
 		Window window("Simple Graphics Library - Test Window", 800, 600);
 
-		// ´´½¨´°¿Ú
+		// åˆ›å»ºçª—å£
 		if (!window.Create()) {
 			std::cerr << "Failed to create window!" << std::endl;
 			return -1;
 		}
 
-		// ÏÔÊ¾´°¿Ú
+		// æ˜¾ç¤ºçª—å£
 		window.Show();
 
 		std::cout << "Window created and shown successfully!" << std::endl;
@@ -38,18 +38,18 @@ int TestSingleWindows() {
 		std::cout << "  Visible: " << (window.IsVisible() ? "Yes" : "No") << std::endl;
 		std::cout << "  Resizable: " << (window.IsResizable() ? "Yes" : "No") << std::endl;
 
-		std::cout << "\n=== ¿ªÊ¼ÏûÏ¢Ñ­»· ===" << std::endl;
-		std::cout << "¹Ø±Õ´°¿ÚÀ´ÍË³ö³ÌĞò" << std::endl;
+		std::cout << "\n=== å¼€å§‹æ¶ˆæ¯å¾ªç¯ ===" << std::endl;
+		std::cout << "å…³é—­çª—å£æ¥é€€å‡ºç¨‹åº" << std::endl;
 
-		// Ö÷ÏûÏ¢Ñ­»·
+		// ä¸»æ¶ˆæ¯å¾ªç¯
 		auto lastTime = std::chrono::steady_clock::now();
 		int frameCount = 0;
 
 		while (!window.ShouldClose()) {
-			// ´¦Àí´°¿ÚÏûÏ¢
+			// å¤„ç†çª—å£æ¶ˆæ¯
 			window.ProcessMessages();
 
-			// FPS¼ÆËã
+			// FPSè®¡ç®—
 			auto currentTime = std::chrono::steady_clock::now();
 			auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastTime);
 
@@ -62,11 +62,11 @@ int TestSingleWindows() {
 
 			frameCount++;
 
-			// ÏŞÖÆFPSµ½60
+			// é™åˆ¶FPSåˆ°60
 			std::this_thread::sleep_for(std::chrono::milliseconds(16));
 		}
 
-		std::cout << "\n=== ÇåÀí×ÊÔ´ ===" << std::endl;
+		std::cout << "\n=== æ¸…ç†èµ„æº ===" << std::endl;
 		window.Destroy();
 
 	}
@@ -80,11 +80,11 @@ int TestSingleWindows() {
 }
 
 int TestMultipleWindows() {
-	std::cout << "\n=== ¶à´°¿Ú²âÊÔ ===" << std::endl;
+	std::cout << "\n=== å¤šçª—å£æµ‹è¯• ===" << std::endl;
 
 	try {
-		Window window1("´°¿Ú 1", 600, 400);
-		Window window2("´°¿Ú 2", 400, 300);
+		Window window1("çª—å£ 1", 600, 400);
+		Window window2("çª—å£ 2", 400, 300);
 
 		window1.Create();
 		window2.Create();
@@ -95,7 +95,7 @@ int TestMultipleWindows() {
 		window1.Show();
 		window2.Show();
 
-		// ÔËĞĞ¶à´°¿ÚÏûÏ¢Ñ­»·
+		// è¿è¡Œå¤šçª—å£æ¶ˆæ¯å¾ªç¯
 		while (!window1.ShouldClose() && !window2.ShouldClose()) {
 			window1.ProcessMessages();
 			window2.ProcessMessages();

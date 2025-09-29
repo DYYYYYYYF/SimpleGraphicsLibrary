@@ -1,4 +1,4 @@
-#ifdef __APPLE__
+ï»¿#ifdef __APPLE__
 
 #include "../../Core/WindowImpl.h"
 #include "Core/Event.h"
@@ -10,7 +10,7 @@
 #import <Cocoa/Cocoa.h>
 #import <Foundation/Foundation.h>
 
-// Ç°ÏòÉùÃ÷
+// å‰å‘å£°æ˜
 @class AppleWindowDelegate;
 @class AppleWindowView;
 
@@ -19,7 +19,7 @@ public:
     AppleWindowImpl(const std::string& title, uint32_t width, uint32_t height);
     ~AppleWindowImpl() override;
 
-    // WindowImpl½Ó¿ÚÊµÏÖ
+    // WindowImplæ¥å£å®ç°
     bool Create() override;
     void Destroy() override;
     void Show() override;
@@ -43,11 +43,11 @@ public:
 
     void* GetNativeHandle() const override;
 
-    // ÊÂ¼şÏµÍ³¼¯³É
+    // äº‹ä»¶ç³»ç»Ÿé›†æˆ
     void SetEventCallback(const EventCallbackFn& callback) override;
     void SetEventDispatchMode(bool useGlobalQueue, bool useDirectCallback = true) override;
 
-    // ÊÂ¼ş´¦Àí·½·¨£¨¹©Objective-CÎ¯ÍĞµ÷ÓÃ£©
+    // äº‹ä»¶å¤„ç†æ–¹æ³•ï¼ˆä¾›Objective-Cå§”æ‰˜è°ƒç”¨ï¼‰
     void OnWindowClose();
     void OnWindowResize(uint32_t width, uint32_t height);
     void OnWindowMove(int x, int y);
@@ -61,19 +61,19 @@ public:
     void OnMouseMoved(float x, float y);
     void OnMouseScrolled(float xOffset, float yOffset);
 
-    // ÊÂ¼ş×ª»»¸¨Öúº¯Êı
+    // äº‹ä»¶è½¬æ¢è¾…åŠ©å‡½æ•°
     KeyCode CocoaKeyToKeyCode(unsigned short keyCode);
     MouseButton CocoaButtonToMouseButton(NSInteger buttonNumber);
     ModifierKeys CocoaModifiersToModifierKeys(NSEventModifierFlags flags);
     void DispatchEvent(Event& event);
     std::unique_ptr<Event> CreateEventCopy(const Event& event);
 
-    // NSString×ª»»¸¨Öúº¯Êı
+    // NSStringè½¬æ¢è¾…åŠ©å‡½æ•°
     NSString* StringToNSString(const std::string& str);
     std::string NSStringToString(NSString* nsStr);
 
 private:
-    // ´°¿ÚÊôĞÔ
+    // çª—å£å±æ€§
     std::string title_;
     uint32_t width_;
     uint32_t height_;
@@ -83,22 +83,22 @@ private:
     bool isVisible_;
     bool isResizable_;
 
-    // Cocoa¶ÔÏó
+    // Cocoaå¯¹è±¡
     NSWindow* nsWindow_;
     AppleWindowDelegate* windowDelegate_;
     AppleWindowView* windowView_;
 
-    // ÊÂ¼şÏµÍ³
+    // äº‹ä»¶ç³»ç»Ÿ
     EventCallbackFn eventCallback_;
     bool useGlobalEventQueue_;
     bool useDirectCallback_;
 
-    // ¾²Ì¬³ÉÔ±
+    // é™æ€æˆå‘˜
     static std::unordered_map<NSWindow*, AppleWindowImpl*> windowMap_;
     static bool applicationInitialized_;
 };
 
-// Objective-C´°¿ÚÎ¯ÍĞÀà
+// Objective-Cçª—å£å§”æ‰˜ç±»
 @interface AppleWindowDelegate : NSObject <NSWindowDelegate>
 @property (nonatomic, assign) AppleWindowImpl* windowImpl;
 @end
@@ -117,7 +117,7 @@ private:
     if (self.windowImpl) {
         self.windowImpl->OnWindowClose();
     }
-    return NO; // ÈÃC++´úÂë¿ØÖÆ´°¿Ú¹Ø±Õ
+    return NO; // è®©C++ä»£ç æ§åˆ¶çª—å£å…³é—­
 }
 
 - (void)windowDidResize:(NSNotification*)notification {
@@ -137,7 +137,7 @@ private:
         NSRect frame = [window frame];
         NSRect screenFrame = [[NSScreen mainScreen] frame];
         
-        // ×ª»»×ø±êÏµ£¨CocoaÊ¹ÓÃ×óÏÂ½ÇÎªÔ­µã£¬ÎÒÃÇÊ¹ÓÃ×óÉÏ½Ç£©
+        // è½¬æ¢åæ ‡ç³»ï¼ˆCocoaä½¿ç”¨å·¦ä¸‹è§’ä¸ºåŸç‚¹ï¼Œæˆ‘ä»¬ä½¿ç”¨å·¦ä¸Šè§’ï¼‰
         int x = static_cast<int>(frame.origin.x);
         int y = static_cast<int>(screenFrame.size.height - frame.origin.y - frame.size.height);
         
@@ -159,7 +159,7 @@ private:
 
 @end
 
-// Objective-CÊÓÍ¼Àà£¬ÓÃÓÚ´¦Àí¼üÅÌºÍÊó±êÊÂ¼ş
+// Objective-Cè§†å›¾ç±»ï¼Œç”¨äºå¤„ç†é”®ç›˜å’Œé¼ æ ‡äº‹ä»¶
 @interface AppleWindowView : NSView
 @property (nonatomic, assign) AppleWindowImpl* windowImpl;
 @end
@@ -186,11 +186,11 @@ private:
         
         self.windowImpl->OnKeyPressed(keyCode, modifiers, isRepeat);
         
-        // ´¦Àí×Ö·ûÊäÈë
+        // å¤„ç†å­—ç¬¦è¾“å…¥
         NSString* characters = [event charactersIgnoringModifiers];
         if ([characters length] > 0) {
             unichar character = [characters characterAtIndex:0];
-            if (character >= 32 && character != 127) { // ¹ıÂË¿ØÖÆ×Ö·û
+            if (character >= 32 && character != 127) { // è¿‡æ»¤æ§åˆ¶å­—ç¬¦
                 self.windowImpl->OnCharInput(static_cast<uint32_t>(character));
             }
         }
@@ -277,7 +277,7 @@ private:
         NSPoint locationInWindow = [event locationInWindow];
         NSRect contentRect = [self frame];
         
-        // ×ª»»×ø±êÏµ£¨CocoaÊ¹ÓÃ×óÏÂ½ÇÎªÔ­µã£¬ÎÒÃÇÊ¹ÓÃ×óÉÏ½Ç£©
+        // è½¬æ¢åæ ‡ç³»ï¼ˆCocoaä½¿ç”¨å·¦ä¸‹è§’ä¸ºåŸç‚¹ï¼Œæˆ‘ä»¬ä½¿ç”¨å·¦ä¸Šè§’ï¼‰
         float x = locationInWindow.x;
         float y = contentRect.size.height - locationInWindow.y;
         
@@ -290,9 +290,9 @@ private:
         float deltaX = static_cast<float>([event scrollingDeltaX]);
         float deltaY = static_cast<float>([event scrollingDeltaY]);
         
-        // ´¦Àí¾«È·¹ö¶¯ÓëĞĞ¹ö¶¯
+        // å¤„ç†ç²¾ç¡®æ»šåŠ¨ä¸è¡Œæ»šåŠ¨
         if ([event hasPreciseScrollingDeltas]) {
-            deltaX *= 0.1f; // µ÷Õû¾«È·¹ö¶¯µÄÃô¸Ğ¶È
+            deltaX *= 0.1f; // è°ƒæ•´ç²¾ç¡®æ»šåŠ¨çš„æ•æ„Ÿåº¦
             deltaY *= 0.1f;
         }
         
@@ -302,18 +302,18 @@ private:
 
 @end
 
-// ¾²Ì¬³ÉÔ±¶¨Òå
+// é™æ€æˆå‘˜å®šä¹‰
 std::unordered_map<NSWindow*, AppleWindowImpl*> AppleWindowImpl::windowMap_;
 bool AppleWindowImpl::applicationInitialized_ = false;
 
-// ¹¹Ôìº¯Êı
+// æ„é€ å‡½æ•°
 AppleWindowImpl::AppleWindowImpl(const std::string& title, uint32_t width, uint32_t height)
     : title_(title), width_(width), height_(height), x_(100), y_(100)
     , shouldClose_(false), isVisible_(false), isResizable_(true)
     , nsWindow_(nil), windowDelegate_(nil), windowView_(nil)
     , useGlobalEventQueue_(true), useDirectCallback_(true) {
     
-    // È·±£NSApplicationÒÑ³õÊ¼»¯
+    // ç¡®ä¿NSApplicationå·²åˆå§‹åŒ–
     if (!applicationInitialized_) {
         [NSApplication sharedApplication];
         [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
@@ -321,12 +321,12 @@ AppleWindowImpl::AppleWindowImpl(const std::string& title, uint32_t width, uint3
     }
 }
 
-// Îö¹¹º¯Êı
+// ææ„å‡½æ•°
 AppleWindowImpl::~AppleWindowImpl() {
     Destroy();
 }
 
-// ´´½¨´°¿Ú
+// åˆ›å»ºçª—å£
 bool AppleWindowImpl::Create() {
     if (nsWindow_) {
         std::cout << "Window already created" << std::endl;
@@ -334,16 +334,16 @@ bool AppleWindowImpl::Create() {
     }
 
     @autoreleasepool {
-        // ´´½¨´°¿ÚÑùÊ½
+        // åˆ›å»ºçª—å£æ ·å¼
         NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
         if (isResizable_) {
             styleMask |= NSWindowStyleMaskResizable;
         }
 
-        // ´´½¨´°¿Ú¾ØĞÎ
+        // åˆ›å»ºçª—å£çŸ©å½¢
         NSRect windowRect = NSMakeRect(x_, y_, width_, height_);
 
-        // ´´½¨NSWindow
+        // åˆ›å»ºNSWindow
         nsWindow_ = [[NSWindow alloc] initWithContentRect:windowRect
                                                 styleMask:styleMask
                                                   backing:NSBackingStoreBuffered
@@ -354,21 +354,21 @@ bool AppleWindowImpl::Create() {
             return false;
         }
 
-        // ÉèÖÃ´°¿Ú±êÌâ
+        // è®¾ç½®çª—å£æ ‡é¢˜
         [nsWindow_ setTitle:StringToNSString(title_)];
 
-        // ´´½¨´°¿ÚÎ¯ÍĞ
+        // åˆ›å»ºçª—å£å§”æ‰˜
         windowDelegate_ = [[AppleWindowDelegate alloc] initWithWindowImpl:this];
         [nsWindow_ setDelegate:windowDelegate_];
 
-        // ´´½¨×Ô¶¨ÒåÊÓÍ¼
+        // åˆ›å»ºè‡ªå®šä¹‰è§†å›¾
         windowView_ = [[AppleWindowView alloc] initWithWindowImpl:this];
         [nsWindow_ setContentView:windowView_];
 
-        // ÉèÖÃ´°¿Ú½ÓÊÜÊó±êÒÆ¶¯ÊÂ¼ş
+        // è®¾ç½®çª—å£æ¥å—é¼ æ ‡ç§»åŠ¨äº‹ä»¶
         [nsWindow_ setAcceptsMouseMovedEvents:YES];
 
-        // ½«´°¿ÚÌí¼Óµ½Ó³Éä
+        // å°†çª—å£æ·»åŠ åˆ°æ˜ å°„
         windowMap_[nsWindow_] = this;
 
         std::cout << "Window created successfully: " << title_ << " (" << width_ << "x" << height_ << ")" << std::endl;
@@ -376,14 +376,14 @@ bool AppleWindowImpl::Create() {
     }
 }
 
-// Ïú»Ù´°¿Ú
+// é”€æ¯çª—å£
 void AppleWindowImpl::Destroy() {
     if (nsWindow_) {
         @autoreleasepool {
-            // ´ÓÓ³ÉäÖĞÒÆ³ı
+            // ä»æ˜ å°„ä¸­ç§»é™¤
             windowMap_.erase(nsWindow_);
 
-            // ÇåÀíÎ¯ÍĞºÍÊÓÍ¼
+            // æ¸…ç†å§”æ‰˜å’Œè§†å›¾
             [nsWindow_ setDelegate:nil];
             [nsWindow_ setContentView:nil];
 
@@ -397,7 +397,7 @@ void AppleWindowImpl::Destroy() {
                 windowView_ = nil;
             }
 
-            // ¹Ø±Õ´°¿Ú
+            // å…³é—­çª—å£
             [nsWindow_ close];
             [nsWindow_ release];
             nsWindow_ = nil;
@@ -407,7 +407,7 @@ void AppleWindowImpl::Destroy() {
     }
 }
 
-// ÏÔÊ¾´°¿Ú
+// æ˜¾ç¤ºçª—å£
 void AppleWindowImpl::Show() {
     if (nsWindow_) {
         @autoreleasepool {
@@ -419,7 +419,7 @@ void AppleWindowImpl::Show() {
     }
 }
 
-// Òş²Ø´°¿Ú
+// éšè—çª—å£
 void AppleWindowImpl::Hide() {
     if (nsWindow_) {
         @autoreleasepool {
@@ -430,7 +430,7 @@ void AppleWindowImpl::Hide() {
     }
 }
 
-// ÉèÖÃ´°¿Ú±êÌâ
+// è®¾ç½®çª—å£æ ‡é¢˜
 void AppleWindowImpl::SetTitle(const std::string& title) {
     title_ = title;
     if (nsWindow_) {
@@ -440,7 +440,7 @@ void AppleWindowImpl::SetTitle(const std::string& title) {
     }
 }
 
-// ÉèÖÃ´°¿Ú´óĞ¡
+// è®¾ç½®çª—å£å¤§å°
 void AppleWindowImpl::SetSize(uint32_t width, uint32_t height) {
     width_ = width;
     height_ = height;
@@ -451,7 +451,7 @@ void AppleWindowImpl::SetSize(uint32_t width, uint32_t height) {
             NSSize newContentSize = NSMakeSize(width, height);
             NSRect newFrame = [nsWindow_ frameRectForContentRect:NSMakeRect(0, 0, newContentSize.width, newContentSize.height)];
             
-            // ±£³Ö´°¿Ú×óÉÏ½ÇÎ»ÖÃ²»±ä
+            // ä¿æŒçª—å£å·¦ä¸Šè§’ä½ç½®ä¸å˜
             newFrame.origin.x = frame.origin.x;
             newFrame.origin.y = frame.origin.y + (frame.size.height - newFrame.size.height);
             
@@ -460,7 +460,7 @@ void AppleWindowImpl::SetSize(uint32_t width, uint32_t height) {
     }
 }
 
-// ÉèÖÃ´°¿ÚÎ»ÖÃ
+// è®¾ç½®çª—å£ä½ç½®
 void AppleWindowImpl::SetPosition(int x, int y) {
     x_ = x;
     y_ = y;
@@ -470,14 +470,14 @@ void AppleWindowImpl::SetPosition(int x, int y) {
             NSRect screenFrame = [[NSScreen mainScreen] frame];
             NSRect windowFrame = [nsWindow_ frame];
             
-            // ×ª»»×ø±êÏµ
+            // è½¬æ¢åæ ‡ç³»
             NSPoint newOrigin = NSMakePoint(x, screenFrame.size.height - y - windowFrame.size.height);
             [nsWindow_ setFrameOrigin:newOrigin];
         }
     }
 }
 
-// ÉèÖÃÊÇ·ñ¿Éµ÷Õû´óĞ¡
+// è®¾ç½®æ˜¯å¦å¯è°ƒæ•´å¤§å°
 void AppleWindowImpl::SetResizable(bool resizable) {
     isResizable_ = resizable;
 
@@ -496,7 +496,7 @@ void AppleWindowImpl::SetResizable(bool resizable) {
     }
 }
 
-// ÊÂ¼şÏµÍ³¼¯³É
+// äº‹ä»¶ç³»ç»Ÿé›†æˆ
 void AppleWindowImpl::SetEventCallback(const EventCallbackFn& callback) {
     eventCallback_ = callback;
 }
@@ -506,7 +506,7 @@ void AppleWindowImpl::SetEventDispatchMode(bool useGlobalQueue, bool useDirectCa
     useDirectCallback_ = useDirectCallback;
 }
 
-// ´¦ÀíÏûÏ¢
+// å¤„ç†æ¶ˆæ¯
 void AppleWindowImpl::ProcessMessages() {
     @autoreleasepool {
         NSEvent* event;
@@ -519,7 +519,7 @@ void AppleWindowImpl::ProcessMessages() {
     }
 }
 
-// ÊôĞÔ»ñÈ¡º¯Êı
+// å±æ€§è·å–å‡½æ•°
 bool AppleWindowImpl::ShouldClose() const {
     return shouldClose_;
 }
@@ -586,7 +586,7 @@ void* AppleWindowImpl::GetNativeHandle() const {
     return (__bridge void*)nsWindow_;
 }
 
-// ÊÂ¼ş´¦Àí·½·¨
+// äº‹ä»¶å¤„ç†æ–¹æ³•
 void AppleWindowImpl::OnWindowClose() {
     shouldClose_ = true;
     WindowCloseEvent event;
@@ -656,14 +656,14 @@ void AppleWindowImpl::OnMouseScrolled(float xOffset, float yOffset) {
     DispatchEvent(event);
 }
 
-// ÊÂ¼ş·Ö·¢¸¨Öúº¯Êı
+// äº‹ä»¶åˆ†å‘è¾…åŠ©å‡½æ•°
 void AppleWindowImpl::DispatchEvent(Event& event) {
-    // ·½Ê½1: Ö±½Ó»Øµ÷ (Á¢¼´´¦Àí)
+    // æ–¹å¼1: ç›´æ¥å›è°ƒ (ç«‹å³å¤„ç†)
     if (useDirectCallback_ && eventCallback_) {
         eventCallback_(event);
     }
 
-    // ·½Ê½2: ·ÅÈëÈ«¾ÖÊÂ¼ş¶ÓÁĞ (ÑÓ³Ù´¦Àí)
+    // æ–¹å¼2: æ”¾å…¥å…¨å±€äº‹ä»¶é˜Ÿåˆ— (å»¶è¿Ÿå¤„ç†)
     if (useGlobalEventQueue_) {
         std::unique_ptr<Event> eventCopy = CreateEventCopy(event);
         if (eventCopy) {
@@ -672,7 +672,7 @@ void AppleWindowImpl::DispatchEvent(Event& event) {
     }
 }
 
-// ´´½¨ÊÂ¼ş¸±±¾µÄ¸¨Öúº¯Êı
+// åˆ›å»ºäº‹ä»¶å‰¯æœ¬çš„è¾…åŠ©å‡½æ•°
 std::unique_ptr<Event> AppleWindowImpl::CreateEventCopy(const Event& event) {
     switch (event.GetEventType()) {
     case EventType::WindowClose:
@@ -734,10 +734,10 @@ std::unique_ptr<Event> AppleWindowImpl::CreateEventCopy(const Event& event) {
     }
 }
 
-// Cocoa¼üÂë×ª»»ÎªKeyCode
+// Cocoaé”®ç è½¬æ¢ä¸ºKeyCode
 KeyCode AppleWindowImpl::CocoaKeyToKeyCode(unsigned short keyCode) {
     switch (keyCode) {
-        // ×ÖÄ¸¼ü
+        // å­—æ¯é”®
         case 0x00: return KeyCode::A; case 0x0B: return KeyCode::B; case 0x08: return KeyCode::C;
         case 0x02: return KeyCode::D; case 0x0E: return KeyCode::E; case 0x03: return KeyCode::F;
         case 0x05: return KeyCode::G; case 0x04: return KeyCode::H; case 0x22: return KeyCode::I;
@@ -748,13 +748,13 @@ KeyCode AppleWindowImpl::CocoaKeyToKeyCode(unsigned short keyCode) {
         case 0x09: return KeyCode::V; case 0x0D: return KeyCode::W; case 0x07: return KeyCode::X;
         case 0x10: return KeyCode::Y; case 0x06: return KeyCode::Z;
 
-        // Êı×Ö¼ü
+        // æ•°å­—é”®
         case 0x1D: return KeyCode::D0; case 0x12: return KeyCode::D1; case 0x13: return KeyCode::D2;
         case 0x14: return KeyCode::D3; case 0x15: return KeyCode::D4; case 0x17: return KeyCode::D5;
         case 0x16: return KeyCode::D6; case 0x1A: return KeyCode::D7; case 0x1C: return KeyCode::D8;
         case 0x19: return KeyCode::D9;
 
-        // ¹¦ÄÜ¼ü
+        // åŠŸèƒ½é”®
         case 0x7A: return KeyCode::F1;  case 0x78: return KeyCode::F2;
         case 0x63: return KeyCode::F3;  case 0x76: return KeyCode::F4;
         case 0x60: return KeyCode::F5;  case 0x61: return KeyCode::F6;
@@ -762,7 +762,7 @@ KeyCode AppleWindowImpl::CocoaKeyToKeyCode(unsigned short keyCode) {
         case 0x65: return KeyCode::F9;  case 0x6D: return KeyCode::F10;
         case 0x67: return KeyCode::F11; case 0x6F: return KeyCode::F12;
 
-        // ÌØÊâ¼ü
+        // ç‰¹æ®Šé”®
         case 0x31: return KeyCode::Space;
         case 0x24: return KeyCode::Enter;
         case 0x35: return KeyCode::Escape;
@@ -775,31 +775,31 @@ KeyCode AppleWindowImpl::CocoaKeyToKeyCode(unsigned short keyCode) {
         case 0x74: return KeyCode::PageUp;
         case 0x79: return KeyCode::PageDown;
 
-        // ¼ıÍ·¼ü
+        // ç®­å¤´é”®
         case 0x7B: return KeyCode::Left;
         case 0x7E: return KeyCode::Up;
         case 0x7C: return KeyCode::Right;
         case 0x7D: return KeyCode::Down;
 
-        // Ğ¡¼üÅÌ
+        // å°é”®ç›˜
         case 0x52: return KeyCode::NumPad0; case 0x53: return KeyCode::NumPad1;
         case 0x54: return KeyCode::NumPad2; case 0x55: return KeyCode::NumPad3;
         case 0x56: return KeyCode::NumPad4; case 0x57: return KeyCode::NumPad5;
         case 0x58: return KeyCode::NumPad6; case 0x59: return KeyCode::NumPad7;
         case 0x5B: return KeyCode::NumPad8; case 0x5C: return KeyCode::NumPad9;
 
-        // ÆäËû¼ü
+        // å…¶ä»–é”®
         case 0x39: return KeyCode::CapsLock;
         case 0x47: return KeyCode::NumLock;
         case 0x6B: return KeyCode::ScrollLock;
         case 0x69: return KeyCode::PrintScreen;
         case 0x71: return KeyCode::Pause;
 
-        default: return KeyCode::A; // Ä¬ÈÏ·µ»ØA¼ü
+        default: return KeyCode::A; // é»˜è®¤è¿”å›Aé”®
     }
 }
 
-// CocoaÊó±ê°´Å¥×ª»»
+// Cocoaé¼ æ ‡æŒ‰é’®è½¬æ¢
 MouseButton AppleWindowImpl::CocoaButtonToMouseButton(NSInteger buttonNumber) {
     switch (buttonNumber) {
         case 0: return MouseButton::Left;
@@ -811,7 +811,7 @@ MouseButton AppleWindowImpl::CocoaButtonToMouseButton(NSInteger buttonNumber) {
     }
 }
 
-// CocoaĞŞÊÎ¼ü×ª»»
+// Cocoaä¿®é¥°é”®è½¬æ¢
 ModifierKeys AppleWindowImpl::CocoaModifiersToModifierKeys(NSEventModifierFlags flags) {
     ModifierKeys modifiers;
     modifiers.shift = (flags & NSEventModifierFlagShift) != 0;
@@ -821,7 +821,7 @@ ModifierKeys AppleWindowImpl::CocoaModifiersToModifierKeys(NSEventModifierFlags 
     return modifiers;
 }
 
-// ×Ö·û´®×ª»»¸¨Öúº¯Êı
+// å­—ç¬¦ä¸²è½¬æ¢è¾…åŠ©å‡½æ•°
 NSString* AppleWindowImpl::StringToNSString(const std::string& str) {
     return [NSString stringWithUTF8String:str.c_str()];
 }
@@ -832,7 +832,7 @@ std::string AppleWindowImpl::NSStringToString(NSString* nsStr) {
     return cStr ? std::string(cStr) : std::string();
 }
 
-// ÊµÏÖMacÆ½Ì¨ÌØ¶¨µÄ¹¤³§º¯Êı
+// å®ç°Macå¹³å°ç‰¹å®šçš„å·¥å‚å‡½æ•°
 std::unique_ptr<WindowImpl> CreateMacWindow(const std::string& title, uint32_t width, uint32_t height) {
     return std::make_unique<AppleWindowImpl>(title, width, height);
 }
