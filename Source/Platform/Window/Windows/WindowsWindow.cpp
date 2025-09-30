@@ -1,6 +1,6 @@
 ﻿#ifdef _WIN32
 
-#include "../../Core/WindowImpl.h"  // 修正包含路径
+#include "Window/WindowImpl.h"  // 修正包含路径
 #include "Core/Event.h"       // 包含事件定义
 #include "Core/EventManager.h" // 包含事件管理器
 #include <iostream>

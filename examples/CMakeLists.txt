@@ -14,7 +14,7 @@ function(add_example target_name source_dir)
     
     # 链接库
     target_link_libraries(${target_name} PRIVATE
-        SimpleGraphicsLibrary::SimpleGraphicsLibrary
+        Engine::Engine
     )
     
     # 设置输出目录

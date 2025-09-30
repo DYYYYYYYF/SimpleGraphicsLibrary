@@ -1,4 +1,4 @@
-﻿#include "Core/Window.h"
+﻿#include "Window.h"
 #include "WindowImpl.h"  // 包含内部实现头文件
 #include <iostream>
 #include <stdexcept>
