@@ -22,7 +22,13 @@ if(APPLE)
     )
 endif()
 
+# 通用第三方库
+target_link_libraries(EngineCore 
+    UL::Logger
+)
+
 # 确保源文件也能找到头文件
 target_include_directories(EngineCore PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
+    UL::Logger
 )
