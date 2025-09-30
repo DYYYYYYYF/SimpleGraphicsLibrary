@@ -1,7 +1,12 @@
 ﻿#include "Window.h"
-#include "WindowImpl.h"  // 包含内部实现头文件
+#include "WindowImpl.h"  
+#include "Surface/Windows/Win32OpenGLSurface.h"
+
 #include <iostream>
 #include <stdexcept>
+
+using namespace Engine;
+using namespace Engine::Platform;
 
 // 平台特定的工厂函数实现 - 选择正确的平台实现
 std::unique_ptr<WindowImpl> CreatePlatformWindow(const std::string& title, uint32_t width, uint32_t height) {

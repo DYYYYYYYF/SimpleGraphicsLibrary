@@ -837,4 +837,26 @@ std::unique_ptr<WindowImpl> CreateMacWindow(const std::string& title, uint32_t w
     return std::make_unique<AppleWindowImpl>(title, width, height);
 }
 
+Graphics::RenderSurfacePtr AppleWindowImpl::CreateRenderSurface(Graphics::GraphicsBackend backend) {
+    switch (backend) {
+        case Graphics::GraphicsBackend::OpenGL: {
+            auto surface = std::make_shared<Graphics::CocoaOpenGLSurface>(
+                windowView_, width_, height_
+            );
+            if (surface->Initialize()) {
+                return surface;
+            }
+            return nullptr;
+        }
+        
+        // macOS还可以支持Metal
+        // case Graphics::GraphicsBackend::Metal:
+        //     return std::make_shared<Graphics::MetalSurface>(...);
+        
+        default:
+            std::cerr << "Unsupported graphics backend" << std::endl;
+            return nullptr;
+    }
+}
+
 #endif // __APPLE__

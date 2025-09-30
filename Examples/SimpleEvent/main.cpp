@@ -6,6 +6,9 @@
 #include <thread>
 #include <iomanip>
 
+using namespace Engine;
+using namespace Engine::Platform;
+
 class EventDemoApp : public EventHandler {
 public:
 	EventDemoApp() : running_(false), window_("事件系统演示", 800, 600) {}

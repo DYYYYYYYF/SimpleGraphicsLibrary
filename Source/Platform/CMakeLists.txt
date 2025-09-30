@@ -3,6 +3,7 @@ project(EnginePlatform)
 # 头文件路径
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 
 # Platform库

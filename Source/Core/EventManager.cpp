@@ -3,6 +3,9 @@
 #include <chrono>
 #include <iomanip>
 
+using namespace Engine;
+using namespace Engine::Core;
+
 void EventManager::PostEvent(std::unique_ptr<Event> event) {
 	if (!event) {
 		return;

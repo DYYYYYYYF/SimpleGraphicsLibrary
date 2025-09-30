@@ -3,6 +3,9 @@
 #include <chrono>
 #include <thread>
 
+using namespace Engine;
+using namespace Engine::Platform;
+
 int TestSingleWindows();
 int TestMultipleWindows();
 
