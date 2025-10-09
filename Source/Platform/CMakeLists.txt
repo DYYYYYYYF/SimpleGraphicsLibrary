@@ -17,6 +17,9 @@ set(Platform_HEADERS
 
 # 平台相关源文件
 if(WIN32)
+    list(APPEND Platform_HEADERS 
+        ${CMAKE_CURRENT_SOURCE_DIR}/Window/Windows/WindowsWindow.h
+    )
     list(APPEND Platform_SOURCES 
         ${CMAKE_CURRENT_SOURCE_DIR}/Window/Windows/WindowsWindow.cpp
     )
