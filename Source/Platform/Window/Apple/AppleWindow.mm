@@ -1,6 +1,6 @@
 ﻿#ifdef __APPLE__
 
-#include "../../Core/WindowImpl.h"
+#include "Window/WindowImpl.h"
 #include "Core/Event.h"
 #include "Core/EventManager.h"
 #include <iostream>
