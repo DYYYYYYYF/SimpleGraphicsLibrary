@@ -17,6 +17,12 @@ Engine& Engine::GetInstance() {
 }
 
 bool Engine::Initialize(IApplication* app) {
+    // Logger
+    Log::Logger* Logger = Log::Logger::getInstance();
+    Logger->open("Engine");
+    Logger->setMaxSize(1024 * 1024);
+    Logger->SetMode(Log::Logger::LogMode::eMode_Only_Message);
+
 	// Application
 	if (!app) {
 		LOG_ERROR << "Engine create failed. Application pointer is null!";
