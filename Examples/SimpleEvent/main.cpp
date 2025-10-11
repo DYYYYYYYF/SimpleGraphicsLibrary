@@ -105,9 +105,9 @@ private:
 			return false; // 不阻止其他监听器处理
 			});
 
-		dispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent& e) {
+		/*dispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent& e) {
 			return OnKeyPressed(e);
-			});
+			});*/
 
 		dispatcher.Dispatch<MouseButtonPressedEvent>([this](MouseButtonPressedEvent& e) {
 			return OnMouseButtonPressed(e);

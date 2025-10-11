@@ -38,7 +38,7 @@ endforeach()
 
 option(ENGINE_BUILD_SHARED "Build shared libraries" OFF)
 option(ENGINE_BUILD_EXAMPLES "Build example programs" ON)
-option(ENGINE_BUILD_EDITOR "Build editor" OFF)
+option(ENGINE_BUILD_EDITOR "Build editor" ON)
 option(ENGINE_BUILD_AUDIO "Build audio module" OFF)
 option(ENGINE_BUILD_PHYSICS "Build physics module" OFF)
 
@@ -102,6 +102,9 @@ if(ENGINE_BUILD_EDITOR)
     message(STATUS "Configuring Editor...")
     add_subdirectory(Editor)
 endif()
+
+# 启动器
+add_subdirectory(Launcher)
 
 # ============================================================================
 # 构建信息汇总

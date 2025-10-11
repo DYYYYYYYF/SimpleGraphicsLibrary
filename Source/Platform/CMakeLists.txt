@@ -13,6 +13,7 @@ set(Platform_SOURCES
 set(Platform_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/Window/Window.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Window/WindowImpl.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/DLL/DynamicLibrary.h
 )
 
 # 平台相关源文件
@@ -22,10 +23,12 @@ if(WIN32)
     )
     list(APPEND Platform_SOURCES 
         ${CMAKE_CURRENT_SOURCE_DIR}/Window/Windows/WindowsWindow.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DLL/Windows/Win32DynamicLibrary.cpp
     )
 elseif(APPLE)
     list(APPEND Platform_SOURCES 
         ${CMAKE_CURRENT_SOURCE_DIR}/Window/Apple/AppleWindow.mm
+        ${CMAKE_CURRENT_SOURCE_DIR}/DLL/Apple/AppleDynamicLibrary.mm
     )
 
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/Window/Apple/AppleWindow.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")

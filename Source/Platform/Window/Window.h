@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Core/Event.h"
-#include "PlatformMoudleAPI.h"
+#include "../PlatformMoudleAPI.h"
 
 #include <string>
 #include <cstdint>
@@ -13,7 +13,7 @@ class Window {
 public:
 	ENGINE_PLATFORM_API Window();
 	ENGINE_PLATFORM_API Window(const std::string& title, uint32_t width, uint32_t height);
-	ENGINE_PLATFORM_API ~Window();
+	ENGINE_PLATFORM_API virtual ~Window();
 
 	// 禁用拷贝构造和赋值
 	ENGINE_PLATFORM_API Window(const Window&) = delete;

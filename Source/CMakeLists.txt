@@ -73,9 +73,9 @@ add_subdirectory(Platform)
 #message(STATUS "[8/9] Configuring Input...")
 #add_subdirectory(Input)
 #
-## 第九层：引擎主模块
-#message(STATUS "[9/9] Configuring Engine...")
-#add_subdirectory(Engine)
+# 第九层：引擎主模块
+message(STATUS "[9/9] Configuring Engine...")
+add_subdirectory(Engine)
 
 # ============================================================================
 # 可选模块
@@ -113,7 +113,7 @@ if(ENGINE_CREATE_UNIFIED_INTERFACE)
         #EngineScene
         #EngineComponents
         #EngineInput
-        #EngineEngine
+        EngineEngine
     )
     
     # 链接可选模块
@@ -151,7 +151,7 @@ set(REQUIRED_TARGETS
     #EngineScene
     #EngineComponents
     #EngineInput
-    #EngineEngine
+    EngineEngine
 )
 
 foreach(TARGET ${REQUIRED_TARGETS})
@@ -176,7 +176,7 @@ message(STATUS "  ✓ Platform")
 #message(STATUS "  ✓ Scene")
 #message(STATUS "  ✓ Components")
 #message(STATUS "  ✓ Input")
-#message(STATUS "  ✓ Engine")
+message(STATUS "  ✓ Engine")
 
 if(ENGINE_BUILD_AUDIO)
     message(STATUS "  ✓ Audio")

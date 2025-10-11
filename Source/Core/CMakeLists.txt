@@ -2,12 +2,10 @@ project(EngineCore)
 
 # Core¿â
 set(CORE_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Engine.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/EventManager.cpp
 )
 
 set(CORE_HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/Engine.h
     ${CMAKE_CURRENT_SOURCE_DIR}/EventManager.h
 )
 

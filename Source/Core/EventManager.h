@@ -55,7 +55,7 @@ private:
 class EventManager {
 public:
 	ENGINE_CORE_API EventManager() = default;
-	ENGINE_CORE_API ~EventManager() = default;
+	ENGINE_CORE_API virtual ~EventManager() = default;
 
 	// 禁用拷贝和赋值
 	ENGINE_CORE_API EventManager(const EventManager&) = delete;
