@@ -52,32 +52,38 @@ private:
 };
 
 // 主事件管理器
-class ENGINE_CORE_API EventManager {
+class EventManager {
 public:
-	EventManager() = default;
-	~EventManager() = default;
+	ENGINE_CORE_API EventManager() = default;
+	ENGINE_CORE_API ~EventManager() = default;
 
 	// 禁用拷贝和赋值
-	EventManager(const EventManager&) = delete;
-	EventManager& operator=(const EventManager&) = delete;
+	ENGINE_CORE_API EventManager(const EventManager&) = delete;
+	ENGINE_CORE_API EventManager& operator=(const EventManager&) = delete;
 
 	// 单例模式
-	static EventManager& Instance() {
+	ENGINE_CORE_API static EventManager& Instance() {
 		static EventManager instance;
 		return instance;
 	}
 
 	// 发布事件
-	void PostEvent(std::unique_ptr<Event> event);
-
+	ENGINE_CORE_API void PostEvent(std::unique_ptr<Event> event);
 	// 立即分发事件（不加入队列）
-	void DispatchEvent(Event& event);
-
+	ENGINE_CORE_API void DispatchEvent(Event& event);
 	// 处理事件队列中的所有事件
-	void ProcessEvents();
-
+	ENGINE_CORE_API void ProcessEvents();
 	// 清空事件队列
-	void ClearEvents();
+	ENGINE_CORE_API void ClearEvents();
+
+	// 移除所有监听器
+	ENGINE_CORE_API void UnsubscribeAll();
+	// 获取队列中事件数量
+	ENGINE_CORE_API size_t GetEventCount() const { return eventQueue_.size(); }
+
+	// 启用/禁用事件日志
+	ENGINE_CORE_API void SetLogging(bool enabled) { loggingEnabled_ = enabled; }
+	ENGINE_CORE_API bool IsLoggingEnabled() const { return loggingEnabled_; }
 
 	// 注册事件监听器
 	template<typename EventType>
@@ -98,12 +104,6 @@ public:
 		listeners_[std::type_index(typeid(EventType))].clear();
 	}
 
-	// 移除所有监听器
-	void UnsubscribeAll();
-
-	// 获取队列中事件数量
-	size_t GetEventCount() const { return eventQueue_.size(); }
-
 	// 检查是否有特定类型的事件在队列中
 	template<typename EventType>
 	bool HasEvent() const {
@@ -117,14 +117,9 @@ public:
 		return false;
 	}
 
-	// 启用/禁用事件日志
-	void SetLogging(bool enabled) { loggingEnabled_ = enabled; }
-	bool IsLoggingEnabled() const { return loggingEnabled_; }
-
 private:
 	// 分发事件给监听器
 	void DispatchToListeners(Event& event);
-
 	// 记录事件日志
 	void LogEvent(const Event& event);
 

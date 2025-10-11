@@ -94,6 +94,7 @@ private:
 
 		// 分发不同类型的事件到对应的处理函数
 		dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& e) {
+			e.GetName();
 			std::cout << "[WINDOW] 接收到关闭事件，程序将退出" << std::endl;
 			running_ = false;
 			return true;
@@ -144,11 +145,13 @@ private:
 
 		// 注册窗口焦点事件监听器
 		eventManager.On<WindowFocusEvent>([this](WindowFocusEvent& event) {
+			event.GetName();
 			std::cout << "[WINDOW] 窗口获得焦点" << std::endl;
 			return false;
 			});
 
 		eventManager.On<WindowLostFocusEvent>([this](WindowLostFocusEvent& event) {
+			event.GetName();
 			std::cout << "[WINDOW] 窗口失去焦点" << std::endl;
 			return false;
 			});

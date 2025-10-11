@@ -9,51 +9,51 @@
 
 class WindowImpl;
 
-class ENGINE_PLATFORM_API Window {
+class Window {
 public:
-	Window();
-	Window(const std::string& title, uint32_t width, uint32_t height);
-	~Window();
+	ENGINE_PLATFORM_API Window();
+	ENGINE_PLATFORM_API Window(const std::string& title, uint32_t width, uint32_t height);
+	ENGINE_PLATFORM_API ~Window();
 
 	// 禁用拷贝构造和赋值
-	Window(const Window&) = delete;
-	Window& operator=(const Window&) = delete;
+	ENGINE_PLATFORM_API Window(const Window&) = delete;
+	ENGINE_PLATFORM_API Window& operator=(const Window&) = delete;
 
 	// 允许移动构造和赋值
-	Window(Window&& other) noexcept;
-	Window& operator=(Window&& other) noexcept;
+	ENGINE_PLATFORM_API Window(Window&& other) noexcept;
+	ENGINE_PLATFORM_API Window& operator=(Window&& other) noexcept;
 
 public:
 	// 窗口生命周期管理
-	bool Create();
-	void Destroy();
-	void Show();
-	void Hide();
+	ENGINE_PLATFORM_API bool Create();
+	ENGINE_PLATFORM_API void Destroy();
+	ENGINE_PLATFORM_API void Show();
+	ENGINE_PLATFORM_API void Hide();
 
 	// 窗口属性设置
-	void SetTitle(const std::string& title);
-	void SetSize(uint32_t width, uint32_t height);
-	void SetPosition(int x, int y);
-	void SetResizable(bool resizable);
+	ENGINE_PLATFORM_API void SetTitle(const std::string& title);
+	ENGINE_PLATFORM_API void SetSize(uint32_t width, uint32_t height);
+	ENGINE_PLATFORM_API void SetPosition(int x, int y);
+	ENGINE_PLATFORM_API void SetResizable(bool resizable);
 
 	// 消息处理和事件循环
-	void ProcessMessages();
-	bool ShouldClose() const;
+	ENGINE_PLATFORM_API void ProcessMessages();
+	ENGINE_PLATFORM_API bool ShouldClose() const;
 
 	// 事件系统集成
-	void SetEventCallback(const EventCallbackFn& callback);
+	ENGINE_PLATFORM_API void SetEventCallback(const EventCallbackFn& callback);
 
 	// 属性获取
-	uint32_t GetWidth() const;
-	uint32_t GetHeight() const;
-	int GetX() const;
-	int GetY() const;
-	const std::string& GetTitle() const;
-	bool IsVisible() const;
-	bool IsResizable() const;
+	ENGINE_PLATFORM_API uint32_t GetWidth() const;
+	ENGINE_PLATFORM_API uint32_t GetHeight() const;
+	ENGINE_PLATFORM_API int GetX() const;
+	ENGINE_PLATFORM_API int GetY() const;
+	ENGINE_PLATFORM_API const std::string& GetTitle() const;
+	ENGINE_PLATFORM_API bool IsVisible() const;
+	ENGINE_PLATFORM_API bool IsResizable() const;
 
 	// 平台特定句柄获取（返回void*以保持平台无关性）
-	void* GetNativeHandle() const;
+	ENGINE_PLATFORM_API void* GetNativeHandle() const;
 
 protected:
 	std::unique_ptr<WindowImpl> Instance;
