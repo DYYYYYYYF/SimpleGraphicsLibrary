@@ -47,3 +47,7 @@ out
 # MacOS
 /build
 .cache
+
+# Compile cmake proj
+/Bin
+/Lib
