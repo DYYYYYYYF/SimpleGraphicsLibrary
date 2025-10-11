@@ -30,7 +30,7 @@ if(ENGINE_ENABLE_VULKAN AND DVULKAN_ENABLED)
 endif()
 
 # 创建库
-add_library(EngineGraphics ${GRAPHICS_SOURCES} ${GRAPHICS_HEADERS})
+add_library(EngineGraphics SHARED ${GRAPHICS_SOURCES} ${GRAPHICS_HEADERS})
 
 # 包含目录
 target_include_directories(EngineGraphics
