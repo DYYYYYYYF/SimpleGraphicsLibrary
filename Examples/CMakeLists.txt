@@ -16,7 +16,7 @@ function(add_example target_name source_dir)
     target_link_libraries(${target_name} PRIVATE
         Engine::Engine
     )
-    
+ 
     # 设置输出目录
     set_target_properties(${target_name} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/examples
@@ -31,6 +31,17 @@ function(add_example target_name source_dir)
             COMMENT "Copying assets for ${target_name}"
         )
     endif()
+       
+    # 修改runtime目标前拷贝DLL
+    add_custom_command(TARGET ${target_name} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:EngineCore>
+        $<TARGET_FILE_DIR:${target_name}>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:EnginePlatform>
+        $<TARGET_FILE_DIR:${target_name}>
+        COMMENT "Copying dlls for ${target_name}"
+    )
     
     # 设置工作目录（对于IDE）
     set_target_properties(${target_name} PROPERTIES
@@ -46,11 +57,3 @@ endfunction()
 # 添加各个示例
 add_example(BasicWindow "${CMAKE_CURRENT_SOURCE_DIR}/BasicWindow")
 add_example(SimpleEvent "${CMAKE_CURRENT_SOURCE_DIR}/SimpleEvent")
-
-# 可选：为每个示例创建独立的项目文件
-option(GAMEENGINE_EXAMPLES_SEPARATE_PROJECTS "Create separate project files for each example" OFF)
-
-if(GAMEENGINE_EXAMPLES_SEPARATE_PROJECTS)
-    # 为每个示例创建单独的子项目
-    add_subdirectory(BasicWindow)
-endif()

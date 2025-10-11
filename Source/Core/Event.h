@@ -3,6 +3,8 @@
 #include <string>
 #include <functional>
 
+#include "CoreModuleAPI.h"
+
 // 事件类型枚举
 enum class EventType {
 	None = 0,
@@ -159,7 +161,7 @@ struct ModifierKeys {
 };
 
 // 基础事件类
-class Event {
+class ENGINE_CORE_API Event {
 public:
 	virtual ~Event() = default;
 

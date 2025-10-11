@@ -1,13 +1,15 @@
 ﻿#pragma once
 
 #include "Core/Event.h"
+#include "PlatformMoudleAPI.h"
+
 #include <string>
 #include <cstdint>
 #include <memory>
 
 class WindowImpl;
 
-class Window {
+class ENGINE_PLATFORM_API Window {
 public:
 	Window();
 	Window(const std::string& title, uint32_t width, uint32_t height);

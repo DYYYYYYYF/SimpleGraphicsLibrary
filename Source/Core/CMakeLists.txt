@@ -12,7 +12,7 @@ set(CORE_HEADERS
 )
 
 # ´´½¨Core¿â
-add_library(EngineCore STATIC ${CORE_SOURCES} ${CORE_HEADERS})
+add_library(EngineCore SHARED ${CORE_SOURCES} ${CORE_HEADERS})
 
 # Á´½ÓCocoa¿â
 if(APPLE)
@@ -32,3 +32,6 @@ target_include_directories(EngineCore PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     UL::Logger
 )
+
+# ºê
+target_compile_definitions(EngineCore PRIVATE ENGINE_CORE_EXPORTS)

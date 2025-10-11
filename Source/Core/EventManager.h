@@ -52,7 +52,7 @@ private:
 };
 
 // 主事件管理器
-class EventManager {
+class ENGINE_CORE_API EventManager {
 public:
 	EventManager() = default;
 	~EventManager() = default;

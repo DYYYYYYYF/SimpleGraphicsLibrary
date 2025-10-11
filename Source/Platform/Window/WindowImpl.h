@@ -4,6 +4,8 @@
 #include <memory>
 #include <functional>
 
+#include "PlatformMoudleAPI.h"
+
 // 前向声明
 class Event;
 
@@ -11,7 +13,7 @@ class Event;
 using EventCallbackFn = std::function<void(Event&)>;
 
 // WindowImpl 抽象基类 - 只在实现文件中使用，不暴露给用户
-class WindowImpl {
+class ENGINE_PLATFORM_API WindowImpl {
 public:
 	virtual ~WindowImpl() = default;
 
