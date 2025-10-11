@@ -12,6 +12,7 @@ void EventManager::PostEvent(std::unique_ptr<Event> event) {
 		LogEvent(*event);
 	}
 
+	MutexGuard Lock(Mutex_);
 	eventQueue_.push(std::move(event));
 }
 
@@ -26,6 +27,7 @@ void EventManager::DispatchEvent(Event& event) {
 void EventManager::ProcessEvents() {
 	// 处理队列中的所有事件
 	while (!eventQueue_.empty()) {
+		MutexGuard Lock(Mutex_);
 		auto event = std::move(eventQueue_.front());
 		eventQueue_.pop();
 
@@ -38,6 +40,7 @@ void EventManager::ProcessEvents() {
 void EventManager::ClearEvents() {
 	// 清空事件队列
 	std::queue<std::unique_ptr<Event>> empty;
+	MutexGuard Lock(Mutex_);
 	eventQueue_.swap(empty);
 }
 

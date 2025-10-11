@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "Event.h"
+#include "Mutex.h"
+
 #include <functional>
 #include <vector>
 #include <queue>
@@ -107,14 +109,24 @@ public:
 	// 检查是否有特定类型的事件在队列中
 	template<typename EventType>
 	bool HasEvent() const {
-		std::queue<std::unique_ptr<Event>> tempQueue = eventQueue_;
-		while (!tempQueue.empty()) {
-			if (tempQueue.front()->GetEventType() == EventType::GetStaticType()) {
-				return true;
+		std::queue<std::unique_ptr<Event>> tempQueue;
+		auto& queue = const_cast<std::queue<std::unique_ptr<Event>>&>(eventQueue_);
+
+		bool found = false;
+		while (!queue.empty()) {
+			auto event = std::move(queue.front());
+			queue.pop();
+
+			if (event->GetEventType() == EventType::GetStaticType()) {
+				found = true;
 			}
-			tempQueue.pop();
+
+			tempQueue.push(std::move(event));
 		}
-		return false;
+
+		// 恢复队列
+		queue = std::move(tempQueue);
+		return found;
 	}
 
 private:
@@ -127,6 +139,8 @@ private:
 	std::queue<std::unique_ptr<Event>> eventQueue_;
 	std::unordered_map<std::type_index, std::vector<std::shared_ptr<EventListener>>> listeners_;
 	bool loggingEnabled_ = false;
+
+	mutable Mutex Mutex_;
 };
 
 // 便利宏 - 简化事件监听器注册

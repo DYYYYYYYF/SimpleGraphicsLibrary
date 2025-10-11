@@ -2,10 +2,12 @@ project(EngineCore)
 
 # Core¿â
 set(CORE_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/Mutex.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/EventManager.cpp
 )
 
 set(CORE_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/Mutex.h
     ${CMAKE_CURRENT_SOURCE_DIR}/EventManager.h
 )
 

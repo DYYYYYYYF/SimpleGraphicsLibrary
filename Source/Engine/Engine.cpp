@@ -42,7 +42,7 @@ bool Engine::Initialize(IApplication* app) {
 	// Event
 	EventManager& eventManager = EventManager::Instance();
 	eventManager.SetLogging(false);
-	eventManager.On<KeyPressedEvent>([this](KeyPressedEvent& e) {
+	eventManager.Subscribe<KeyPressedEvent>([this](KeyPressedEvent& e) {
 		if (e.GetKeyCode() == KeyCode::Escape)
 		{
 			Running_ = false;
