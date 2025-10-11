@@ -1,4 +1,4 @@
-# Ê¾ÀıÏîÄ¿
+ï»¿# ç¤ºä¾‹é¡¹ç›®
 message(STATUS "Building GameEngine Editor")
 
 file(GLOB EDITOR_SOURCES 
@@ -8,7 +8,7 @@ file(GLOB EDITOR_SOURCES
 
 add_library(Editor SHARED ${EDITOR_SOURCES})
 
-# Á´½Ó¿â
+# é“¾æ¥åº“
 target_link_libraries(Editor PRIVATE
     Engine::Engine
 )
@@ -17,12 +17,12 @@ target_include_directories(Editor PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
  
-# ÉèÖÃ¹¤×÷Ä¿Â¼£¨¶ÔÓÚIDE£©
+# è®¾ç½®å·¥ä½œç›®å½•ï¼ˆå¯¹äºIDEï¼‰
 set_target_properties(Editor PROPERTIES
     VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:Editor>"
     XCODE_GENERATE_SCHEME TRUE
     XCODE_SCHEME_WORKING_DIRECTORY "$<TARGET_FILE_DIR:Editor>"
 )
 
-# ºê
+# å®
 target_compile_definitions(Editor PRIVATE EDITOR_EXPORTS)

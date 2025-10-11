@@ -1,6 +1,6 @@
-project(EngineCore)
+ï»¿project(EngineCore)
 
-# Core¿â
+# Coreåº“
 set(CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Mutex.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/EventManager.cpp
@@ -11,10 +11,10 @@ set(CORE_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/EventManager.h
 )
 
-# ´´½¨Core¿â
+# åˆ›å»ºCoreåº“
 add_library(EngineCore SHARED ${CORE_SOURCES} ${CORE_HEADERS})
 
-# Á´½ÓCocoa¿â
+# é“¾æ¥Cocoaåº“
 if(APPLE)
     target_link_libraries(EngineCore 
         "-framework Cocoa"
@@ -22,16 +22,16 @@ if(APPLE)
     )
 endif()
 
-# Í¨ÓÃµÚÈı·½¿â
+# é€šç”¨ç¬¬ä¸‰æ–¹åº“
 target_link_libraries(EngineCore 
     UL::Logger
 )
 
-# È·±£Ô´ÎÄ¼şÒ²ÄÜÕÒµ½Í·ÎÄ¼ş
+# ç¡®ä¿æºæ–‡ä»¶ä¹Ÿèƒ½æ‰¾åˆ°å¤´æ–‡ä»¶
 target_include_directories(EngineCore PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     UL::Logger
 )
 
-# ºê
+# å®
 target_compile_definitions(EngineCore PRIVATE ENGINE_CORE_EXPORTS)

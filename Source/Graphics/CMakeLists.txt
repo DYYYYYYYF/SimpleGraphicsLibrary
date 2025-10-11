@@ -1,6 +1,6 @@
-project(EngineGraphics)
+ï»¿project(EngineGraphics)
 
-# Ô´ÎÄ¼ş
+# æºæ–‡ä»¶
 set(GRAPHICS_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/API/RendererAPI.cpp
 )
@@ -12,7 +12,7 @@ set(GRAPHICS_HEADERS
 find_package(OpenGL QUIET)
 find_package(Vulkan QUIET)
 
-# OpenGLºó¶Ë
+# OpenGLåç«¯
 if(ENGINE_ENABLE_OPENGL)
     list(APPEND GRAPHICS_SOURCES
        Backend/OpenGL/glad/glad.c
@@ -23,16 +23,16 @@ if(ENGINE_ENABLE_OPENGL)
     )
 endif()
 
-# Vulkanºó¶Ë
+# Vulkanåç«¯
 if(ENGINE_ENABLE_VULKAN AND DVULKAN_ENABLED)
     target_include_directories(RayTracer PUBLIC ${Vulkan_INCLUDE_DIRS})
 	target_link_libraries(RayTracer PUBLIC Vulkan::Vulkan)
 endif()
 
-# ´´½¨¿â
+# åˆ›å»ºåº“
 add_library(EngineGraphics ${GRAPHICS_SOURCES} ${GRAPHICS_HEADERS})
 
-# °üº¬Ä¿Â¼
+# åŒ…å«ç›®å½•
 target_include_directories(EngineGraphics
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/..
@@ -41,7 +41,7 @@ target_include_directories(EngineGraphics
         $<$<BOOL:${ENGINE_ENABLE_OPENGL}>: Backend/OpenGL/glad>
 )
 
-# Á´½ÓÒÀÀµ
+# é“¾æ¥ä¾èµ–
 target_link_libraries(EngineGraphics
     PUBLIC
         EngineCore
@@ -50,7 +50,7 @@ target_link_libraries(EngineGraphics
         $<$<BOOL:${ENGINE_ENABLE_OPENGL}>:OpenGL::GL>
 )
 
-# ±àÒë¶¨Òå
+# ç¼–è¯‘å®šä¹‰
 if(ENGINE_ENABLE_OPENGL)
     target_compile_definitions(EngineGraphics PUBLIC ENGINE_OPENGL_ENABLED)
 endif()
@@ -61,5 +61,5 @@ if(ENGINE_ENABLE_VULKAN)
     target_compile_definitions(EngineGraphics PUBLIC ENGINE_VULKAN_ENABLED)
 endif()
 
-# ÉèÖÃÎÄ¼ş¼Ğ
+# è®¾ç½®æ–‡ä»¶å¤¹
 set_target_properties(EngineGraphics PROPERTIES FOLDER "Graphics")

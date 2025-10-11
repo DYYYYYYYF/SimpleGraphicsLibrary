@@ -1,4 +1,4 @@
-class GraphicsContext {
+﻿class GraphicsContext {
 public:
 	enum class API {
 		None = 0,

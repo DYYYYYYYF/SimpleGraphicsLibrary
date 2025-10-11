@@ -1,4 +1,4 @@
-#include "Mutex.h"
+﻿#include "Mutex.h"
 #include "Logger.hpp"
 
 #ifdef _WIN32
@@ -68,7 +68,7 @@ Mutex::Mutex() {
 	}
 
 	// Save off the mutex handle.
-	InternalData = Platform::PlatformAllocate(sizeof(pthread_mutex_t), false);
+	InternalData = malloc(sizeof(pthread_mutex_t));
 	*(pthread_mutex_t*)InternalData = mutex;
 
 	return;
@@ -91,11 +91,11 @@ Mutex::~Mutex() {
 		LOG_ERROR << "Unable to destroy mutex: the value specified by mutex is invalid.";
 		break;
 	default:
-		LOG_ERROR << "An handled error has occurred while destroy a mutex: errno=%i", result;
+		LOG_ERROR << "An handled error has occurred while destroy a mutex: errno=" << result;
 		break;
 	}
 
-	Platform::PlatformFree(InternalData, false);
+	free(InternalData);
 	InternalData = 0;
 }
 
@@ -124,7 +124,7 @@ bool Mutex::Lock() {
 		LOG_ERROR << "Unable to obtain mutex lock: a mutex deadlock was detected.";
 		return false;
 	default:
-		LOG_ERROR << "An handled error has occurred while obtaining a mutex lock: errno=%i", result;
+		LOG_ERROR << "An handled error has occurred while obtaining a mutex lock: errno=" << result;
 		return false;
 	}
 
@@ -148,7 +148,7 @@ bool Mutex::UnLock() {
 		LOG_ERROR << "Unable to unlock mutex: mutex not owned by current thread.";
 		return false;
 	default:
-		LOG_ERROR << "An handled error has occurred while unlocking a mutex lock: errno=%i", Result;
+		LOG_ERROR << "An handled error has occurred while unlocking a mutex lock: errno=" << Result;
 		return false;
 	}
 	return false;

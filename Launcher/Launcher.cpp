@@ -1,4 +1,4 @@
-#include "Editor.h"
+ï»¿#include "Editor.h"
 #include "Logger.hpp"
 #include "Engine/Engine.h"
 #include "Platform/DLL/DynamicLibrary.h"
@@ -6,7 +6,7 @@
 int main(int argc, char** argv) {
 	bool isEditor = false;
 	if (argc > 1) {
-		// ½âÎöÃüÁîĞĞ
+		// è§£æå‘½ä»¤è¡Œ
 		for (int i = 1; i < argc; ++i) {
 			if (strcmp(argv[i], "-editor") == 0) {
 				isEditor = true;
@@ -22,21 +22,21 @@ int main(int argc, char** argv) {
 		}
 	}
 	
-	// ¸ù¾İÆ½Ì¨Ñ¡ÔñDLLÃû³Æ
+	// æ ¹æ®å¹³å°é€‰æ‹©DLLåç§°
 #ifdef _WIN32
 	const char* libName = isEditor ? "Editor.dll" : "Game.dll";
 #elif __APPLE__
 	const char* libName = isEditor ? "libEditor.dylib" : "libGame.dylib";
 #endif
 
-	// ¼ÓÔØ¶¯Ì¬¿â
+	// åŠ è½½åŠ¨æ€åº“
 	DynamicLibrary appLibrary;
 	if (!appLibrary.Load(libName)) {
 		LOG_ERROR << "Failed to load library: " << appLibrary.GetLastError();
 		return -1;
 	}
 
-	// »ñÈ¡´´½¨º¯Êı
+	// è·å–åˆ›å»ºå‡½æ•°
 	typedef IApplication* (*CreateAppFunc)();
 	CreateAppFunc createApp = appLibrary.GetFunction<CreateAppFunc>("CreateApplication");
 
@@ -45,21 +45,21 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
-	// ´´½¨Ó¦ÓÃ³ÌĞò
+	// åˆ›å»ºåº”ç”¨ç¨‹åº
 	IApplication* app = createApp();
 	if (!app) {
 		LOG_ERROR << "Failed to create application";
 		return -1;
 	}
 
-	// ÔËĞĞÒıÇæ
+	// è¿è¡Œå¼•æ“
 	Engine& engine = Engine::GetInstance();
 	if (engine.Initialize(app)) {
 		engine.Run();
 	}
 	engine.Shutdown();
 
-	// »ñÈ¡Ïú»Ùº¯Êı£¨¿ÉÑ¡£¬¸ü°²È«£©
+	// è·å–é”€æ¯å‡½æ•°ï¼ˆå¯é€‰ï¼Œæ›´å®‰å…¨ï¼‰
 	typedef void (*DestroyAppFunc)(IApplication*);
 	DestroyAppFunc destroyApp = appLibrary.GetFunction<DestroyAppFunc>("DestroyApplication");
 

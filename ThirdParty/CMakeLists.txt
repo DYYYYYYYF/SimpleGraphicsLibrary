@@ -1,1 +1,1 @@
-add_subdirectory(UncleDon-Logger)
+﻿add_subdirectory(UncleDon-Logger)

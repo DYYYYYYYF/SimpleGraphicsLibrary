@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "CoreModuleAPI.h"
 
@@ -42,7 +42,7 @@ public:
 		}
 	}
 
-	// ½ûÖ¹¿½±´¹¹ÔìºÍ¸³Öµ£¬·ÀÖ¹×ÊÔ´ÖØ¸´ÊÍ·Å
+	// ç¦æ­¢æ‹·è´æ„é€ å’Œèµ‹å€¼ï¼Œé˜²æ­¢èµ„æºé‡å¤é‡Šæ”¾
 	MutexGuard(const MutexGuard&) = delete;
 	MutexGuard& operator=(const MutexGuard&) = delete;
 

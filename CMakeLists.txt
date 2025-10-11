@@ -1,5 +1,5 @@
-# ============================================================================
-# GameEngine ¸ùÄ¿Â¼ CMakeLists.txt - ¼ò»¯°æ
+ï»¿# ============================================================================
+# GameEngine æ ¹ç›®å½• CMakeLists.txt - ç®€åŒ–ç‰ˆ
 # ============================================================================
 
 cmake_minimum_required(VERSION 3.15)
@@ -11,20 +11,20 @@ project(GameEngine
 )
 
 # ============================================================================
-# È«¾ÖÅäÖÃ
+# å…¨å±€é…ç½®
 # ============================================================================
 
-# C++±ê×¼
+# C++æ ‡å‡†
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Êä³öÄ¿Â¼
+# è¾“å‡ºç›®å½•
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-# ¶àÅäÖÃÉú³ÉÆ÷
+# å¤šé…ç½®ç”Ÿæˆå™¨
 foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
     string(TOUPPER ${CONFIG} CONFIG_UPPER)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR}/bin/${CONFIG})
@@ -33,7 +33,7 @@ foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
 endforeach()
 
 # ============================================================================
-# ¹¹½¨Ñ¡Ïî
+# æ„å»ºé€‰é¡¹
 # ============================================================================
 
 option(ENGINE_BUILD_SHARED "Build shared libraries" OFF)
@@ -50,7 +50,7 @@ option(ENGINE_ENABLE_DX12 "Enable DirectX12 backend" ON)
 endif()
 
 # ============================================================================
-# ±àÒëÆ÷ÉèÖÃ
+# ç¼–è¯‘å™¨è®¾ç½®
 # ============================================================================
 
 if(MSVC)
@@ -65,7 +65,7 @@ else()
 endif()
 
 # ============================================================================
-# Æ½Ì¨¼ì²â
+# å¹³å°æ£€æµ‹
 # ============================================================================
 
 if(WIN32)
@@ -77,38 +77,38 @@ elseif(APPLE)
 endif()
 
 # ============================================================================
-# Ìí¼Ó×ÓÄ¿Â¼
+# æ·»åŠ å­ç›®å½•
 # ============================================================================
 
 message(STATUS "========================================")
 message(STATUS "Configuring GameEngine")
 message(STATUS "========================================")
 
-# µÚÈı·½¿â
+# ç¬¬ä¸‰æ–¹åº“
 message(STATUS "Configuring Third-Party Libraries...")
 add_subdirectory(ThirdParty)
 
-# ÒıÇæÔ´´úÂë
+# å¼•æ“æºä»£ç 
 message(STATUS "Configuring Engine Source...")
 add_subdirectory(Source)
 
-# Ê¾ÀıÏîÄ¿
+# ç¤ºä¾‹é¡¹ç›®
 if(ENGINE_BUILD_EXAMPLES)
     message(STATUS "Configuring Examples...")
     add_subdirectory(Examples)
 endif()
 
-# ±à¼­Æ÷
+# ç¼–è¾‘å™¨
 if(ENGINE_BUILD_EDITOR)
     message(STATUS "Configuring Editor...")
     add_subdirectory(Editor)
 endif()
 
-# Æô¶¯Æ÷
+# å¯åŠ¨å™¨
 add_subdirectory(Launcher)
 
 # ============================================================================
-# ¹¹½¨ĞÅÏ¢»ã×Ü
+# æ„å»ºä¿¡æ¯æ±‡æ€»
 # ============================================================================
 
 message(STATUS "========================================")

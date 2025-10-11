@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #ifdef _WIN32
 
 #include "Window/WindowImpl.h"
@@ -14,7 +14,7 @@ public:
 	WindowsWindowImpl(const std::string& title, uint32_t width, uint32_t height);
 	~WindowsWindowImpl() override;
 
-	// WindowImpl½Ó¿ÚÊµÏÖ
+	// WindowImplæ¥å£å®ç°
 	bool Create() override;
 	void Destroy() override;
 	void Show() override;
@@ -38,12 +38,12 @@ public:
 
 	void* GetNativeHandle() const override;
 
-	// ÊÂ¼şÏµÍ³¼¯³É
+	// äº‹ä»¶ç³»ç»Ÿé›†æˆ
 	void SetEventCallback(const EventCallbackFn& callback) override;
 	void SetEventDispatchMode(bool useGlobalQueue, bool useDirectCallback = true) override;
 
 private:
-	// Windows APIÏà¹Ø
+	// Windows APIç›¸å…³
 	static LRESULT CALLBACK StaticWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -52,15 +52,15 @@ private:
 	std::wstring StringToWString(const std::string& str);
 	std::string WStringToString(const std::wstring& wstr);
 
-	// ÊÂ¼ş×ª»»¸¨Öúº¯Êı
+	// äº‹ä»¶è½¬æ¢è¾…åŠ©å‡½æ•°
 	KeyCode VirtualKeyToKeyCode(WPARAM vkCode);
 	MouseButton VirtualButtonToMouseButton(UINT message, WPARAM wParam);
 	ModifierKeys GetCurrentModifiers();
 	void DispatchEvent(Event& event);
-	std::unique_ptr<Event> CreateEventCopy(const Event& event);  // ´´½¨ÊÂ¼ş¸±±¾
+	std::unique_ptr<Event> CreateEventCopy(const Event& event);  // åˆ›å»ºäº‹ä»¶å‰¯æœ¬
 
 private:
-	// ´°¿ÚÊôĞÔ
+	// çª—å£å±æ€§
 	std::string title_;
 	uint32_t width_;
 	uint32_t height_;
@@ -70,17 +70,17 @@ private:
 	bool isVisible_;
 	bool isResizable_;
 
-	// WindowsÌØ¶¨³ÉÔ±
+	// Windowsç‰¹å®šæˆå‘˜
 	HWND hwnd_;
 	HDC hdc_;
 	HINSTANCE hInstance_;
 
-	// ÊÂ¼şÏµÍ³
+	// äº‹ä»¶ç³»ç»Ÿ
 	EventCallbackFn eventCallback_;
 	bool useGlobalEventQueue_;
 	bool useDirectCallback_;
 
-	// ¾²Ì¬³ÉÔ±
+	// é™æ€æˆå‘˜
 	static const wchar_t* WINDOW_CLASS_NAME;
 	static bool classRegistered_;
 	static std::unordered_map<HWND, WindowsWindowImpl*> windowMap_;

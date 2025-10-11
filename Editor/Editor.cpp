@@ -1,4 +1,4 @@
-#include "Editor.h"
+﻿#include "Editor.h"
 #include "Logger.hpp"
 
 #ifdef _WIN32

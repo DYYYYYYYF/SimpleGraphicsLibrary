@@ -1,4 +1,4 @@
-project(EngineEngine)
+ï»¿project(EngineEngine)
 
 file(GLOB ENGINE_SOURCES 
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp" 
@@ -7,7 +7,7 @@ file(GLOB ENGINE_SOURCES
 
 add_library(EngineEngine SHARED ${ENGINE_SOURCES})
 
-# Á´½Ó¿â
+# é“¾æŽ¥åº“
 target_link_libraries(EngineEngine PRIVATE
     EngineCore
     EnginePlatform

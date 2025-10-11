@@ -1,4 +1,4 @@
-#ifdef __APPLE__
+ï»¿#ifdef __APPLE__
 
 #include "DLL/DynamicLibrary.h"
 #include <dlfcn.h>
@@ -12,8 +12,8 @@ bool DynamicLibrary::Load(const std::string& path) {
 		Unload();
 	}
 
-	// RTLD_LAZY: ÑÓ³Ù°ó¶¨
-	// RTLD_NOW: Á¢¼´½âÎöËùÓĞ·ûºÅ
+	// RTLD_LAZY: å»¶è¿Ÿç»‘å®š
+	// RTLD_NOW: ç«‹å³è§£ææ‰€æœ‰ç¬¦å·
 	m_Handle = dlopen(path.c_str(), RTLD_NOW);
 
 	if (!m_Handle) {
@@ -38,7 +38,7 @@ void* DynamicLibrary::GetFunction(const std::string& name) {
 		return nullptr;
 	}
 
-	// Çå³ıÖ®Ç°µÄ´íÎó
+	// æ¸…é™¤ä¹‹å‰çš„é”™è¯¯
 	dlerror();
 
 	void* func = dlsym(m_Handle, name.c_str());

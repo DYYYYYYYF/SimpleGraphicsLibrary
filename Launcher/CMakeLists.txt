@@ -1,4 +1,4 @@
-message(STATUS "Building GameEngine Launcher")
+ï»¿message(STATUS "Building GameEngine Launcher")
 
 file(GLOB LAUNCHER_SOURCES 
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp" 
@@ -7,14 +7,14 @@ file(GLOB LAUNCHER_SOURCES
 
 add_executable(Launcher ${LAUNCHER_SOURCES})
 
-# Á´½Ó¿â
+# é“¾æŽ¥åº“
 target_link_libraries(Launcher PRIVATE
     Engine::Engine
     Editor
 )
  
-# ÉèÖÃ¹¤×÷Ä¿Â¼£¨¶ÔÓÚIDE£©
-set_target_properties(Editor PROPERTIES
+# è®¾ç½®å·¥ä½œç›®å½•ï¼ˆå¯¹äºŽIDEï¼‰
+set_target_properties(Launcher PROPERTIES
     VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:Launcher>"
     XCODE_GENERATE_SCHEME TRUE
     XCODE_SCHEME_WORKING_DIRECTORY "$<TARGET_FILE_DIR:Launcher>"

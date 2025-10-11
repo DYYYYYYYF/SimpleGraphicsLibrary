@@ -1,11 +1,11 @@
-project(EnginePlatform)
+Ôªøproject(EnginePlatform)
 
-# Õ∑Œƒº˛¬∑æ∂
+# Â§¥Êñá‰ª∂Ë∑ØÂæÑ
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-# Platformø‚
+# PlatformÂ∫ì
 set(Platform_SOURCES 
      ${CMAKE_CURRENT_SOURCE_DIR}/Window/Window.cpp
 )
@@ -16,7 +16,7 @@ set(Platform_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/DLL/DynamicLibrary.h
 )
 
-# ∆ΩÃ®œ‡πÿ‘¥Œƒº˛
+# Âπ≥Âè∞Áõ∏ÂÖ≥Ê∫êÊñá‰ª∂
 if(WIN32)
     list(APPEND Platform_HEADERS 
         ${CMAKE_CURRENT_SOURCE_DIR}/Window/Windows/WindowsWindow.h
@@ -28,13 +28,13 @@ if(WIN32)
 elseif(APPLE)
     list(APPEND Platform_SOURCES 
         ${CMAKE_CURRENT_SOURCE_DIR}/Window/Apple/AppleWindow.mm
-        ${CMAKE_CURRENT_SOURCE_DIR}/DLL/Apple/AppleDynamicLibrary.mm
+        ${CMAKE_CURRENT_SOURCE_DIR}/DLL/Apple/AppleDynamicLibrary.cpp
     )
 
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/Window/Apple/AppleWindow.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
 endif()
 
-# ¥¥Ω®Platformø‚
+# ÂàõÂª∫PlatformÂ∫ì
 add_library(EnginePlatform SHARED ${Platform_SOURCES} ${Platform_HEADERS})
 
 target_link_libraries(EnginePlatform PRIVATE 
@@ -45,5 +45,5 @@ target_include_directories(EnginePlatform PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-# ∫Í
+# ÂÆè
 target_compile_definitions(EnginePlatform PRIVATE ENGINE_PLATFORM_EXPORTS)

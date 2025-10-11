@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../PlatformMoudleAPI.h"
 
@@ -9,22 +9,22 @@ public:
 	ENGINE_PLATFORM_API DynamicLibrary() = default;
 	ENGINE_PLATFORM_API virtual ~DynamicLibrary();
 
-	// ½ûÖ¹¿½±´
+	// ç¦æ­¢æ‹·è´
 	DynamicLibrary(const DynamicLibrary&) = delete;
 	DynamicLibrary& operator=(const DynamicLibrary&) = delete;
 
-	// ¼ÓÔØ¶¯Ì¬¿â
+	// åŠ è½½åŠ¨æ€åº“
 	ENGINE_PLATFORM_API bool Load(const std::string& path);
-	// Ğ¶ÔØ¶¯Ì¬¿â
+	// å¸è½½åŠ¨æ€åº“
 	ENGINE_PLATFORM_API void Unload();
-	// »ñÈ¡º¯ÊıÖ¸Õë
+	// è·å–å‡½æ•°æŒ‡é’ˆ
 	ENGINE_PLATFORM_API void* GetFunction(const std::string& name);
-	// ¼ì²éÊÇ·ñÒÑ¼ÓÔØ
+	// æ£€æŸ¥æ˜¯å¦å·²åŠ è½½
 	ENGINE_PLATFORM_API bool IsLoaded() const { return m_Handle != nullptr; }
-	// »ñÈ¡´íÎóĞÅÏ¢
+	// è·å–é”™è¯¯ä¿¡æ¯
 	ENGINE_PLATFORM_API std::string GetLastError() const { return m_LastError; }
 
-	// Ä£°å·½·¨£¬·½±ãÊ¹ÓÃ
+	// æ¨¡æ¿æ–¹æ³•ï¼Œæ–¹ä¾¿ä½¿ç”¨
 	template<typename T>
 	T GetFunction(const std::string& name) {
 		return reinterpret_cast<T>(GetFunction(name));

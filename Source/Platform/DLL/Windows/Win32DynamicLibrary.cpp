@@ -1,4 +1,4 @@
-// DynamicLibrary_Win32.cpp
+ï»¿// DynamicLibrary_Win32.cpp
 #ifdef _WIN32
 
 #include "DLL/DynamicLibrary.h"
@@ -16,7 +16,7 @@ bool DynamicLibrary::Load(const std::string& path) {
 	m_Handle = LoadLibraryA(path.c_str());
 
 	if (!m_Handle) {
-		// Õâ¸öÊ¹ÓÃÈ«¾Ö :: ¼´Ê¹ÓÃ<windows.h>ÖĞµÄ·½·¨¶ø·ÇÀàÄÚ·½·¨
+		// è¿™ä¸ªä½¿ç”¨å…¨å±€ :: å³ä½¿ç”¨<windows.h>ä¸­çš„æ–¹æ³•è€Œéç±»å†…æ–¹æ³•
 		DWORD error = ::GetLastError();
 		char buffer[256];
 		FormatMessageA(

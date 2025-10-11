@@ -1,28 +1,28 @@
-# Ê¾ÀıÏîÄ¿
+ï»¿# ç¤ºä¾‹é¡¹ç›®
 message(STATUS "Building GameEngine Examples")
 
-# Í¨ÓÃÊ¾ÀıÅäÖÃº¯Êı
+# é€šç”¨ç¤ºä¾‹é…ç½®å‡½æ•°
 function(add_example target_name source_dir)
-    # »ñÈ¡Ô´ÎÄ¼ş
+    # è·å–æºæ–‡ä»¶
     file(GLOB EXAMPLE_SOURCES 
         "${source_dir}/*.cpp" 
         "${source_dir}/*.h"
     )
     
-    # ´´½¨¿ÉÖ´ĞĞÎÄ¼ş
+    # åˆ›å»ºå¯æ‰§è¡Œæ–‡ä»¶
     add_executable(${target_name} ${EXAMPLE_SOURCES})
     
-    # Á´½Ó¿â
+    # é“¾æ¥åº“
     target_link_libraries(${target_name} PRIVATE
         Engine::Engine
     )
  
-    # ÉèÖÃÊä³öÄ¿Â¼
+    # è®¾ç½®è¾“å‡ºç›®å½•
     set_target_properties(${target_name} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/examples
     )
     
-    # Èç¹ûÓĞassetsÎÄ¼ş¼Ğ£¬¸´ÖÆµ½Êä³öÄ¿Â¼
+    # å¦‚æœæœ‰assetsæ–‡ä»¶å¤¹ï¼Œå¤åˆ¶åˆ°è¾“å‡ºç›®å½•
     if(EXISTS "${source_dir}/assets")
         add_custom_command(TARGET ${target_name} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -32,7 +32,7 @@ function(add_example target_name source_dir)
         )
     endif()
        
-    # ĞŞ¸ÄruntimeÄ¿±êÇ°¿½±´DLL
+    # ä¿®æ”¹runtimeç›®æ ‡å‰æ‹·è´DLL
     add_custom_command(TARGET ${target_name} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:EngineCore>
@@ -43,17 +43,17 @@ function(add_example target_name source_dir)
         COMMENT "Copying dlls for ${target_name}"
     )
     
-    # ÉèÖÃ¹¤×÷Ä¿Â¼£¨¶ÔÓÚIDE£©
+    # è®¾ç½®å·¥ä½œç›®å½•ï¼ˆå¯¹äºIDEï¼‰
     set_target_properties(${target_name} PROPERTIES
         VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${target_name}>"
         XCODE_GENERATE_SCHEME TRUE
         XCODE_SCHEME_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${target_name}>"
     )
     
-    # Ìí¼Óµ½examplesÎÄ¼ş¼Ğ£¨ÔÚIDEÖĞ×éÖ¯£©
+    # æ·»åŠ åˆ°examplesæ–‡ä»¶å¤¹ï¼ˆåœ¨IDEä¸­ç»„ç»‡ï¼‰
     set_target_properties(${target_name} PROPERTIES FOLDER "Examples")
 endfunction()
 
-# Ìí¼Ó¸÷¸öÊ¾Àı
+# æ·»åŠ å„ä¸ªç¤ºä¾‹
 add_example(BasicWindow "${CMAKE_CURRENT_SOURCE_DIR}/BasicWindow")
 add_example(SimpleEvent "${CMAKE_CURRENT_SOURCE_DIR}/SimpleEvent")
