@@ -49,10 +49,10 @@ add_subdirectory(Core)
 message(STATUS "[2/9] Configuring Platform...")
 add_subdirectory(Platform)
 
-## 第三层：图形层
-#message(STATUS "[3/9] Configuring Graphics...")
-#add_subdirectory(Graphics)
-#
+# 第三层：图形层
+message(STATUS "[3/9] Configuring Graphics...")
+add_subdirectory(Graphics)
+
 ## 第四层：渲染层
 #message(STATUS "[4/9] Configuring Rendering...")
 #add_subdirectory(Rendering)
@@ -107,7 +107,7 @@ if(ENGINE_CREATE_UNIFIED_INTERFACE)
     target_link_libraries(Engine INTERFACE
         EngineCore
         EnginePlatform
-        #EngineGraphics
+        EngineGraphics
         #EngineRendering
         #EngineResource
         #EngineScene
@@ -145,7 +145,7 @@ endif()
 set(REQUIRED_TARGETS
     EngineCore
     EnginePlatform
-    #EngineGraphics
+    EngineGraphics
     #EngineRendering
     #EngineResource
     #EngineScene
@@ -170,7 +170,7 @@ message(STATUS "")
 message(STATUS "Engine Modules Summary:")
 message(STATUS "  ✓ Core")
 message(STATUS "  ✓ Platform")
-#message(STATUS "  ✓ Graphics")
+message(STATUS "  ✓ Graphics")
 #message(STATUS "  ✓ Rendering")
 #message(STATUS "  ✓ Resource")
 #message(STATUS "  ✓ Scene")

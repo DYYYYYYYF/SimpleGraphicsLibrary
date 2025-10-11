@@ -43,10 +43,11 @@ option(ENGINE_BUILD_AUDIO "Build audio module" OFF)
 option(ENGINE_BUILD_PHYSICS "Build physics module" OFF)
 
 option(ENGINE_ENABLE_OPENGL "Enable OpenGL backend" ON)
-option(ENGINE_ENABLE_DX12 "Enable DirectX12 backend" OFF)
-option(ENGINE_ENABLE_VULKAN "Enable Vulkan backend" OFF)
+option(ENGINE_ENABLE_VULKAN "Enable Vulkan backend" ON)
 
-set(BUILD_SHARED_LIBS ${ENGINE_BUILD_SHARED})
+if(WIN32)
+option(ENGINE_ENABLE_DX12 "Enable DirectX12 backend" ON)
+endif()
 
 # ============================================================================
 # ±‡“Î∆˜…Ë÷√
