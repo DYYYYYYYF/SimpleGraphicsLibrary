@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "EngineModuleAPI.h"
-#include "Core/Event.h"
 
 class Window;
 class IApplication;

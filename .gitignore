@@ -51,3 +51,4 @@ out
 # Compile cmake proj
 /Bin
 /Lib
+compile_commands.json

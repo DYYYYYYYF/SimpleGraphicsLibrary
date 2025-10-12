@@ -21,7 +21,7 @@ bool Engine::Initialize(IApplication* app) {
     Log::Logger* Logger = Log::Logger::getInstance();
     Logger->open("Engine");
     Logger->setMaxSize(1024 * 1024);
-    Logger->SetMode(Log::Logger::LogMode::eMode_Only_Message);
+    Logger->SetMode(Log::Logger::LogMode::eMode_Complex);
 
 	// Application
 	if (!app) {
