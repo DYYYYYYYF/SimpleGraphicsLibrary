@@ -2,6 +2,7 @@
 
 #ifdef _WIN32
 #include "Core/EventManager.h" // 包含事件管理器
+#include "Logger.hpp"
 
 #include <iostream>
 #include <stdexcept>
@@ -28,13 +29,13 @@ WindowsWindowImpl::~WindowsWindowImpl() {
 // 创建窗口
 bool WindowsWindowImpl::Create() {
 	if (hwnd_) {
-		std::cout << "Window already created" << std::endl;
+		LOG_WARN << "Window already created";
 		return true;
 	}
 
 	// 注册窗口类
 	if (!RegisterWindowClass()) {
-		std::cerr << "Failed to register window class" << std::endl;
+		LOG_ERROR << "Failed to register window class";
 		return false;
 	}
 
@@ -72,14 +73,14 @@ bool WindowsWindowImpl::Create() {
 
 	if (!hwnd_) {
 		DWORD error = GetLastError();
-		std::cerr << "Failed to create window. Error: " << error << std::endl;
+		LOG_ERROR << "Failed to create window. Error: " << error;
 		return false;
 	}
 
 	// 获取设备上下文
 	hdc_ = GetDC(hwnd_);
 	if (!hdc_) {
-		std::cerr << "Failed to get device context" << std::endl;
+		LOG_ERROR << "Failed to get device context";
 		DestroyWindow(hwnd_);
 		hwnd_ = nullptr;
 		return false;
@@ -88,7 +89,7 @@ bool WindowsWindowImpl::Create() {
 	// 将窗口句柄和实例关联
 	windowMap_[hwnd_] = this;
 
-	std::cout << "Window created successfully: " << title_ << " (" << width_ << "x" << height_ << ")" << std::endl;
+	LOG_INFO << "Window created successfully: " << title_ << " (" << width_ << "x" << height_ << ")";
 	return true;
 }
 
@@ -108,7 +109,7 @@ void WindowsWindowImpl::Destroy() {
 		DestroyWindow(hwnd_);
 		hwnd_ = nullptr;
 
-		std::cout << "Window destroyed: " << title_ << std::endl;
+		LOG_INFO << "Window destroyed: " << title_;
 	}
 }
 
@@ -118,7 +119,7 @@ void WindowsWindowImpl::Show() {
 		ShowWindow(hwnd_, SW_SHOW);
 		UpdateWindow(hwnd_);
 		isVisible_ = true;
-		std::cout << "Window shown: " << title_ << std::endl;
+		LOG_INFO << "Window shown: " << title_;
 	}
 }
 
@@ -127,7 +128,6 @@ void WindowsWindowImpl::Hide() {
 	if (hwnd_) {
 		ShowWindow(hwnd_, SW_HIDE);
 		isVisible_ = false;
-		std::cout << "Window hidden: " << title_ << std::endl;
 	}
 }
 
@@ -660,7 +660,7 @@ bool WindowsWindowImpl::RegisterWindowClass() {
 	if (!RegisterClassExW(&wc)) {
 		DWORD error = GetLastError();
 		if (error != ERROR_CLASS_ALREADY_EXISTS) {
-			std::cerr << "Failed to register window class. Error: " << error << std::endl;
+			LOG_ERROR << "Failed to register window class. Error: " << error;
 			return false;
 		}
 	}

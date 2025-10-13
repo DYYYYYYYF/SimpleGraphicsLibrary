@@ -1,82 +1,67 @@
-project(EngineGraphics)
+Ôªøproject(EngineGraphics)
 
-# ‘¥Œƒº˛
+# Ê∫êÊñá‰ª∂
 set(GRAPHICS_SOURCES
-    GraphicsDevice.cpp
-    GraphicsContext.cpp
-    GraphicsResource.cpp
-    VertexLayout.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/API/RendererAPI.cpp
 )
 
 set(GRAPHICS_HEADERS
-    GraphicsDevice.h
-    GraphicsContext.h
-    GraphicsEnums.h
-    GraphicsResource.h
-    Shader.h
-    Texture.h
-    Buffer.h
-    RenderTarget.h
-    VertexLayout.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/API/RendererAPI.h
 )
 
-# OpenGL∫Û∂À
+find_package(OpenGL QUIET)
+find_package(Vulkan QUIET)
+
+# OpenGLÂêéÁ´Ø
 if(ENGINE_ENABLE_OPENGL)
     list(APPEND GRAPHICS_SOURCES
-        Backend/OpenGL/OpenGLDevice.cpp
-        Backend/OpenGL/OpenGLShader.cpp
-        Backend/OpenGL/OpenGLTexture.cpp
-        Backend/OpenGL/OpenGLBuffer.cpp
-        Backend/OpenGL/OpenGLUtils.cpp
+       Backend/OpenGL/glad/glad.c
     )
     list(APPEND GRAPHICS_HEADERS
-        Backend/OpenGL/OpenGLDevice.h
-        Backend/OpenGL/OpenGLShader.h
-        Backend/OpenGL/OpenGLTexture.h
-        Backend/OpenGL/OpenGLBuffer.h
-        Backend/OpenGL/OpenGLUtils.h
+        Backend/OpenGL/glad/glad.h
+        Backend/OpenGL/glad/KHR/khrplatform.h
     )
 endif()
 
-# DirectX12∫Û∂À
-if(ENGINE_ENABLE_DX12)
-    list(APPEND GRAPHICS_SOURCES
-        Backend/D3D12/D3D12Device.cpp
-        # ...
-    )
+# ÂàõÂª∫Â∫ì
+add_library(EngineGraphics SHARED ${GRAPHICS_SOURCES} ${GRAPHICS_HEADERS})
+
+# VulkanÂêéÁ´Ø
+if(ENGINE_ENABLE_VULKAN)
+    target_include_directories(EngineGraphics PUBLIC ${Vulkan_INCLUDE_DIRS})
+	target_link_libraries(EngineGraphics PUBLIC Vulkan::Vulkan)
 endif()
 
-# ¥¥Ω®ø‚
-add_library(EngineGraphics ${GRAPHICS_SOURCES} ${GRAPHICS_HEADERS})
-
-# ∞¸∫¨ƒø¬º
+# ÂåÖÂê´ÁõÆÂΩï
 target_include_directories(EngineGraphics
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/..
-    PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
+
+    PRIVATE
+        $<$<BOOL:${ENGINE_ENABLE_OPENGL}>: Backend/OpenGL/glad>
 )
 
-# ¡¥Ω”“¿¿µ
+# ÈìæÊé•‰æùËµñ
 target_link_libraries(EngineGraphics
-    PUBLIC
+    PRIVATE
         EngineCore
         EnginePlatform
-    PRIVATE
-        $<$<BOOL:${ENGINE_ENABLE_OPENGL}>:glad>
         $<$<BOOL:${ENGINE_ENABLE_OPENGL}>:OpenGL::GL>
 )
 
-# ±‡“Î∂®“Â
+# ÁºñËØëÂÆö‰πâ
 if(ENGINE_ENABLE_OPENGL)
     target_compile_definitions(EngineGraphics PUBLIC ENGINE_OPENGL_ENABLED)
 endif()
-if(ENGINE_ENABLE_DX12)
+if(ENGINE_ENABLE_DX12 AND WIN32)
     target_compile_definitions(EngineGraphics PUBLIC ENGINE_DX12_ENABLED)
 endif()
 if(ENGINE_ENABLE_VULKAN)
     target_compile_definitions(EngineGraphics PUBLIC ENGINE_VULKAN_ENABLED)
 endif()
 
-# …Ë÷√Œƒº˛º–
-set_target_properties(EngineGraphics PROPERTIES FOLDER "Engine")
+# ËÆæÁΩÆÊñá‰ª∂Â§π
+set_target_properties(EngineGraphics PROPERTIES FOLDER "Graphics")
+
+# ÂÆè
+target_compile_definitions(EngineGraphics PRIVATE ENGINE_GRAPHICS_EXPORTS)

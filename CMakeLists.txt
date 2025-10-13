@@ -1,8 +1,8 @@
-# ============================================================================
-# GameEngine ∏˘ƒø¬º CMakeLists.txt - ºÚªØ∞Ê
+Ôªø# ============================================================================
+# GameEngine Ê†πÁõÆÂΩï CMakeLists.txt - ÁÆÄÂåñÁâà
 # ============================================================================
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.21)
 
 project(GameEngine 
     VERSION 1.0.0
@@ -11,45 +11,48 @@ project(GameEngine
 )
 
 # ============================================================================
-# »´æ÷≈‰÷√
+# ÂÖ®Â±ÄÈÖçÁΩÆ
 # ============================================================================
 
-# C++±Í◊º
+# C++Ê†áÂáÜ
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-#  ‰≥ˆƒø¬º
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+# ÁîüÊàêCmakeÊåá‰ª§
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# ∂‡≈‰÷√…˙≥…∆˜
+# ËæìÂá∫ÁõÆÂΩï
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Lib)
+
+# Â§öÈÖçÁΩÆÁîüÊàêÂô®
 foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
     string(TOUPPER ${CONFIG} CONFIG_UPPER)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR}/bin/${CONFIG})
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR}/lib/${CONFIG})
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR}/lib/${CONFIG})
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR}/Bin/${CONFIG})
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR}/Lib/${CONFIG})
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR}/Lib/${CONFIG})
 endforeach()
 
 # ============================================================================
-# ππΩ®—°œÓ
+# ÊûÑÂª∫ÈÄâÈ°π
 # ============================================================================
 
-option(ENGINE_BUILD_SHARED "Build shared libraries" OFF)
 option(ENGINE_BUILD_EXAMPLES "Build example programs" ON)
-option(ENGINE_BUILD_EDITOR "Build editor" OFF)
+option(ENGINE_BUILD_EDITOR "Build editor" ON)
 option(ENGINE_BUILD_AUDIO "Build audio module" OFF)
 option(ENGINE_BUILD_PHYSICS "Build physics module" OFF)
 
 option(ENGINE_ENABLE_OPENGL "Enable OpenGL backend" ON)
-option(ENGINE_ENABLE_DX12 "Enable DirectX12 backend" OFF)
-option(ENGINE_ENABLE_VULKAN "Enable Vulkan backend" OFF)
+option(ENGINE_ENABLE_VULKAN "Enable Vulkan backend" ON)
 
-set(BUILD_SHARED_LIBS ${ENGINE_BUILD_SHARED})
+if(WIN32)
+    option(ENGINE_ENABLE_DX12 "Enable DirectX12 backend" ON)
+endif()
 
 # ============================================================================
-# ±‡“Î∆˜…Ë÷√
+# ÁºñËØëÂô®ËÆæÁΩÆ
 # ============================================================================
 
 if(MSVC)
@@ -64,7 +67,7 @@ else()
 endif()
 
 # ============================================================================
-# ∆ΩÃ®ºÏ≤‚
+# Âπ≥Âè∞Ê£ÄÊµã
 # ============================================================================
 
 if(WIN32)
@@ -76,42 +79,45 @@ elseif(APPLE)
 endif()
 
 # ============================================================================
-# ÃÌº”◊”ƒø¬º
+# Ê∑ªÂä†Â≠êÁõÆÂΩï
 # ============================================================================
 
 message(STATUS "========================================")
 message(STATUS "Configuring GameEngine")
 message(STATUS "========================================")
 
-# µ⁄»˝∑Ωø‚
+# Á¨¨‰∏âÊñπÂ∫ì
 message(STATUS "Configuring Third-Party Libraries...")
 add_subdirectory(ThirdParty)
 
-# “˝«Ê‘¥¥˙¬Î
+# ÂºïÊìéÊ∫ê‰ª£Á†Å
 message(STATUS "Configuring Engine Source...")
 add_subdirectory(Source)
 
-#  æ¿˝œÓƒø
+# Á§∫‰æãÈ°πÁõÆ
 if(ENGINE_BUILD_EXAMPLES)
     message(STATUS "Configuring Examples...")
     add_subdirectory(Examples)
 endif()
 
-# ±‡º≠∆˜
+# ÁºñËæëÂô®
 if(ENGINE_BUILD_EDITOR)
     message(STATUS "Configuring Editor...")
     add_subdirectory(Editor)
 endif()
 
+# ÂêØÂä®Âô®
+message(STATUS "Configuring Editor Source...")
+add_subdirectory(Launcher)
+
 # ============================================================================
-# ππΩ®–≈œ¢ª„◊‹
+# ÊûÑÂª∫‰ø°ÊÅØÊ±áÊÄª
 # ============================================================================
 
 message(STATUS "========================================")
 message(STATUS "Build Configuration:")
 message(STATUS "  Version:       ${PROJECT_VERSION}")
 message(STATUS "  Build Type:    ${CMAKE_BUILD_TYPE}")
-message(STATUS "  Shared Libs:   ${ENGINE_BUILD_SHARED}")
 message(STATUS "  Examples:      ${ENGINE_BUILD_EXAMPLES}")
 message(STATUS "  Editor:        ${ENGINE_BUILD_EDITOR}")
 message(STATUS "")

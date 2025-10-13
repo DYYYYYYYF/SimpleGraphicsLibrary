@@ -43,7 +43,13 @@
 # visual studio files
 .vs
 out
+CMakeSettings.json
 
 # MacOS
 /build
 .cache
+
+# Compile cmake proj
+/Bin
+/Lib
+compile_commands.json

@@ -1,4 +1,4 @@
-# ============================================================================
+﻿# ============================================================================
 # Source 目录 CMakeLists.txt
 # 职责：管理引擎各个模块的添加顺序和依赖关系
 # ============================================================================
@@ -49,10 +49,10 @@ add_subdirectory(Core)
 message(STATUS "[2/9] Configuring Platform...")
 add_subdirectory(Platform)
 
-## 第三层：图形层
-#message(STATUS "[3/9] Configuring Graphics...")
-#add_subdirectory(Graphics)
-#
+# 第三层：图形层
+message(STATUS "[3/9] Configuring Graphics...")
+add_subdirectory(Graphics)
+
 ## 第四层：渲染层
 #message(STATUS "[4/9] Configuring Rendering...")
 #add_subdirectory(Rendering)
@@ -73,9 +73,9 @@ add_subdirectory(Platform)
 #message(STATUS "[8/9] Configuring Input...")
 #add_subdirectory(Input)
 #
-## 第九层：引擎主模块
-#message(STATUS "[9/9] Configuring Engine...")
-#add_subdirectory(Engine)
+# 第九层：引擎主模块
+message(STATUS "[9/9] Configuring Engine...")
+add_subdirectory(Engine)
 
 # ============================================================================
 # 可选模块
@@ -107,13 +107,13 @@ if(ENGINE_CREATE_UNIFIED_INTERFACE)
     target_link_libraries(Engine INTERFACE
         EngineCore
         EnginePlatform
-        #EngineGraphics
+        EngineGraphics
         #EngineRendering
         #EngineResource
         #EngineScene
         #EngineComponents
         #EngineInput
-        #EngineEngine
+        EngineEngine
     )
     
     # 链接可选模块
@@ -145,13 +145,13 @@ endif()
 set(REQUIRED_TARGETS
     EngineCore
     EnginePlatform
-    #EngineGraphics
+    EngineGraphics
     #EngineRendering
     #EngineResource
     #EngineScene
     #EngineComponents
     #EngineInput
-    #EngineEngine
+    EngineEngine
 )
 
 foreach(TARGET ${REQUIRED_TARGETS})
@@ -171,11 +171,11 @@ message(STATUS "Engine Modules Summary:")
 message(STATUS "  ✓ Core")
 message(STATUS "  ✓ Platform")
 message(STATUS "  ✓ Graphics")
-message(STATUS "  ✓ Rendering")
-message(STATUS "  ✓ Resource")
-message(STATUS "  ✓ Scene")
-message(STATUS "  ✓ Components")
-message(STATUS "  ✓ Input")
+#message(STATUS "  ✓ Rendering")
+#message(STATUS "  ✓ Resource")
+#message(STATUS "  ✓ Scene")
+#message(STATUS "  ✓ Components")
+#message(STATUS "  ✓ Input")
 message(STATUS "  ✓ Engine")
 
 if(ENGINE_BUILD_AUDIO)
