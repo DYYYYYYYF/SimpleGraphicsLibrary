@@ -2,7 +2,7 @@
 # GameEngine 根目录 CMakeLists.txt - 简化版
 # ============================================================================
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.21)
 
 project(GameEngine 
     VERSION 1.0.0

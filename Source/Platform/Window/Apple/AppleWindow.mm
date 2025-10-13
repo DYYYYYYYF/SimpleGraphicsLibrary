@@ -329,7 +329,7 @@ AppleWindowImpl::~AppleWindowImpl() {
 // 创建窗口
 bool AppleWindowImpl::Create() {
     if (nsWindow_) {
-        std::cout << "Window already created" << std::endl;
+        LOG_INFO << "Window already created";
         return true;
     }
 
@@ -350,7 +350,7 @@ bool AppleWindowImpl::Create() {
                                                     defer:NO];
 
         if (!nsWindow_) {
-            std::cerr << "Failed to create NSWindow" << std::endl;
+            LOG_ERROR << "Failed to create NSWindow";
             return false;
         }
 
@@ -371,7 +371,7 @@ bool AppleWindowImpl::Create() {
         // 将窗口添加到映射
         windowMap_[nsWindow_] = this;
 
-        std::cout << "Window created successfully: " << title_ << " (" << width_ << "x" << height_ << ")" << std::endl;
+        LOG_INFO << "Window created successfully: " << title_ << " (" << width_ << "x" << height_ << ")";
         return true;
     }
 }
@@ -402,7 +402,7 @@ void AppleWindowImpl::Destroy() {
             [nsWindow_ release];
             nsWindow_ = nil;
 
-            std::cout << "Window destroyed: " << title_ << std::endl;
+            LOG_INFO << "Window destroyed: " << title_;
         }
     }
 }
@@ -414,7 +414,6 @@ void AppleWindowImpl::Show() {
             [nsWindow_ makeKeyAndOrderFront:nil];
             [NSApp activateIgnoringOtherApps:YES];
             isVisible_ = true;
-            std::cout << "Window shown: " << title_ << std::endl;
         }
     }
 }
@@ -425,7 +424,6 @@ void AppleWindowImpl::Hide() {
         @autoreleasepool {
             [nsWindow_ orderOut:nil];
             isVisible_ = false;
-            std::cout << "Window hidden: " << title_ << std::endl;
         }
     }
 }

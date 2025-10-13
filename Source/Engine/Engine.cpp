@@ -19,7 +19,7 @@ Engine& Engine::GetInstance() {
 bool Engine::Initialize(IApplication* app) {
     // Logger
     Log::Logger* Logger = Log::Logger::getInstance();
-    Logger->open("Engine");
+    Logger->open("Engine", std::ios_base::ate);
     Logger->setMaxSize(1024 * 1024);
     Logger->SetMode(Log::Logger::LogMode::eMode_Complex);
 
