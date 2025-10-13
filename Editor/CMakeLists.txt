@@ -9,7 +9,7 @@ file(GLOB EDITOR_SOURCES
 add_library(Editor SHARED ${EDITOR_SOURCES})
 
 # 链接库
-target_link_libraries(Editor PRIVATE
+target_link_libraries(Editor PUBLIC
     Engine::Engine
 )
 

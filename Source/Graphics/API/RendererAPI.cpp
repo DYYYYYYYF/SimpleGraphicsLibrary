@@ -1,27 +1,11 @@
-﻿class RendererAPI {
-public:
-	enum class API {
-		None = 0,
-		OpenGL = 1,
-		Vulkan = 2,
-		DirectX11 = 3,
-		DirectX12 = 4
-	};
+﻿#include "RendererAPI.h"
 
-	enum class PrimitiveTopology {
-		Points,
-		Lines,
-		Triangles,
-		TriangleStrip
-	};
+RendererAPI::API RendererAPI::s_API;
 
-	virtual ~RendererAPI() = default;
+void RendererAPI::Init() {
 
-	virtual void Init() = 0;
-	virtual void Destory() = 0;
+}
 
-	static API GetAPI() { return s_API; }
+void RendererAPI::Destory() {
 
-private:
-	static API s_API;
-};
+}

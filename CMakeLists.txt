@@ -39,7 +39,6 @@ endforeach()
 # 构建选项
 # ============================================================================
 
-option(ENGINE_BUILD_SHARED "Build shared libraries" OFF)
 option(ENGINE_BUILD_EXAMPLES "Build example programs" ON)
 option(ENGINE_BUILD_EDITOR "Build editor" ON)
 option(ENGINE_BUILD_AUDIO "Build audio module" OFF)
@@ -49,7 +48,7 @@ option(ENGINE_ENABLE_OPENGL "Enable OpenGL backend" ON)
 option(ENGINE_ENABLE_VULKAN "Enable Vulkan backend" ON)
 
 if(WIN32)
-option(ENGINE_ENABLE_DX12 "Enable DirectX12 backend" ON)
+    option(ENGINE_ENABLE_DX12 "Enable DirectX12 backend" ON)
 endif()
 
 # ============================================================================
@@ -108,6 +107,7 @@ if(ENGINE_BUILD_EDITOR)
 endif()
 
 # 启动器
+message(STATUS "Configuring Editor Source...")
 add_subdirectory(Launcher)
 
 # ============================================================================
@@ -118,7 +118,6 @@ message(STATUS "========================================")
 message(STATUS "Build Configuration:")
 message(STATUS "  Version:       ${PROJECT_VERSION}")
 message(STATUS "  Build Type:    ${CMAKE_BUILD_TYPE}")
-message(STATUS "  Shared Libs:   ${ENGINE_BUILD_SHARED}")
 message(STATUS "  Examples:      ${ENGINE_BUILD_EXAMPLES}")
 message(STATUS "  Editor:        ${ENGINE_BUILD_EDITOR}")
 message(STATUS "")

@@ -9,7 +9,6 @@ add_executable(Launcher ${LAUNCHER_SOURCES})
 
 # 链接库
 target_link_libraries(Launcher PRIVATE
-    Engine::Engine
     Editor
 )
  

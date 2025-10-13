@@ -11,6 +11,7 @@ add_library(EngineEngine SHARED ${ENGINE_SOURCES})
 target_link_libraries(EngineEngine PRIVATE
     EngineCore
     EnginePlatform
+    EngineGraphics
 )
 
 target_compile_definitions(EngineEngine PRIVATE ENGINE_ENGINE_EXPORTS)

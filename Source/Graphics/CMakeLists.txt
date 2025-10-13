@@ -23,30 +23,29 @@ if(ENGINE_ENABLE_OPENGL)
     )
 endif()
 
-# Vulkan后端
-if(ENGINE_ENABLE_VULKAN AND DVULKAN_ENABLED)
-    target_include_directories(RayTracer PUBLIC ${Vulkan_INCLUDE_DIRS})
-	target_link_libraries(RayTracer PUBLIC Vulkan::Vulkan)
-endif()
-
 # 创建库
 add_library(EngineGraphics SHARED ${GRAPHICS_SOURCES} ${GRAPHICS_HEADERS})
+
+# Vulkan后端
+if(ENGINE_ENABLE_VULKAN)
+    target_include_directories(EngineGraphics PUBLIC ${Vulkan_INCLUDE_DIRS})
+	target_link_libraries(EngineGraphics PUBLIC Vulkan::Vulkan)
+endif()
 
 # 包含目录
 target_include_directories(EngineGraphics
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/..
-    PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
+
+    PRIVATE
         $<$<BOOL:${ENGINE_ENABLE_OPENGL}>: Backend/OpenGL/glad>
 )
 
 # 链接依赖
 target_link_libraries(EngineGraphics
-    PUBLIC
+    PRIVATE
         EngineCore
         EnginePlatform
-    PRIVATE
         $<$<BOOL:${ENGINE_ENABLE_OPENGL}>:OpenGL::GL>
 )
 
@@ -63,3 +62,6 @@ endif()
 
 # 设置文件夹
 set_target_properties(EngineGraphics PROPERTIES FOLDER "Graphics")
+
+# 宏
+target_compile_definitions(EngineGraphics PRIVATE ENGINE_GRAPHICS_EXPORTS)
