@@ -8,9 +8,11 @@ include_directories(
 # Platform库
 set(Platform_SOURCES 
      ${CMAKE_CURRENT_SOURCE_DIR}/Window/Window.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/File/File.cpp
 )
 
 set(Platform_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/File/File.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Window/Window.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Window/WindowImpl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/DLL/DynamicLibrary.h
@@ -41,7 +43,7 @@ target_link_libraries(EnginePlatform PRIVATE
     EngineCore
 )
 
-target_include_directories(EnginePlatform PRIVATE
+target_include_directories(EnginePlatform PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 

@@ -5,6 +5,8 @@
 #include "Core/EventManager.h"
 #include "Platform/Window/Window.h"
 
+#include "Rendering/Renderer/Renderer.h"
+
 Engine::Engine() {
 	Window_ = nullptr;
 	Running_ = false;
@@ -56,6 +58,12 @@ bool Engine::Initialize(IApplication* app) {
 		return false;
 	});
 
+	// Rendering
+	CoreRenderer = new Renderer();
+	if (!CoreRenderer || !CoreRenderer->Initialize(Window_)) {
+		return false;
+	}
+
 	// TODO: Managers  Renderer  Subsystems Window
 
 	LOG_INFO << "Engine create successfully.";
@@ -72,6 +80,8 @@ void Engine::Run() {
 
 		// Application tick
 		Application_->Tick();
+
+		CoreRenderer->Draw();
 
 		// TODO: Render
 	}

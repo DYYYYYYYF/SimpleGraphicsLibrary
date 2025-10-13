@@ -4,6 +4,7 @@
 
 class Window;
 class IApplication;
+class Renderer;
 
 class Engine {
 public:
@@ -22,5 +23,7 @@ protected:
 
 	IApplication* Application_;
 	bool Running_;
+
+	Renderer* CoreRenderer;
 
 };
