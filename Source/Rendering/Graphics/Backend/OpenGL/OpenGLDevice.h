@@ -1,17 +1,23 @@
 #include "Graphics/IGraphicsDevice.h"
 
+#include "glad/glad.h"
+
 #ifdef _WIN32
 #include <windows.h>
+#include "glad/wglext.h"
+#elif __APPLE__
+#import <Cocoa/Cocoa.h>
 #endif
 
-#include "glad/glad.h"
 
 class OpenGLDevice : public IGraphicsDevice {
 
 public:
-	bool Initialize(Window* Win) override;
-	void Draw() override;
-	void Destroy() override;
+	virtual bool Initialize(Window* Win) override;
+	virtual void Draw() override;
+	virtual void MakeCurrent() override;
+	virtual void SwapBuffers() override;
+	virtual void Destroy() override;
 
 private:
 	bool InitOpenGLContext();
@@ -26,7 +32,14 @@ private:
 	GLuint FBO;
 
 	// OpenGL handle
+#ifdef _WIN32
 	HGLRC m_hRC;
 	HDC m_hDC;
+	// WGL À©Õ¹º¯ÊýÖ¸Õë
+	PFNWGLCREATECONTEXTATTRIBSARBPROC wglChoosePixelFormatARB;
+	PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
+#elif __APPLE__
+	NSOpenGLContext* glContext_;
+#endif
 
 };

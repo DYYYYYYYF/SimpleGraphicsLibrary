@@ -4,10 +4,22 @@
 set(RENDERING_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/Renderer.cpp
 )
-
 set(RENDERING_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/Renderer.h
 )
+
+# 平台相关源文件
+if(WIN32)
+    list(APPEND RENDERING_SOURCES 
+        ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Backend/OpenGL/OpenGLDevice_Win32.cpp
+    )
+elseif(APPLE)
+    list(APPEND RENDERING_SOURCES 
+        ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Backend/OpenGL/OpenGLDevice_Apple.mm
+    )
+
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/Window/Apple/AppleWindow.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
+endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 

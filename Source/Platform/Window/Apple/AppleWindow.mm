@@ -72,6 +72,9 @@ public:
     NSString* StringToNSString(const std::string& str);
     std::string NSStringToString(NSString* nsStr);
 
+    // 获取私有变量
+    void* GetWindowView() const { return windowView_; }
+
 private:
     // 窗口属性
     std::string title_;
