@@ -45,6 +45,15 @@ bool OpenGLShader::Load(const std::string& path) {
 	return true;
 }
 
+void OpenGLShader::Unload() {
+	if (ShaderProgram_) {
+		for (auto& Stage : ShaderStages_) {
+			glDetachShader(ShaderProgram_, Stage.second);
+			glDeleteShader(Stage.second);
+		}
+	}
+}
+
 void OpenGLShader::Use() {
 	glUseProgram(ShaderProgram_);
 }

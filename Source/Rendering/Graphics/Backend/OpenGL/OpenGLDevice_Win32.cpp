@@ -2,6 +2,7 @@
 
 #ifdef _WIN32
 #include "Logger.hpp"
+#include "OpenGLShader.h"
 #include "Window/Window.h"
 
 void OpenGLDevice::MakeCurrent() {
@@ -67,6 +68,10 @@ bool OpenGLDevice::InitOpenGLContext() {
 }
 
 void OpenGLDevice::Destroy() {
+	if (BuiltinShader_) {
+		BuiltinShader_->Unload();
+	}
+
 	if (m_hRC) {
 		wglMakeCurrent(nullptr, nullptr);
 		wglDeleteContext(m_hRC);

@@ -1,4 +1,5 @@
-﻿#include "Graphics/RHI/IShader.h"
+﻿#pragma once
+#include "Graphics/RHI/IShader.h"
 #include "glad/glad.h"
 
 #include <unordered_map>
@@ -6,6 +7,7 @@
 class OpenGLShader : public IShader {
 public:
 	virtual bool Load(const std::string& path) override;
+	virtual void Unload() override;
 	virtual void Use() override;
 
 private:

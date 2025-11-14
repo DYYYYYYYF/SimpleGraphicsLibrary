@@ -1,4 +1,5 @@
-﻿#include "Graphics/IGraphicsDevice.h"
+﻿#pragma once
+#include "Graphics/IGraphicsDevice.h"
 
 #include "glad/glad.h"
 
