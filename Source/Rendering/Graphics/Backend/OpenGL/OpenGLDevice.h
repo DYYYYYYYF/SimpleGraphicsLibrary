@@ -9,7 +9,7 @@
 class OpenGLDevice : public IGraphicsDevice {
 
 public:
-	bool Initialize(Window* Win, BackendAPI Type) override;
+	bool Initialize(Window* Win) override;
 	void Draw() override;
 	void Destroy() override;
 

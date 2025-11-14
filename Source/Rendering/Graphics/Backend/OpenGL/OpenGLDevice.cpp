@@ -42,8 +42,8 @@ unsigned int indices[] = {
 	0, 2, 3
 };
 
-bool OpenGLDevice::Initialize(Window* Win, BackendAPI Type){
-	BackendAPI_ = Type;
+bool OpenGLDevice::Initialize(Window* Win){
+	BackendAPI_ = BackendAPI::OpenGL;
 	Window_ = Win;
 
 	File ShaderFile();

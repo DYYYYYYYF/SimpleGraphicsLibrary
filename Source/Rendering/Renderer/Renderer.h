@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RenderModuleAPI.h"
+#include "Graphics/GraphicsAPI.h"
 
 class Window;
 class IGraphicsDevice;
@@ -11,7 +12,7 @@ public:
 	virtual ~Renderer();
 
 public:
-	virtual bool Initialize(Window* Win);
+	virtual bool Initialize(Window* Win, BackendAPI Type);
 	virtual void Draw();
 	virtual void Destroy();
 

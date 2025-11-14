@@ -11,12 +11,23 @@ Renderer::~Renderer() {
 
 }
 
-bool Renderer::Initialize(Window* Win) {
+bool Renderer::Initialize(Window* Win, BackendAPI Type) {
+	switch (Type)
+	{
+	case BackendAPI::OpenGL:
+	{
+		LOG_INFO << "Backend API Type: OpenGL.";
+		GraphicsDevice_ = new OpenGLDevice();
+		if (!GraphicsDevice_ || !GraphicsDevice_->Initialize(Win)) {
+			LOG_ERROR << "Create graphics device failed!";
+			return false;
+		}
+	} break;
+	default:
+	{
+		LOG_ERROR << "Create graphics device failed! Must select a type for backend api type";
 
-	GraphicsDevice_ = new OpenGLDevice();
-	if (!GraphicsDevice_ || !GraphicsDevice_->Initialize(Win, BackendAPI::OpenGL)) {
-		LOG_ERROR << "Create graphics device failed!";
-		return false;
+	} return false;
 	}
 
 	return true;

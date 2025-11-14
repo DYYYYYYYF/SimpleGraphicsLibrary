@@ -6,7 +6,7 @@ class Window;
 
 class IGraphicsDevice {
 public:
-	virtual bool Initialize(Window* Win, BackendAPI Type) = 0;
+	virtual bool Initialize(Window* Win) = 0;
 	virtual void Draw() =0;
 	virtual void Destroy() = 0;
 
