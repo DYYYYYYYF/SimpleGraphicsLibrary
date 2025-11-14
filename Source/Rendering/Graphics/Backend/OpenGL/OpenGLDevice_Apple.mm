@@ -1,4 +1,4 @@
-#include "OpenGLDevice.h"
+ï»¿#include "OpenGLDevice.h"
 
 #ifdef __APPLE__
 #include "Logger.hpp"
@@ -20,35 +20,35 @@ void OpenGLDevice::SwapBuffers() {
 
 bool OpenGLDevice::InitOpenGLContext() {
     AppleWindowView* windowView = (AppleWindowView*)window->GetNSView();
-    // ÅäÖÃÏñËØ¸ñÊ½
+    // é…ç½®åƒç´ æ ¼å¼
     NSOpenGLPixelFormatAttribute attrs[] = {
-        NSOpenGLPFAAccelerated,           // Ó²¼ş¼ÓËÙ
-        NSOpenGLPFADoubleBuffer,          // Ë«»º³å
-        NSOpenGLPFAColorSize, 24,         // RGB 24Î»
-        NSOpenGLPFAAlphaSize, 8,          // Alpha 8Î»£¨×Ü¹²32Î»£©
-        NSOpenGLPFADepthSize, 32,         // 32Î»Éî¶È»º³å
-        NSOpenGLPFAStencilSize, 0,        // ²»Ê¹ÓÃÄ£°å»º³å
+        NSOpenGLPFAAccelerated,           // ç¡¬ä»¶åŠ é€Ÿ
+        NSOpenGLPFADoubleBuffer,          // åŒç¼“å†²
+        NSOpenGLPFAColorSize, 24,         // RGB 24ä½
+        NSOpenGLPFAAlphaSize, 8,          // Alpha 8ä½ï¼ˆæ€»å…±32ä½ï¼‰
+        NSOpenGLPFADepthSize, 32,         // 32ä½æ·±åº¦ç¼“å†²
+        NSOpenGLPFAStencilSize, 0,        // ä¸ä½¿ç”¨æ¨¡æ¿ç¼“å†²
         
-        // ×¢Òâ£ºmacOS ×î¸ßÖ»Ö§³Ö OpenGL 4.1 Core Profile
-        // ²»Ö§³Ö OpenGL 4.6£¡
+        // æ³¨æ„ï¼šmacOS æœ€é«˜åªæ”¯æŒ OpenGL 4.1 Core Profile
+        // ä¸æ”¯æŒ OpenGL 4.6ï¼
         NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion4_1Core,
         
-        // ¿ÉÑ¡£º¶àÖØ²ÉÑù¿¹¾â³İ
+        // å¯é€‰ï¼šå¤šé‡é‡‡æ ·æŠ—é”¯é½¿
         // NSOpenGLPFAMultisample,
         // NSOpenGLPFASampleBuffers, 1,
         // NSOpenGLPFASamples, 4,
         
-        0  // ±ØĞëÒÔ 0 ½áÊø
+        0  // å¿…é¡»ä»¥ 0 ç»“æŸ
     };
     
-    // ´´½¨ÏñËØ¸ñÊ½
+    // åˆ›å»ºåƒç´ æ ¼å¼
     NSOpenGLPixelFormat* pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
     if (!pixelFormat) {
         LOG_ERROR << "Failed to create NSOpenGLPixelFormat";
         return false;
     }
     
-    // macOS ²»ĞèÒªÁÙÊ±ÉÏÏÂÎÄ£¬Ö±½Ó´´½¨ÏÖ´ú°æ±¾
+    // macOS ä¸éœ€è¦ä¸´æ—¶ä¸Šä¸‹æ–‡ï¼Œç›´æ¥åˆ›å»ºç°ä»£ç‰ˆæœ¬
     glContext_ = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:nil];
     [pixelFormat release];
     
@@ -57,19 +57,19 @@ bool OpenGLDevice::InitOpenGLContext() {
         return false;
     }
     
-    // °ó¶¨µ½ÊÓÍ¼
+    // ç»‘å®šåˆ°è§†å›¾
     [glContext_ setView:windowView];
-    // ¼¤»îÉÏÏÂÎÄ
+    // æ¿€æ´»ä¸Šä¸‹æ–‡
     [glContext_ makeCurrentContext];
     
-    // ÉèÖÃ´¹Ö±Í¬²½£¨¿ÉÑ¡£©
-    GLint swapInterval = 1;  // 1 = ¿ªÆô VSync, 0 = ¹Ø±Õ
+    // è®¾ç½®å‚ç›´åŒæ­¥ï¼ˆå¯é€‰ï¼‰
+    GLint swapInterval = 1;  // 1 = å¼€å¯ VSync, 0 = å…³é—­
     [glContext_ setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
     
-    // ±£´æÒıÓÃ
+    // ä¿å­˜å¼•ç”¨
     windowView_ = windowView;
     
-    // ÑéÖ¤ OpenGL °æ±¾
+    // éªŒè¯ OpenGL ç‰ˆæœ¬
     const GLubyte* version = glGetString(GL_VERSION);
     const GLubyte* renderer = glGetString(GL_RENDERER);
     LOG_INFO << "OpenGL Version: " << version;

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifdef ENGINE_RENDERING_EXPORTS
 #ifdef _WIN32

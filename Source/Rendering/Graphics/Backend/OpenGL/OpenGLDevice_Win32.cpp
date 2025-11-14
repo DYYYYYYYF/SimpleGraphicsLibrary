@@ -1,4 +1,4 @@
-#include "OpenGLDevice.h"
+ï»¿#include "OpenGLDevice.h"
 
 #ifdef _WIN32
 #include "Logger.hpp"
@@ -16,52 +16,52 @@ bool OpenGLDevice::InitOpenGLContext() {
 	wglCreateContextAttribsARB = nullptr;
 	m_hDC = GetDC((HWND)Window_->GetNativeHandle());
 
-	//³õÊ¼»¯ÏñËØ¸ñÊ½
+	//åˆå§‹åŒ–åƒç´ æ ¼å¼
 	static    PIXELFORMATDESCRIPTOR pfd =
 	{
-		sizeof(PIXELFORMATDESCRIPTOR),    //ÉÏÊö¸ñÊ½ÃèÊö·ûµÄ´óÐ¡
-		1,                                //°æ±¾ºÅ
-		PFD_DRAW_TO_WINDOW |              //¸ñÊ½Ö§³Ö´°¿Ú
-		PFD_SUPPORT_OPENGL |              //¸ñÊ½±ØÐëÖ§³ÖOpenGL
-		PFD_DOUBLEBUFFER,                 //±ØÐëÖ§³ÖË«»º³å
-		PFD_TYPE_RGBA,                    //ÉêÇëRGBA ¸ñÊ½
-		24,                               //Ñ¡¶¨É«²ÊÉî¶È
-		0, 0, 0, 0, 0, 0, 0, 0,           //ºöÂÔRGBA
-		0,                                //ÎÞÀÛ¼Ó»º´æ
-		0, 0, 0, 0,                       //ºöÂÔ¾Û¼¯Î»
-		32,                               //32Î»Z-»º´æ(Éî¶È»º´æ)
-		0,                                //ÎÞÃÉ°å»º´æ
-		0,                                //ÎÞ¸¨Öú»º´æ
-		PFD_MAIN_PLANE,                   //Ö÷»æÍ¼²ã
+		sizeof(PIXELFORMATDESCRIPTOR),    //ä¸Šè¿°æ ¼å¼æè¿°ç¬¦çš„å¤§å°
+		1,                                //ç‰ˆæœ¬å·
+		PFD_DRAW_TO_WINDOW |              //æ ¼å¼æ”¯æŒçª—å£
+		PFD_SUPPORT_OPENGL |              //æ ¼å¼å¿…é¡»æ”¯æŒOpenGL
+		PFD_DOUBLEBUFFER,                 //å¿…é¡»æ”¯æŒåŒç¼“å†²
+		PFD_TYPE_RGBA,                    //ç”³è¯·RGBA æ ¼å¼
+		24,                               //é€‰å®šè‰²å½©æ·±åº¦
+		0, 0, 0, 0, 0, 0, 0, 0,           //å¿½ç•¥RGBA
+		0,                                //æ— ç´¯åŠ ç¼“å­˜
+		0, 0, 0, 0,                       //å¿½ç•¥èšé›†ä½
+		32,                               //32ä½Z-ç¼“å­˜(æ·±åº¦ç¼“å­˜)
+		0,                                //æ— è’™æ¿ç¼“å­˜
+		0,                                //æ— è¾…åŠ©ç¼“å­˜
+		PFD_MAIN_PLANE,                   //ä¸»ç»˜å›¾å±‚
 		0,                                //Reserved
-		0, 0, 0                           //ºöÂÔ²ãÕÚÕÖ
+		0, 0, 0                           //å¿½ç•¥å±‚é®ç½©
 	};
 
-	//Ñ¡ÔñÒ»¸ö×îÊÊºÏpfdÃèÊöµÄÏñËØ¸ñÊ½Ë÷ÒýÖµ
+	//é€‰æ‹©ä¸€ä¸ªæœ€é€‚åˆpfdæè¿°çš„åƒç´ æ ¼å¼ç´¢å¼•å€¼
 	int nPixelFormat = ChoosePixelFormat(m_hDC, &pfd);
 
-	//ÎªDCÉèÖÃÏñËØ¸ñÊ½
+	//ä¸ºDCè®¾ç½®åƒç´ æ ¼å¼
 	SetPixelFormat(m_hDC, nPixelFormat, &pfd);
 
-	//´´½¨RC
+	//åˆ›å»ºRC
 	HGLRC tempContext = wglCreateContext(m_hDC);
 	wglMakeCurrent(m_hDC, tempContext);
 
-	// 2. ¼ÓÔØ wglCreateContextAttribsARB
+	// 2. åŠ è½½ wglCreateContextAttribsARB
 	wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
 
-	// 3. ´´½¨ÕæÕýµÄÏÖ´ú OpenGL ÉÏÏÂÎÄ
+	// 3. åˆ›å»ºçœŸæ­£çš„çŽ°ä»£ OpenGL ä¸Šä¸‹æ–‡
 	int attribs[] = {
 		WGL_CONTEXT_MAJOR_VERSION_ARB, 4, // OpenGL 4.x
 		WGL_CONTEXT_MINOR_VERSION_ARB, 6,
 		WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB, // Core Profile
-		WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB, // ¿ÉÑ¡£ºÆôÓÃµ÷ÊÔ
+		WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB, // å¯é€‰ï¼šå¯ç”¨è°ƒè¯•
 		0
 	};
 
 	m_hRC = wglCreateContextAttribsARB(m_hDC, 0, attribs);
 	wglMakeCurrent(m_hDC, m_hRC);
-	wglDeleteContext(tempContext); // É¾³ýÁÙÊ±ÉÏÏÂÎÄ
+	wglDeleteContext(tempContext); // åˆ é™¤ä¸´æ—¶ä¸Šä¸‹æ–‡
 
 	return true;
 }

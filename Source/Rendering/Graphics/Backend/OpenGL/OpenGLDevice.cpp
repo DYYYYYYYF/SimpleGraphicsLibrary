@@ -1,4 +1,4 @@
-#include "OpenGLDevice.h"
+ï»¿#include "OpenGLDevice.h"
 
 #include "Logger.hpp"
 #include "glad/wglext.h"
@@ -21,20 +21,20 @@ const char* fragmentShaderSource = "\
 		uniform sampler2D screenTexture; \
 		void main() { FragColor = texture(screenTexture, TexCoord); }";
 
-// ¶¥µãÊı¾İ£¨Î»ÖÃ + ÎÆÀí×ø±ê£©
+// é¡¶ç‚¹æ•°æ®ï¼ˆä½ç½® + çº¹ç†åæ ‡ï¼‰
 float vertices[] = {
-	// Î»ÖÃ (x, y, z)      // ÑÕÉ« (r, g, b)
-	-0.5f, -0.5f, 0.0f,    1.0f, 0.0f, 0.0f,  // ¶¥µã1£ººìÉ«
-	 0.5f, -0.5f, 0.0f,    0.0f, 1.0f, 0.0f,  // ¶¥µã2£ºÂÌÉ«
-	 0.0f,  0.5f, 0.0f,    0.0f, 0.0f, 1.0f   // ¶¥µã3£ºÀ¶É«
+	// ä½ç½® (x, y, z)      // é¢œè‰² (r, g, b)
+	-0.5f, -0.5f, 0.0f,    1.0f, 0.0f, 0.0f,  // é¡¶ç‚¹1ï¼šçº¢è‰²
+	 0.5f, -0.5f, 0.0f,    0.0f, 1.0f, 0.0f,  // é¡¶ç‚¹2ï¼šç»¿è‰²
+	 0.0f,  0.5f, 0.0f,    0.0f, 0.0f, 1.0f   // é¡¶ç‚¹3ï¼šè“è‰²
 };
 
 unsigned int indices[] = {
-	// ×¢ÒâË÷Òı´Ó0¿ªÊ¼! 
-	// ´ËÀıµÄË÷Òı(0,1,2,3)¾ÍÊÇ¶¥µãÊı×éverticesµÄÏÂ±ê£¬
-	// ÕâÑù¿ÉÒÔÓÉÏÂ±ê´ú±í¶¥µã×éºÏ³É¾ØĞÎ
+	// æ³¨æ„ç´¢å¼•ä»0å¼€å§‹! 
+	// æ­¤ä¾‹çš„ç´¢å¼•(0,1,2,3)å°±æ˜¯é¡¶ç‚¹æ•°ç»„verticesçš„ä¸‹æ ‡ï¼Œ
+	// è¿™æ ·å¯ä»¥ç”±ä¸‹æ ‡ä»£è¡¨é¡¶ç‚¹ç»„åˆæˆçŸ©å½¢
 
-	0, 1, 2, // µÚÒ»¸öÈı½ÇĞÎ
+	0, 1, 2, // ç¬¬ä¸€ä¸ªä¸‰è§’å½¢
 	0, 2, 3
 };
 
@@ -61,18 +61,18 @@ bool OpenGLDevice::Initialize(Window* Win){
 	glShaderSource(fragShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragShader);
 
-	// ³õÊ¼»¯Shader
+	// åˆå§‹åŒ–Shader
 	shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertShader);
 	glAttachShader(shaderProgram, fragShader);
 	glLinkProgram(shaderProgram);
 	glUseProgram(shaderProgram);
 
-	//³õÊ¼»¯FBO
+	//åˆå§‹åŒ–FBO
 	glGenFramebuffers(1, &FBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
-	// ³õÊ¼»¯Texture
+	// åˆå§‹åŒ–Texture
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
@@ -85,7 +85,7 @@ bool OpenGLDevice::Initialize(Window* Win){
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	// ³õÊ¼»¯ VAO/VBO
+	// åˆå§‹åŒ– VAO/VBO
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -95,25 +95,25 @@ bool OpenGLDevice::Initialize(Window* Win){
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	// Î»ÖÃÊôĞÔ
+	// ä½ç½®å±æ€§
 	glVertexAttribPointer(
-		0,                      // ÊôĞÔÎ»ÖÃ
-		3,                      // 3¸ö·ÖÁ¿(x, y, z)
-		GL_FLOAT,               // Êı¾İÀàĞÍ
-		GL_FALSE,               // ²»ĞèÒª¹éÒ»»¯
-		6 * sizeof(float),      // ²½³¤£º6¸öfloat(Î»ÖÃ3 + ÑÕÉ«3)
-		(void*)0                // Æ«ÒÆÁ¿£º´Ó¿ªÍ·¿ªÊ¼
+		0,                      // å±æ€§ä½ç½®
+		3,                      // 3ä¸ªåˆ†é‡(x, y, z)
+		GL_FLOAT,               // æ•°æ®ç±»å‹
+		GL_FALSE,               // ä¸éœ€è¦å½’ä¸€åŒ–
+		6 * sizeof(float),      // æ­¥é•¿ï¼š6ä¸ªfloat(ä½ç½®3 + é¢œè‰²3)
+		(void*)0                // åç§»é‡ï¼šä»å¼€å¤´å¼€å§‹
 	);
 	glEnableVertexAttribArray(0);
 
-	// ÎÆÀí×ø±êÊôĞÔ
+	// çº¹ç†åæ ‡å±æ€§
 	glVertexAttribPointer(
-		1,                          // ÊôĞÔÎ»ÖÃ
-		3,                          // 3¸ö·ÖÁ¿(r, g, b)
+		1,                          // å±æ€§ä½ç½®
+		3,                          // 3ä¸ªåˆ†é‡(r, g, b)
 		GL_FLOAT,
 		GL_FALSE,
-		6 * sizeof(float),          // ²½³¤£º6¸öfloat
-		(void*)(3 * sizeof(float))  // Æ«ÒÆÁ¿£ºÌø¹ıÇ°3¸öfloat
+		6 * sizeof(float),          // æ­¥é•¿ï¼š6ä¸ªfloat
+		(void*)(3 * sizeof(float))  // åç§»é‡ï¼šè·³è¿‡å‰3ä¸ªfloat
 	);
 	glEnableVertexAttribArray(1);
 

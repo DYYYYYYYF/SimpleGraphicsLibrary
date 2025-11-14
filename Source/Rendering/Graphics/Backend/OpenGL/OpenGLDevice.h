@@ -1,4 +1,4 @@
-#include "Graphics/IGraphicsDevice.h"
+ï»¿#include "Graphics/IGraphicsDevice.h"
 
 #include "glad/glad.h"
 
@@ -35,7 +35,7 @@ private:
 #ifdef _WIN32
 	HGLRC m_hRC;
 	HDC m_hDC;
-	// WGL À©Õ¹º¯ÊýÖ¸Õë
+	// WGL æ‰©å±•å‡½æ•°æŒ‡é’ˆ
 	PFNWGLCREATECONTEXTATTRIBSARBPROC wglChoosePixelFormatARB;
 	PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
 #elif __APPLE__
