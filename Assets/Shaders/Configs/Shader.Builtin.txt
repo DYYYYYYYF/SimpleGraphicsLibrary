@@ -1,0 +1,3 @@
+stages:
+vert, ../Assets/Shaders/Sources/Builtin/Shader.Builtin.vert
+frag, ../Assets/Shaders/Sources/Builtin/Shader.Builtin.frag

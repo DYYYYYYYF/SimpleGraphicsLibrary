@@ -1,6 +1,13 @@
 ﻿#pragma once
+#include <string>
+
+enum class ShaderStage {
+	eVertex = 0,
+	eFragment
+};
 
 class IShader {
 public:
-	bool Load(const std::string& path);
+	virtual bool Load(const std::string& path) = 0;
+	virtual void Use() = 0;
 };

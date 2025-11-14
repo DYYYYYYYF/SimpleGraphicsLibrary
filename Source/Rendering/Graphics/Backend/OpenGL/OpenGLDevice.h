@@ -9,10 +9,11 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
+class IShader;
 
 class OpenGLDevice : public IGraphicsDevice {
-
 public:
+	OpenGLDevice();
 	virtual bool Initialize(Window* Win) override;
 	virtual void Draw() override;
 	virtual void MakeCurrent() override;
@@ -24,9 +25,9 @@ private:
 
 private:
 	Window* Window_;
+	IShader* BuiltinShader_;
 
 	// OpenGL properties
-	GLuint shaderProgram;
 	GLuint textureID;
 	GLuint VAO, VBO, EBO;
 	GLuint FBO;

@@ -3,30 +3,19 @@
 #include "Logger.hpp"
 #include "glad/wglext.h"
 #include "File/File.h"
+#include "OpenGLShader.h"
 
 static const double aspect_ratio = 16.0 / 9.0;
 static const int WIDTH = 1200;
 static const int HEIGHT = static_cast<int>(WIDTH / aspect_ratio);
 
-const char* vertexShaderSource =
-"#version 460 core\n"
-"layout (location = 0) in vec2 aPos; \n\
-		layout(location = 1) in vec2 aTexCoord; \n\
-		layout(location = 0) out vec2 TexCoord;"
-	"void main() { gl_Position = vec4(aPos, 0.0, 1.0); TexCoord = aTexCoord; }";
-const char* fragmentShaderSource = "\
-		#version 460 core\n\
-		layout(location = 0) in vec2 TexCoord; \
-		layout(location = 0) out vec4 FragColor; \
-		uniform sampler2D screenTexture; \
-		void main() { FragColor = texture(screenTexture, TexCoord); }";
-
 // 顶点数据（位置 + 纹理坐标）
 float vertices[] = {
 	// 位置 (x, y, z)      // 颜色 (r, g, b)
-	-0.5f, -0.5f, 0.0f,    1.0f, 0.0f, 0.0f,  // 顶点1：红色
-	 0.5f, -0.5f, 0.0f,    0.0f, 1.0f, 0.0f,  // 顶点2：绿色
-	 0.0f,  0.5f, 0.0f,    0.0f, 0.0f, 1.0f   // 顶点3：蓝色
+	-0.5f,  0.5f, 0.0f,    0.0f, 0.0f, 1.0f,  // 顶点1：蓝色
+	-0.5f, -0.5f, 0.0f,    1.0f, 0.0f, 0.0f,  // 顶点2：红色
+	 0.5f, -0.5f, 0.0f,    0.0f, 1.0f, 0.0f,  // 顶点3：绿色
+	 0.5f,  0.5f, 0.0f,    0.0f, 0.0f, 0.0f   // 顶点4：蓝色
 };
 
 unsigned int indices[] = {
@@ -38,8 +27,14 @@ unsigned int indices[] = {
 	0, 2, 3
 };
 
+OpenGLDevice::OpenGLDevice() {
+	BackendAPI_ = BackendAPI::eUnknown;
+	Window_ = nullptr;
+	BuiltinShader_ = nullptr;
+}
+
 bool OpenGLDevice::Initialize(Window* Win){
-	BackendAPI_ = BackendAPI::OpenGL;
+	BackendAPI_ = BackendAPI::eOpenGL;
 	Window_ = Win;
 
 	if (!InitOpenGLContext()) {
@@ -52,21 +47,15 @@ bool OpenGLDevice::Initialize(Window* Win){
 		return false;
 	}
 
-	GLuint vertShader;
-	vertShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertShader);
-	GLuint fragShader;
-	fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragShader);
-
 	// 初始化Shader
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertShader);
-	glAttachShader(shaderProgram, fragShader);
-	glLinkProgram(shaderProgram);
-	glUseProgram(shaderProgram);
+	BuiltinShader_ = new OpenGLShader();
+	if (!BuiltinShader_) {
+		return false;
+	}
+	
+	if (!BuiltinShader_->Load("")) {
+		return false;
+	}
 
 	//初始化FBO
 	glGenFramebuffers(1, &FBO);
@@ -92,7 +81,7 @@ bool OpenGLDevice::Initialize(Window* Win){
 
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VAO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	// 位置属性
@@ -132,9 +121,15 @@ void OpenGLDevice::Draw() {
 	// Object pass
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	glUseProgram(shaderProgram);
+	BuiltinShader_->Use();
+
+	glEnableVertexAttribArray(0);
 	glBindVertexArray(VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 3); 
+	//glDrawArrays(GL_TRIANGLES, 0, 3); 
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glDisableVertexAttribArray(0);
 
 	SwapBuffers();
 }

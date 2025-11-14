@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 enum class BackendAPI {
-	OpenGL = 0
+	eOpenGL = 0,
+	eUnknown
 };
 

@@ -14,7 +14,7 @@ Renderer::~Renderer() {
 bool Renderer::Initialize(Window* Win, BackendAPI Type) {
 	switch (Type)
 	{
-	case BackendAPI::OpenGL:
+	case BackendAPI::eOpenGL:
 	{
 		LOG_INFO << "Backend API Type: OpenGL.";
 		GraphicsDevice_ = new OpenGLDevice();

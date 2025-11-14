@@ -6,6 +6,7 @@ set(RENDERING_SOURCES
 )
 set(RENDERING_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/Renderer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/RHI/IShader.h
 )
 
 # 平台相关源文件
@@ -30,10 +31,12 @@ find_package(Vulkan QUIET)
 if(ENGINE_ENABLE_OPENGL)
     list(APPEND RENDERING_SOURCES
        Graphics/Backend/OpenGL/OpenGLDevice.cpp
+       Graphics/Backend/OpenGL/OpenGLShader.cpp
        Graphics/Backend/OpenGL/glad/glad.c
     )
     list(APPEND RENDERING_HEADERS
         Graphics/Backend/OpenGL/OpenGLDevice.h
+        Graphics/Backend/OpenGL/OpenGLShader.h
         Graphics/Backend/OpenGL/glad/glad.h
         Graphics/Backend/OpenGL/glad/KHR/khrplatform.h
     )

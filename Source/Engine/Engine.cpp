@@ -60,7 +60,7 @@ bool Engine::Initialize(IApplication* app) {
 
 	// Rendering
 	CoreRenderer = new Renderer();
-	if (!CoreRenderer || !CoreRenderer->Initialize(Window_, BackendAPI::OpenGL)) {
+	if (!CoreRenderer || !CoreRenderer->Initialize(Window_, BackendAPI::eOpenGL)) {
 		return false;
 	}
 
