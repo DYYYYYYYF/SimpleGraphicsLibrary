@@ -2,6 +2,15 @@
 #include "Platform/File/File.h"
 #include <Logger.hpp>
 
+OpenGLShader::OpenGLShader() {
+	ProgramID_ = NULL;
+
+}
+
+OpenGLShader::~OpenGLShader() {
+	Unload();
+}
+
 bool OpenGLShader::Load(const std::string& path) {
 	// TODO:从配置文件读取具体配置
 	std::string vertFile = "../Assets/Shaders/Sources/Builtin/Shader.Builtin.vert";
@@ -16,46 +25,58 @@ bool OpenGLShader::Load(const std::string& path) {
 	
 
 	// 初始化ShaderProgram
-	ShaderProgram_ = glCreateProgram();
+	ProgramID_ = glCreateProgram();
 	for (auto Stage : ShaderStages_) {
-		glAttachShader(ShaderProgram_, Stage.second);
+		glAttachShader(ProgramID_, Stage.second);
 	}
-	glLinkProgram(ShaderProgram_);
+	glLinkProgram(ProgramID_);
 
 	// 检测连接结果
 	GLint Success;
-	glGetProgramiv(ShaderProgram_, GL_LINK_STATUS, &Success);
+	glGetProgramiv(ProgramID_, GL_LINK_STATUS, &Success);
 	if (Success == 0) {
 		GLchar ErrorLog[1024];
-		glGetProgramInfoLog(ShaderProgram_, sizeof(ErrorLog), NULL, ErrorLog);
+		glGetProgramInfoLog(ProgramID_, sizeof(ErrorLog), NULL, ErrorLog);
 		LOG_ERROR << "Invalid shader program: '" << ErrorLog << "'.";
 		return false;
 	}
 
-	glValidateProgram(ShaderProgram_);
-	glGetProgramiv(ShaderProgram_, GL_VALIDATE_STATUS, &Success);
+	glValidateProgram(ProgramID_);
+	glGetProgramiv(ProgramID_, GL_VALIDATE_STATUS, &Success);
 	if (!Success) {
 		GLchar ErrorLog[1024];
-		glGetProgramInfoLog(ShaderProgram_, sizeof(ErrorLog), NULL, ErrorLog);
+		glGetProgramInfoLog(ProgramID_, sizeof(ErrorLog), NULL, ErrorLog);
 		LOG_ERROR << "Invalid shader program: '" << ErrorLog << "'.";
 		return false;
 	}
 
-	Use();
+	Bind();
 	return true;
 }
 
 void OpenGLShader::Unload() {
-	if (ShaderProgram_) {
+	if (ProgramID_ != NULL) {
 		for (auto& Stage : ShaderStages_) {
-			glDetachShader(ShaderProgram_, Stage.second);
+			glDetachShader(ProgramID_, Stage.second);
 			glDeleteShader(Stage.second);
 		}
+
+		glDeleteProgram(ProgramID_);
 	}
 }
 
-void OpenGLShader::Use() {
-	glUseProgram(ShaderProgram_);
+void OpenGLShader::Bind() {
+	if (ProgramID_ != 0){
+		glUseProgram(ProgramID_);
+	}
+}
+
+void OpenGLShader::Unbind() {
+	glUseProgram(0);
+}
+
+GLint OpenGLShader::GetUniformLocation(const std::string& name) const {
+	return glGetUniformLocation(ProgramID_, name.c_str());
 }
 
 bool OpenGLShader::AddStage(const std::string& source, ShaderStage stage) {
@@ -76,6 +97,7 @@ bool OpenGLShader::AddStage(const std::string& source, ShaderStage stage) {
 	}
 
 	if (!CompileShader(source, shaderObj)) {
+		glDeleteShader(shaderObj);
 		LOG_ERROR << "Error compiling shader '" << source << "' Type: " << (int)stage;
 		return false;
 	}
@@ -119,3 +141,13 @@ bool OpenGLShader::CompileShader(const std::string& source, GLuint& Obj)
 
 	return true;
 }
+
+// -------------------------------- 设置Uniform ----------------------------------
+void OpenGLShader::SetInt(const std::string& name, int value){ glUniform1i(GetUniformLocation(name), value); }
+void OpenGLShader::SetFloat(const std::string& name, float value){ glUniform1f(GetUniformLocation(name), value); }
+void OpenGLShader::SetVec2(const std::string& name, const FVector2& value){ glUniform2fv(GetUniformLocation(name), 1, value.data()); }
+void OpenGLShader::SetVec3(const std::string& name, const FVector3& value){ glUniform3fv(GetUniformLocation(name), 1, value.data()); }
+void OpenGLShader::SetVec4(const std::string& name, const FVector4& value){ glUniform4fv(GetUniformLocation(name), 1, value.data()); }
+// GL_FALSE这里意味着cloumn-major 方式读取
+void OpenGLShader::SetMat3(const std::string& name, const FMatrix3& value){ glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, value.data()); }
+void OpenGLShader::SetMat4(const std::string& name, const FMatrix4& value) { glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, value.data()); }

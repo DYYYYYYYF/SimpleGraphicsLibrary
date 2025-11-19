@@ -11,15 +11,14 @@ set(RENDERING_HEADERS
 
 # 平台相关源文件
 if(WIN32)
+    # Windows支持OpenGL
     list(APPEND RENDERING_SOURCES 
-        ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Backend/OpenGL/OpenGLDevice_Win32.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Backend/OpenGL/OpenGLDevice.cpp
     )
 elseif(APPLE)
-    list(APPEND RENDERING_SOURCES 
-        ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Backend/OpenGL/OpenGLDevice_Apple.mm
-    )
+    # MacOS已经遗弃OpenGL，后续使用Metal
+    
 
-    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/Window/Apple/AppleWindow.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
