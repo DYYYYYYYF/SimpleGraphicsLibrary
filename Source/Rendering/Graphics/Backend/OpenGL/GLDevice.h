@@ -8,15 +8,20 @@
 #include "glad/wglext.h"
 
 class IShader;
+class IMesh;
+class IMaterial;
 
-class OpenGLDevice : public IGraphicsDevice {
+class GLDevice : public IGraphicsDevice {
 public:
-	OpenGLDevice();
+	GLDevice();
 	virtual bool Initialize(Window* Win) override;
 	virtual void Draw() override;
 	virtual void MakeCurrent() override;
 	virtual void SwapBuffers() override;
 	virtual void Destroy() override;
+
+	virtual std::shared_ptr<IMesh> CreateMesh() override;
+	virtual std::shared_ptr<IMaterial> CreateMaterial() override;
 
 private:
 	bool InitOpenGLContext();

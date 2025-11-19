@@ -9,6 +9,7 @@ enum class ShaderStage {
 
 class IShader {
 public:
+
 	// 使用和管理
 	virtual bool Load(const std::string& path) = 0;
 	virtual void Unload() = 0;
@@ -23,4 +24,9 @@ public:
 	virtual void SetVec4(const std::string& name, const FVector4& value) = 0;
 	virtual void SetMat3(const std::string& name, const FMatrix3& value) = 0;
 	virtual void SetMat4(const std::string& name, const FMatrix4& value) = 0;
+
+	virtual bool IsValid() const { return IsValid_; }
+
+protected:
+	bool IsValid_;
 };

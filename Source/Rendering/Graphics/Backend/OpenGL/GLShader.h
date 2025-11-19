@@ -1,13 +1,13 @@
 ﻿#pragma once
-#include "Graphics/RHI/IShader.h"
+#include "Resource/IShader.h"
 #include "glad/glad.h"
 
 #include <unordered_map>
 
-class OpenGLShader : public IShader {
+class GLShader : public IShader {
 public:
-	OpenGLShader();
-	virtual ~OpenGLShader();
+	GLShader(const std::string& path);
+	virtual ~GLShader();
 
 public:
 	// 使用和管理

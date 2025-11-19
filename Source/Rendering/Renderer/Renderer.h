@@ -3,20 +3,32 @@
 #include "RenderModuleAPI.h"
 #include "Graphics/GraphicsAPI.h"
 
+#include <string>
+#include <memory>
+
 class Window;
 class IGraphicsDevice;
+class IMesh;
+class IMaterial;
 
-class ENGINE_RENDERING_API Renderer {
+class Renderer {
 public:
-	Renderer();
-	virtual ~Renderer();
+	ENGINE_RENDERING_API Renderer();
+	ENGINE_RENDERING_API virtual ~Renderer();
+
+	ENGINE_RENDERING_API static Renderer* Instance();
 
 public:
-	virtual bool Initialize(Window* Win, BackendAPI Type);
-	virtual void Draw();
-	virtual void Destroy();
+	ENGINE_RENDERING_API virtual bool Initialize(Window* Win, BackendAPI Type);
+	ENGINE_RENDERING_API virtual void Draw();
+	ENGINE_RENDERING_API virtual void Destroy();
+
+public:
+	ENGINE_RENDERING_API std::shared_ptr<IMesh> CreateMesh(const std::string& Mesh);
+	ENGINE_RENDERING_API std::shared_ptr<IMaterial> CreateMaterial(const std::string& Mesh);
 
 protected:
-	IGraphicsDevice* GraphicsDevice_;
+	std::unique_ptr<IGraphicsDevice> GraphicsDevice_;
+	static Renderer* GlobalRenderer;
 
 };

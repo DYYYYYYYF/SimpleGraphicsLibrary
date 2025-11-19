@@ -2,14 +2,31 @@
 
 #include "Core/IApplication.h"
 
+#ifdef _WIN32
+#define EXPORT_API __declspec(dllexport)
+#else
+#define EXPORT_API __attribute__((visibility("default")))
+#endif
+
 class Editor : public IApplication {
 public:
 	Editor() {}
 	virtual ~Editor() {}
 
 public:
-	virtual bool Initialize() override;
-	virtual void Tick() override;
-	virtual void Render() override;
-	virtual void Shutdown() override;
+	EXPORT_API virtual bool Initialize() override;
+	EXPORT_API virtual void InitScene() override;
+	EXPORT_API virtual void Tick(float DeltaTime) override;
+	EXPORT_API virtual void Render() override;
+	EXPORT_API virtual void Shutdown() override;
 };
+
+extern "C" {
+	EXPORT_API IApplication* CreateApplication() {
+		return new Editor();
+	}
+
+	EXPORT_API void DestroyApplication(IApplication* app) {
+		delete app;
+	}
+}

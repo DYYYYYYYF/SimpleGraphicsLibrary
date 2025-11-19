@@ -6,20 +6,7 @@ set(RENDERING_SOURCES
 )
 set(RENDERING_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/Renderer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/RHI/IShader.h
 )
-
-# 平台相关源文件
-if(WIN32)
-    # Windows支持OpenGL
-    list(APPEND RENDERING_SOURCES 
-        ${CMAKE_CURRENT_SOURCE_DIR}/Graphics/Backend/OpenGL/OpenGLDevice.cpp
-    )
-elseif(APPLE)
-    # MacOS已经遗弃OpenGL，后续使用Metal
-    
-
-endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -29,13 +16,17 @@ find_package(Vulkan QUIET)
 # OpenGL后端
 if(ENGINE_ENABLE_OPENGL)
     list(APPEND RENDERING_SOURCES
-       Graphics/Backend/OpenGL/OpenGLDevice.cpp
-       Graphics/Backend/OpenGL/OpenGLShader.cpp
+       Graphics/Backend/OpenGL/GLDevice.cpp
+       Graphics/Backend/OpenGL/GLShader.cpp
+       Graphics/Backend/OpenGL/GLMesh.cpp
+       Graphics/Backend/OpenGL/GLMaterial.cpp
        Graphics/Backend/OpenGL/glad/glad.c
     )
     list(APPEND RENDERING_HEADERS
-        Graphics/Backend/OpenGL/OpenGLDevice.h
-        Graphics/Backend/OpenGL/OpenGLShader.h
+        Graphics/Backend/OpenGL/GLDevice.h
+        Graphics/Backend/OpenGL/GLShader.h
+        Graphics/Backend/OpenGL/GLMesh.h
+        Graphics/Backend/OpenGL/GLMaterial.h
         Graphics/Backend/OpenGL/glad/glad.h
         Graphics/Backend/OpenGL/glad/KHR/khrplatform.h
     )

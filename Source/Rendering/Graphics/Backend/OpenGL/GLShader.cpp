@@ -1,17 +1,20 @@
-﻿#include "OpenGLShader.h"
+﻿#include "GLShader.h"
 #include "Platform/File/File.h"
 #include <Logger.hpp>
 
-OpenGLShader::OpenGLShader() {
+GLShader::GLShader(const std::string& path) {
 	ProgramID_ = NULL;
+	IsValid_ = false;
 
+	// 加载Shader
+	Load(path);
 }
 
-OpenGLShader::~OpenGLShader() {
+GLShader::~GLShader() {
 	Unload();
 }
 
-bool OpenGLShader::Load(const std::string& path) {
+bool GLShader::Load(const std::string& path) {
 	// TODO:从配置文件读取具体配置
 	std::string vertFile = "../Assets/Shaders/Sources/Builtin/Shader.Builtin.vert";
 	if (!AddStage(vertFile, ShaderStage::eVertex)) {
@@ -51,10 +54,12 @@ bool OpenGLShader::Load(const std::string& path) {
 	}
 
 	Bind();
+
+	IsValid_ = true;
 	return true;
 }
 
-void OpenGLShader::Unload() {
+void GLShader::Unload() {
 	if (ProgramID_ != NULL) {
 		for (auto& Stage : ShaderStages_) {
 			glDetachShader(ProgramID_, Stage.second);
@@ -65,21 +70,21 @@ void OpenGLShader::Unload() {
 	}
 }
 
-void OpenGLShader::Bind() {
+void GLShader::Bind() {
 	if (ProgramID_ != 0){
 		glUseProgram(ProgramID_);
 	}
 }
 
-void OpenGLShader::Unbind() {
+void GLShader::Unbind() {
 	glUseProgram(0);
 }
 
-GLint OpenGLShader::GetUniformLocation(const std::string& name) const {
+GLint GLShader::GetUniformLocation(const std::string& name) const {
 	return glGetUniformLocation(ProgramID_, name.c_str());
 }
 
-bool OpenGLShader::AddStage(const std::string& source, ShaderStage stage) {
+bool GLShader::AddStage(const std::string& source, ShaderStage stage) {
 	GLuint shaderObj = 0;
 	switch (stage)
 	{
@@ -106,7 +111,7 @@ bool OpenGLShader::AddStage(const std::string& source, ShaderStage stage) {
 	return true;
 }
 
-bool OpenGLShader::CompileShader(const std::string& source, GLuint& Obj)
+bool GLShader::CompileShader(const std::string& source, GLuint& Obj)
 {
 	File shaderSrc(source);
 	if (!shaderSrc.IsExist()) {
@@ -143,11 +148,11 @@ bool OpenGLShader::CompileShader(const std::string& source, GLuint& Obj)
 }
 
 // -------------------------------- 设置Uniform ----------------------------------
-void OpenGLShader::SetInt(const std::string& name, int value){ glUniform1i(GetUniformLocation(name), value); }
-void OpenGLShader::SetFloat(const std::string& name, float value){ glUniform1f(GetUniformLocation(name), value); }
-void OpenGLShader::SetVec2(const std::string& name, const FVector2& value){ glUniform2fv(GetUniformLocation(name), 1, value.data()); }
-void OpenGLShader::SetVec3(const std::string& name, const FVector3& value){ glUniform3fv(GetUniformLocation(name), 1, value.data()); }
-void OpenGLShader::SetVec4(const std::string& name, const FVector4& value){ glUniform4fv(GetUniformLocation(name), 1, value.data()); }
+void GLShader::SetInt(const std::string& name, int value){ glUniform1i(GetUniformLocation(name), value); }
+void GLShader::SetFloat(const std::string& name, float value){ glUniform1f(GetUniformLocation(name), value); }
+void GLShader::SetVec2(const std::string& name, const FVector2& value){ glUniform2fv(GetUniformLocation(name), 1, value.data()); }
+void GLShader::SetVec3(const std::string& name, const FVector3& value){ glUniform3fv(GetUniformLocation(name), 1, value.data()); }
+void GLShader::SetVec4(const std::string& name, const FVector4& value){ glUniform4fv(GetUniformLocation(name), 1, value.data()); }
 // GL_FALSE这里意味着cloumn-major 方式读取
-void OpenGLShader::SetMat3(const std::string& name, const FMatrix3& value){ glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, value.data()); }
-void OpenGLShader::SetMat4(const std::string& name, const FMatrix4& value) { glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, value.data()); }
+void GLShader::SetMat3(const std::string& name, const FMatrix3& value){ glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, value.data()); }
+void GLShader::SetMat4(const std::string& name, const FMatrix4& value) { glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, value.data()); }

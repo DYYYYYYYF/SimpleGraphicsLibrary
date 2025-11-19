@@ -53,6 +53,10 @@ add_subdirectory(Platform)
 message(STATUS "[3/9] Configuring Rendering...")
 add_subdirectory(Rendering)
 
+## 第四层：资源管理
+message(STATUS "[4/9] Configuring Framework...")
+add_subdirectory(Framework)
+
 ## 第五层：资源管理
 #message(STATUS "[5/9] Configuring Resource...")
 #add_subdirectory(Resource)
@@ -104,6 +108,7 @@ if(ENGINE_CREATE_UNIFIED_INTERFACE)
         EngineCore
         EnginePlatform
         EngineRendering
+        EngineFramework
         #EngineResource
         #EngineScene
         #EngineComponents

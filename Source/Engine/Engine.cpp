@@ -71,6 +71,8 @@ bool Engine::Initialize(IApplication* app) {
 }
 
 void Engine::Run() {
+	Application_->InitScene();
+
 	EventManager& eventManager = EventManager::Instance();
 	while (Running_ && !Window_->ShouldClose()) {
 		// 处理窗口消息
@@ -79,7 +81,7 @@ void Engine::Run() {
 		eventManager.ProcessEvents();
 
 		// Application tick
-		Application_->Tick();
+		Application_->Tick(0.01f);
 
 		CoreRenderer->Draw();
 
