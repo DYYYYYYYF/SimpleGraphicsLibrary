@@ -63,7 +63,7 @@ endif()
 # ============================================================================
 
 if(MSVC)
-    add_compile_options(/W4 /permissive- /MP)
+    add_compile_options(/W4 /permissive- /MP /utf-8)
     add_compile_definitions(
         _CRT_SECURE_NO_WARNINGS
         NOMINMAX

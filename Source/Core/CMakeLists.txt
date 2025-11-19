@@ -24,6 +24,7 @@ endif()
 
 # 通用第三方库
 target_link_libraries(EngineCore 
+    Eigen3::Eigen
     UL::Logger
 )
 
