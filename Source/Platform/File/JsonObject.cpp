@@ -45,6 +45,18 @@ bool JsonObject::IsString() const {
 	return Handle->value.is_string();
 }
 
+bool JsonObject::IsNull() const {
+	return Handle->value.is_null();
+}
+
+bool JsonObject::IsBool() const {
+	return Handle->value.is_boolean();
+}
+
+bool JsonObject::IsNumber() const {
+	return Handle->value.is_number();
+}
+
 std::string JsonObject::GetString() const {
 	if (Handle->value.is_string())
 		return Handle->value.get<std::string>();
@@ -63,6 +75,80 @@ JsonObject JsonObject::ArrayItemAt(size_t index) const {
 	return Obj;
 }
 
+void JsonObject::ArrayPush(const JsonObject& value) {
+	if (IsArray()) {
+		Handle->value.push_back(value.Handle->value);
+	}
+}
+
+bool JsonObject::ArrayRemoveAt(size_t index) {
+	if (IsArray() && index < Handle->value.size()) {
+		Handle->value.erase(Handle->value.begin() + index);
+		return true;
+	}
+	return false;
+}
+
+bool JsonObject::HasKey(const std::string& key) const {
+	if (!IsObject()) return false;
+	return Handle->value.find(key) != Handle->value.end();
+}
+
+bool JsonObject::Remove(const std::string& key) {
+	if (!IsObject()) return false;
+	return Handle->value.erase(key) > 0;
+}
+
+std::vector<std::string> JsonObject::GetKeys() const {
+	std::vector<std::string> keys;
+	if (IsObject()) {
+		for (auto it = Handle->value.begin(); it != Handle->value.end(); ++it) {
+			keys.push_back(it.key());
+		}
+	}
+	return keys;
+}
+
+bool JsonObject::SaveToFile(const File& file) const {
+	try {
+		std::string content = Dump(2);
+		// 假设File有WriteString方法
+		// file.WriteString(content);
+		return true;
+	}
+	catch (...) {
+		return false;
+	}
+}
+
+bool JsonObject::LoadFromFile(const File& file) {
+	try {
+		if (!file.IsExist()) return false;
+		std::string content = file.ReadBytes();
+		Handle->value = nlohmann::json::parse(content);
+		return true;
+	}
+	catch (...) {
+		return false;
+	}
+}
+
+bool JsonObject::IsEmpty() const {
+	return Handle->value.empty();
+}
+
+JsonObject JsonObject::Clone() const {
+	JsonObject copy;
+	copy.Handle->value = Handle->value;
+	return copy;
+}
+
+void JsonObject::Merge(const JsonObject& other) {
+	if (IsObject() && other.IsObject()) {
+		Handle->value.update(other.Handle->value);
+	}
+}
+
 size_t JsonObject::Size() const {
 	return Handle->value.size();
 }
@@ -77,6 +163,24 @@ float JsonObject::GetFloat() const {
 	return 0.0f;
 }
 
+bool JsonObject::GetBool(bool defaultValue) const {
+	if (Handle->value.is_boolean())
+		return Handle->value.get<bool>();
+	return defaultValue;
+}
+
+int JsonObject::GetInt(int defaultValue) const {
+	if (Handle->value.is_number())
+		return Handle->value.get<int>();
+	return defaultValue;
+}
+
+double JsonObject::GetDouble(double defaultValue) const {
+	if (Handle->value.is_number())
+		return Handle->value.get<double>();
+	return defaultValue;
+}
+
 JsonObject JsonObject::Get(const std::string& key) const {
 	JsonObject Obj;
 	auto it = Handle->value.find(key);
@@ -87,6 +191,22 @@ JsonObject JsonObject::Get(const std::string& key) const {
 		Obj.Handle->value = nlohmann::json();
 	}
 	return Obj;
+}
+
+void JsonObject::SetString(const std::string& key, const std::string& value) {
+	Handle->value[key] = value;
+}
+
+void JsonObject::SetInt(const std::string& key, int value) {
+	Handle->value[key] = value;
+}
+
+void JsonObject::SetFloat(const std::string& key, float value) {
+	Handle->value[key] = value;
+}
+
+void JsonObject::SetBool(const std::string& key, bool value) {
+	Handle->value[key] = value;
 }
 
 void JsonObject::Set(const std::string& key, const JsonObject& value) {

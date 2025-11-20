@@ -24,9 +24,9 @@ public:
 	ENGINE_PLATFORM_API std::string GetFullPath() const { return FullPath; }
 	ENGINE_PLATFORM_API std::string GetPrePath() const { return PrePath; }
 	ENGINE_PLATFORM_API std::string GetFileType() const { return FileType; }
-	ENGINE_PLATFORM_API std::string ReadBytes();
+	ENGINE_PLATFORM_API std::string ReadBytes() const ;
 	ENGINE_PLATFORM_API bool WriteBytes(const char* source, size_t size, std::ios::openmode mode = std::ios::ate);
-	ENGINE_PLATFORM_API bool IsExist();
+	ENGINE_PLATFORM_API bool IsExist() const;
 
 protected:
 	std::string FullPath;

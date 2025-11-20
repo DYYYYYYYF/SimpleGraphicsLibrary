@@ -58,5 +58,14 @@ function(add_example target_name source_dir)
 endfunction()
 
 # 添加各个示例
-add_example(BasicWindow "${CMAKE_CURRENT_SOURCE_DIR}/BasicWindow")
-add_example(SimpleEvent "${CMAKE_CURRENT_SOURCE_DIR}/SimpleEvent")
+FILE(GLOB ALL_ITEMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*)
+foreach(ITEM ${ALL_ITEMS})
+    if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${ITEM})
+        add_example(${ITEM} "${CMAKE_CURRENT_SOURCE_DIR}/${ITEM}")
+        message("-- Add example: ${ITEM}")
+    endif()
+endforeach()
+
+#add_example(BasicWindow "${CMAKE_CURRENT_SOURCE_DIR}/BasicWindow")
+#add_example(SimpleEvent "${CMAKE_CURRENT_SOURCE_DIR}/SimpleEvent")
+#add_example(TestJson "${CMAKE_CURRENT_SOURCE_DIR}/TestJson")
