@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "File.h"
 #include <string>
 #include <memory>
 
@@ -8,26 +9,29 @@ public:
 	enum class Type { eNull, eBool, eNumber, eString, eObject, eArray };
 
 public:
-	JsonObject();
-	JsonObject(JsonObject::Type type);
-	JsonObject(const std::string& content);
+	ENGINE_PLATFORM_API JsonObject();
+	ENGINE_PLATFORM_API JsonObject(File file);
+	ENGINE_PLATFORM_API JsonObject(JsonObject::Type type);
+	ENGINE_PLATFORM_API JsonObject(const std::string& content);
 
 public:
-
 	// 引擎API（与任何库无关）
-	bool IsObject() const;
-	bool IsArray() const;
-	bool IsString() const;
+	ENGINE_PLATFORM_API bool IsObject() const;
+	ENGINE_PLATFORM_API bool IsArray() const;
+	ENGINE_PLATFORM_API bool IsString() const;
 
-	float GetFloat() const;
-	std::string GetString() const;
+	ENGINE_PLATFORM_API float GetFloat() const;
+	ENGINE_PLATFORM_API std::string GetString() const;
 
-	std::string Dump(int indent = -1) const;
+	ENGINE_PLATFORM_API JsonObject ArrayItemAt(size_t index) const;
+	ENGINE_PLATFORM_API size_t Size() const;
 
-	JsonObject Get(const std::string& key) const;
-	void Set(const std::string& key, const JsonObject& value);
+	ENGINE_PLATFORM_API std::string Dump(int indent = -1) const;
 
-	void Clear();
+	ENGINE_PLATFORM_API JsonObject Get(const std::string& key) const;
+	ENGINE_PLATFORM_API void Set(const std::string& key, const JsonObject& value);
+
+	ENGINE_PLATFORM_API void Clear();
 
 private:
 	struct JsonHandle;

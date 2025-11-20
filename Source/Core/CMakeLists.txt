@@ -26,6 +26,7 @@ endif()
 target_link_libraries(EngineCore 
     Eigen3::Eigen
     UL::Logger
+    nlohmann_json::nlohmann_json
 )
 
 # 确保源文件也能找到头文件

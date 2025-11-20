@@ -190,13 +190,13 @@ void GLDevice::Destroy() {
 	LOG_INFO << "Destroying OpenGL device.";
 }
 
-std::shared_ptr<IMesh> GLDevice::CreateMesh() {
-	std::shared_ptr<IMesh> NewMesh = std::make_shared<GLMesh>("");
+std::shared_ptr<IMesh> GLDevice::CreateMesh(const std::string& AssetPath) {
+	std::shared_ptr<IMesh> NewMesh = std::make_shared<GLMesh>(AssetPath);
 	return NewMesh;
 }
 
-std::shared_ptr<IMaterial> GLDevice::CreateMaterial() {
-	std::shared_ptr<IMaterial> NewMaterial = std::make_shared<GLMaterial>("");
+std::shared_ptr<IMaterial> GLDevice::CreateMaterial(const std::string& AssetPath) {
+	std::shared_ptr<IMaterial> NewMaterial = std::make_shared<GLMaterial>(AssetPath);
 	return NewMaterial;
 }
 

@@ -29,8 +29,8 @@ public:
 	ENGINE_RENDERING_API virtual void Destroy();
 
 public:
-	ENGINE_RENDERING_API std::shared_ptr<IMesh> CreateMesh(const std::string& Mesh);
-	ENGINE_RENDERING_API std::shared_ptr<IMaterial> CreateMaterial(const std::string& Mesh);
+	ENGINE_RENDERING_API std::shared_ptr<IMesh> CreateMesh(const std::string& AssetPath);
+	ENGINE_RENDERING_API std::shared_ptr<IMaterial> CreateMaterial(const std::string& AssetPath);
 
 protected:
 	std::unique_ptr<IGraphicsDevice> GraphicsDevice_;

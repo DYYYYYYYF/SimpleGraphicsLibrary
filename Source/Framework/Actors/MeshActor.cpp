@@ -1,7 +1,7 @@
 ﻿#include "MeshActor.h"
 
 MeshActor::MeshActor(const std::string& name) : Actor(name){
-	MeshComponent_ = AddComponent<MeshComponent>(this, "MeshComponent");
+	MeshComponent_ = CreateComponent<MeshComponent>(this, "MeshComponent");
 	if (!MeshComponent_) { return; }
 
 	
@@ -9,9 +9,9 @@ MeshActor::MeshActor(const std::string& name) : Actor(name){
 }
 
 void MeshActor::BeginPlay() {
-	MeshComponent_->LoadFromFile("");
+	MeshComponent_->LoadFromFile("/Builtin/Builtin.json");
 }
 
 void MeshActor::Tick(float DeltaTime) {
-	
+	(void)DeltaTime;
 }

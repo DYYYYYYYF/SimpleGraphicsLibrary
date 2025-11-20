@@ -20,8 +20,8 @@ public:
 	virtual void SwapBuffers() override;
 	virtual void Destroy() override;
 
-	virtual std::shared_ptr<IMesh> CreateMesh() override;
-	virtual std::shared_ptr<IMaterial> CreateMaterial() override;
+	virtual std::shared_ptr<IMesh> CreateMesh(const std::string& AssetPath) override;
+	virtual std::shared_ptr<IMaterial> CreateMaterial(const std::string& AssetPath) override;
 
 private:
 	bool InitOpenGLContext();

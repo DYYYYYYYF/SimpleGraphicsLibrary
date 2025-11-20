@@ -3,20 +3,77 @@
 #include "Resource/IShader.h"
 #include "Resource/ITexture.h"
 #include "GLShader.h"
+#include "Platform/File/JsonObject.h"
 
-GLMaterial::GLMaterial(const std::string& mesh) {
-	Load();
+GLMaterial::GLMaterial() { Name_ = "";  IsValid_ = false; }
+
+GLMaterial::GLMaterial(const std::string& filename) {
+	IsValid_ = false;
+
+	Load(filename);
 }
 
 GLMaterial::~GLMaterial() {
 	Unload();
 }
 
-void GLMaterial::Load() {
+void GLMaterial::Load(const std::string& filename) {
+	File MaterialFile("../Assets/Materials" + filename);
+	if (!MaterialFile.IsExist()) {
+		return;
+	}
+
+	JsonObject MaterialObj(MaterialFile);
+	if (!MaterialObj.IsObject()) {
+		return;
+	}
+
+	// 加载数据
+	Name_ = MaterialObj.Get("Name").GetString();
+
+	JsonObject UBOData = MaterialObj.Get("MaterialUBO");
+	if (!UBOData.IsObject()) {
+		return;
+	}
+
+	JsonObject AlbedoData = UBOData.Get("Albedo");
+	if (AlbedoData.IsArray() && AlbedoData.Size() == 4) {
+		MaterialUBO_.Albedo_ = FVector4(
+			AlbedoData.ArrayItemAt(0).GetFloat(),
+			AlbedoData.ArrayItemAt(1).GetFloat(),
+			AlbedoData.ArrayItemAt(2).GetFloat(),
+			AlbedoData.ArrayItemAt(3).GetFloat()
+		);
+	}
+
+	JsonObject EmissiveData = UBOData.Get("Emissive");
+	if (EmissiveData.IsArray() && AlbedoData.Size() == 4) {
+		MaterialUBO_.Albedo_ = FVector4(
+			EmissiveData.ArrayItemAt(0).GetFloat(),
+			EmissiveData.ArrayItemAt(1).GetFloat(),
+			EmissiveData.ArrayItemAt(2).GetFloat(),
+			EmissiveData.ArrayItemAt(3).GetFloat()
+		);
+	}
+
+	JsonObject MetallicRoughnessAOData = UBOData.Get("MetallicRoughnessAO");
+	if (MetallicRoughnessAOData.Get("MetallicRoughnessAO").IsArray() && AlbedoData.Size() == 4) {
+		MaterialUBO_.Albedo_ = FVector4(
+			MetallicRoughnessAOData.ArrayItemAt(0).GetFloat(),
+			MetallicRoughnessAOData.ArrayItemAt(1).GetFloat(),
+			MetallicRoughnessAOData.ArrayItemAt(2).GetFloat(),
+			MetallicRoughnessAOData.ArrayItemAt(3).GetFloat()
+		);
+	}
+
+	std::string ShaderAsset = MaterialObj.Get("UsedShader").GetString();
+	Shader_ = std::make_shared<GLShader>(filename);
+
+	// 创建Buffer
 	glGenBuffers(1, &UBO_);
 	glBindBuffer(GL_UNIFORM_BUFFER, UBO_);
 
-	Shader_ = std::make_shared<GLShader>("");
+	IsValid_ = true;
 }
 
 void GLMaterial::Unload() {

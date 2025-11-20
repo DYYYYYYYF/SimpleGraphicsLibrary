@@ -15,7 +15,7 @@ public:
 public:
 	ENGINE_FRAMEWORK_API void Draw(CommandList& CmdList);
 
-	ENGINE_FRAMEWORK_API bool LoadFromFile(const std::string& File);
+	ENGINE_FRAMEWORK_API bool LoadFromFile(const std::string& FilePath);
 
 	ENGINE_FRAMEWORK_API std::shared_ptr<IMesh> GetMesh() { return Meshes_; }
 	ENGINE_FRAMEWORK_API std::shared_ptr<IMaterial> GetMaterial() { return Materials_; }

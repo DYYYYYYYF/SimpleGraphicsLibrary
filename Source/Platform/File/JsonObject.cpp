@@ -7,6 +7,15 @@ struct JsonObject::JsonHandle {
 
 JsonObject::JsonObject() : Handle(std::make_shared<JsonHandle>()) {}
 
+JsonObject::JsonObject(File file) : Handle(std::make_shared<JsonHandle>()) {
+	if (file.IsExist()) {
+		Handle->value = JsonObject(file.ReadBytes()).Handle->value;
+	}
+	else {
+		Handle->value = nlohmann::json();
+	}
+}
+
 JsonObject::JsonObject(JsonObject::Type type) : Handle(std::make_shared<JsonHandle>()) {
 	switch (type)
 	{
@@ -40,6 +49,22 @@ std::string JsonObject::GetString() const {
 	if (Handle->value.is_string())
 		return Handle->value.get<std::string>();
 	return "";
+}
+
+JsonObject JsonObject::ArrayItemAt(size_t index) const {
+	JsonObject Obj;
+	if (IsArray()) {
+		Obj.Handle->value = Handle->value.at(index);
+	}
+	else
+	{
+		Obj.Handle->value = nlohmann::json();
+	}
+	return Obj;
+}
+
+size_t JsonObject::Size() const {
+	return Handle->value.size();
 }
 
 std::string JsonObject::Dump(int indent) const {

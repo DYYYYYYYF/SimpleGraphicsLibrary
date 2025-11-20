@@ -4,6 +4,7 @@
 #include "ITexture.h"
 
 #include <memory>
+#include <string>
 #include <unordered_map>
 
 class IShader;
@@ -23,7 +24,7 @@ public:
 	};
 
 public:
-	virtual void Load() = 0;
+	virtual void Load(const std::string& filename) = 0;
 	virtual void Unload() = 0;
 
 	virtual void Apply() const = 0;
@@ -44,9 +45,14 @@ public:
 		Textures_.erase(slot);
 	}
 
+	const std::string& GetName() const { return Name_; }
+	bool IsValid() const { return IsValid_; }
 	std::shared_ptr<IShader> GetShader() { return Shader_; }
 
 protected:
+	std::string Name_;
+	bool IsValid_;
+
 	// 材质参数
 	MaterialUBO MaterialUBO_;
 

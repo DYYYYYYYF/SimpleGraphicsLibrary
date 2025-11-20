@@ -2,15 +2,15 @@
 
 #include "Resource/IMaterial.h"
 #include "glad/glad.h"
-#include <string>
 
 class GLMaterial : public IMaterial {
 public:
-	GLMaterial(const std::string& mesh);
+	GLMaterial();
+	GLMaterial(const std::string& filename);
 	virtual ~GLMaterial();
 
 public:
-	virtual void Load() override;
+	virtual void Load(const std::string& filename) override;
 	virtual void Unload() override;
 
 	virtual void Apply() const override;

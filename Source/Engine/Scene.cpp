@@ -1,4 +1,4 @@
-#include "Scene.h"
+﻿#include "Scene.h"
 #include "Framework/Actors/Actor.h"
 
 void Scene::AddToScene(std::shared_ptr<Actor> Act) { 

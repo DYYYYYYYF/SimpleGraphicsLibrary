@@ -2,6 +2,7 @@
 
 #include "GraphicsAPI.h"
 #include <memory>
+#include <string>
 
 class Window;
 class IMesh;
@@ -17,8 +18,8 @@ public:
 	virtual void Destroy() = 0;
 
 public:
-	virtual std::shared_ptr<IMesh> CreateMesh() = 0;
-	virtual std::shared_ptr<IMaterial> CreateMaterial() = 0;
+	virtual std::shared_ptr<IMesh> CreateMesh(const std::string& AssetPath) = 0;
+	virtual std::shared_ptr<IMaterial> CreateMaterial(const std::string& AssetPath) = 0;
 
 public:
 	BackendAPI GetBackendAPI() { return BackendAPI_; }

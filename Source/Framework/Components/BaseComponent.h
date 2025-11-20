@@ -15,7 +15,7 @@ public:
 	ENGINE_FRAMEWORK_API virtual void OnEnable() override {}
 	ENGINE_FRAMEWORK_API virtual void OnDisable() override {}
 
-	ENGINE_FRAMEWORK_API virtual void Tick(float deltaTime) {};
+	ENGINE_FRAMEWORK_API virtual void Tick(float DeltaTime) { (void)DeltaTime; };
 
 	ENGINE_FRAMEWORK_API Actor* GetOwner() const { return Owner_; }
 	ENGINE_FRAMEWORK_API void SetOwner(Actor* Owner) { Owner_ = Owner; }

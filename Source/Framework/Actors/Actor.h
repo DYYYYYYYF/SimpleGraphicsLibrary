@@ -31,18 +31,28 @@ public:
 
 
 	template<typename T, typename... Args>
-	T* AddComponent(Args&&... args) {
+	T* CreateComponent(Args&&... args) {
 		static_assert(std::is_base_of<Component, T>::value,
 			"T must derive from Component");
 
-		auto component = std::make_unique<T>(std::forward<Args>(args)...);
-		T* ptr = component.get();
+		std::unique_ptr<T> component = std::make_unique<T>(std::forward<Args>(args)...);
+		T* Handle = component.get();
 
-		component->SetOwner(this);
-		Components_[typeid(T)] = std::move(component);
+		AddComponent(std::move(component));
+
+		return Handle;
+	}
+
+	template<typename T, typename... Args>
+	void AddComponent(std::unique_ptr<T> Comp) {
+		static_assert(std::is_base_of<Component, T>::value,
+			"T must derive from Component");
+
+		T* ptr = Comp.get();
+		Comp->SetOwner(this);
+		Components_[typeid(T)] = std::move(Comp);
 
 		ptr->OnAttach();
-		return ptr;
 	}
 
 	template<typename T>

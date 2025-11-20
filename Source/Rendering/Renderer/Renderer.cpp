@@ -81,14 +81,14 @@ void Renderer::Destroy() {
 	}
 }
 
-std::shared_ptr<IMesh> Renderer::CreateMesh(const std::string& Mesh) {
-	std::shared_ptr<IMesh> NewMesh = GraphicsDevice_->CreateMesh();
+std::shared_ptr<IMesh> Renderer::CreateMesh(const std::string& AssetPath) {
+	std::shared_ptr<IMesh> NewMesh = GraphicsDevice_->CreateMesh(AssetPath);
 	AllMeshes.push_back(NewMesh);
 	return NewMesh;
 }
 
-std::shared_ptr<IMaterial> Renderer::CreateMaterial(const std::string& Mesh) {
-	std::shared_ptr<IMaterial> NewMaterial = GraphicsDevice_->CreateMaterial();
+std::shared_ptr<IMaterial> Renderer::CreateMaterial(const std::string& AssetPath) {
+	std::shared_ptr<IMaterial> NewMaterial = GraphicsDevice_->CreateMaterial(AssetPath);
 	AllMaterials.push_back(NewMaterial);
 	return NewMaterial;
 }
