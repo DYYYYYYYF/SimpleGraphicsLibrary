@@ -1,6 +1,7 @@
 ﻿#pragma once
-#include <string>
+
 #include "Core/BaseMath.h"
+#include <string>
 
 enum class ShaderStage {
 	eVertex = 0,
@@ -25,8 +26,10 @@ public:
 	virtual void SetMat3(const std::string& name, const FMatrix3& value) = 0;
 	virtual void SetMat4(const std::string& name, const FMatrix4& value) = 0;
 
-	virtual bool IsValid() const { return IsValid_; }
+	std::string GetName() const { return Name_; }
+	bool IsValid() const { return IsValid_; }
 
 protected:
+	std::string Name_;
 	bool IsValid_;
 };

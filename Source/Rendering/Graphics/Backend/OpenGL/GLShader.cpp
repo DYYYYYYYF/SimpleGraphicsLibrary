@@ -1,30 +1,73 @@
 ﻿#include "GLShader.h"
-#include "Platform/File/File.h"
+#include "Platform/File/JsonObject.h"
 #include <Logger.hpp>
 
-GLShader::GLShader(const std::string& path) {
+GLShader::GLShader() {
+	ProgramID_ = NULL;
+	Name_ = "";
+	IsValid_ = false;
+}
+
+GLShader::GLShader(const std::string& AssetPath) {
 	ProgramID_ = NULL;
 	IsValid_ = false;
 
 	// 加载Shader
-	Load(path);
+	Load(AssetPath);
 }
 
 GLShader::~GLShader() {
 	Unload();
 }
 
-bool GLShader::Load(const std::string& path) {
-	// TODO:从配置文件读取具体配置
-	std::string vertFile = "../Assets/Shaders/Sources/Builtin/Shader.Builtin.vert";
-	if (!AddStage(vertFile, ShaderStage::eVertex)) {
+bool GLShader::Load(const std::string& AssetPath) {
+	File ShaderFile("../Assets/Shaders/Configs" + AssetPath);
+	if (!ShaderFile.IsExist()) {
 		return false;
 	}
 
-	std::string fragFile = "../Assets/Shaders/Sources/Builtin/Shader.Builtin.frag";
-	if (!AddStage(fragFile, ShaderStage::eFragment)) {
+	JsonObject ShaderObj(ShaderFile);
+	if (!ShaderObj.IsObject()) {
 		return false;
 	}
+
+	Name_ = ShaderObj.Get("Name").GetString();
+
+	// Stages
+	JsonObject StageObj = ShaderObj.Get("Stages");
+	if (StageObj.IsArray() && StageObj.Size() > 0) {
+		for (int i = 0; i < StageObj.Size(); ++i) {
+			// 具体的阶段 vert geom frag comp
+			JsonObject Stage = StageObj.ArrayItemAt(i);
+			if (!Stage.IsObject()) {
+				continue;
+			}
+
+			// 添加阶段
+			std::string StageName = Stage.Get("Name").GetString();
+			std::string StageSource = "../Assets/Shaders/Sources" + Stage.Get("Source").GetString();
+
+			if (StageName.compare("vert") == 0) {
+				if (!AddStage(StageSource, ShaderStage::eVertex)) {
+					return false;
+				}
+			}
+			else if (StageName.compare("geom") == 0) {
+				LOG_WARN << "Engine not support geom shader yet!";
+				continue;
+			}
+			else if (StageName.compare("frag") == 0) {
+				if (!AddStage(StageSource, ShaderStage::eFragment)) {
+					continue;
+				}
+			}
+			else if (StageName.compare("comp") == 0) {
+				LOG_WARN << "Engine not support comp shader yet!";
+				continue;
+			}
+		}
+	}
+
 	
 
 	// 初始化ShaderProgram
