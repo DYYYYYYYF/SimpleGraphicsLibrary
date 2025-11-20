@@ -4,3 +4,6 @@
 [submodule "ThirdParty/Eigen"]
 	path = ThirdParty/Eigen
 	url = https://gitlab.com/libeigen/eigen.git
+[submodule "ThirdParty/nlohmann-json"]
+	path = ThirdParty/nlohmann-json
+	url = https://github.com/nlohmann/json.git

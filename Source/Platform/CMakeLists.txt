@@ -9,10 +9,14 @@ include_directories(
 set(Platform_SOURCES 
      ${CMAKE_CURRENT_SOURCE_DIR}/Window/Window.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/File/File.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/File/JsonFile.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/File/JsonObject.cpp
 )
 
 set(Platform_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/File/File.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/File/JsonFile.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/File/JsonObject.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Window/Window.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Window/WindowImpl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/DLL/DynamicLibrary.h

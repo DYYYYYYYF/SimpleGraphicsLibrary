@@ -8,7 +8,11 @@
 #include <sys/stat.h>
 #endif
 
-File::File(const std::string& fn) {
+File::File(const std::string& fn) : IsValid(false) {
+	if (fn.size() == 0) {
+		return;
+	}
+
 	FullPath = fn;
 	std::replace(FullPath.begin(), FullPath.end(), '\\', '/');
 	size_t PrePathIndex = FullPath.find_last_of('/');
@@ -25,6 +29,7 @@ File::File(const std::string& fn) {
 	}
 
 	FileType = FullPath.substr(SufPathIndex);
+	IsValid = IsExist();
 }
 
 std::string File::ReadBytes() {
