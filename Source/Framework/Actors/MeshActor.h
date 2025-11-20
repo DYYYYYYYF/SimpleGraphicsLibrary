@@ -1,15 +1,14 @@
-#include "Actor.h"
-
-class MeshComponent;
+﻿#include "Actor.h"
+#include "Framework/Components/MeshComponent.h"
 
 class MeshActor : public Actor {
 public:
 	ENGINE_FRAMEWORK_API MeshActor(const std::string& name);
 
 public:
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
+	ENGINE_FRAMEWORK_API virtual void BeginPlay() override;
+	ENGINE_FRAMEWORK_API virtual void Tick(float DeltaTime) override;
 
 private:
-	std::unique_ptr<MeshComponent> MeshComponent_;
+	MeshComponent* MeshComponent_;
 };

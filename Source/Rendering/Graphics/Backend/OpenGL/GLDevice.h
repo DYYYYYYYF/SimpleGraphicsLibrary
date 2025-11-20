@@ -15,7 +15,7 @@ class GLDevice : public IGraphicsDevice {
 public:
 	GLDevice();
 	virtual bool Initialize(Window* Win) override;
-	virtual void Draw() override;
+	virtual void ExecuteCommandList(const CommandList& cmdList) override;
 	virtual void MakeCurrent() override;
 	virtual void SwapBuffers() override;
 	virtual void Destroy() override;

@@ -10,44 +10,6 @@ Actor::Actor(const std::string& Name) : Name_(Name) {
 	//m_Transform = AddComponent<TransformComponent>();
 }
 
-template<typename T, typename... Args>
-T* Actor::AddComponent(Args&&... args) {
-	static_assert(std::is_base_of<Component, T>::value,
-		"T must derive from Component");
-
-	auto component = std::make_unique<T>(std::forward<Args>(args)...);
-	T* ptr = component.get();
-
-	component->SetOwner(this);
-	Components_[typeid(T)] = std::move(component);
-
-	ptr->OnAttach();
-	return ptr;
-}
-
-template<typename T>
-T* Actor::GetComponent() const {
-	auto it = Components_.find(typeid(T));
-	if (it != Components_.end()) {
-		return static_cast<T*>(it->second.get());
-	}
-	return nullptr;
-}
-
-template<typename T>
-void Actor::RemoveComponent() {
-	auto it = Components_.find(typeid(T));
-	if (it != Components_.end()) {
-		it->second->OnDetach();
-		Components_.erase(it);
-	}
-}
-
-template<typename T>
-bool Actor::HasComponent() const {
-	return Components_.find(typeid(T)) != Components_.end();
-}
-
 void Actor::AddChild(std::unique_ptr<Actor> child) {
 	child->Parent_ = this;
 	Children_.push_back(std::move(child));

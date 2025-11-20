@@ -44,6 +44,8 @@ public:
 		Textures_.erase(slot);
 	}
 
+	std::shared_ptr<IShader> GetShader() { return Shader_; }
+
 protected:
 	// 材质参数
 	MaterialUBO MaterialUBO_;

@@ -29,14 +29,45 @@ public:
 	ENGINE_FRAMEWORK_API bool IsActive() const;
 	ENGINE_FRAMEWORK_API const std::string& GetName() const;
 
+
 	template<typename T, typename... Args>
-	ENGINE_FRAMEWORK_API T* AddComponent(Args&&... args);
+	T* AddComponent(Args&&... args) {
+		static_assert(std::is_base_of<Component, T>::value,
+			"T must derive from Component");
+
+		auto component = std::make_unique<T>(std::forward<Args>(args)...);
+		T* ptr = component.get();
+
+		component->SetOwner(this);
+		Components_[typeid(T)] = std::move(component);
+
+		ptr->OnAttach();
+		return ptr;
+	}
+
 	template<typename T>
-	ENGINE_FRAMEWORK_API T* GetComponent() const;
+	T* GetComponent() const {
+		auto it = Components_.find(typeid(T));
+		if (it != Components_.end()) {
+			return static_cast<T*>(it->second.get());
+		}
+		return nullptr;
+	}
+
 	template<typename T>
-	ENGINE_FRAMEWORK_API void RemoveComponent();
+	void RemoveComponent() {
+		auto it = Components_.find(typeid(T));
+		if (it != Components_.end()) {
+			it->second->OnDetach();
+			Components_.erase(it);
+		}
+	}
+
 	template<typename T>
-	ENGINE_FRAMEWORK_API bool HasComponent() const;
+	bool HasComponent() const {
+		return Components_.find(typeid(T)) != Components_.end();
+	}
+
 
 private:
 	std::string Name_;

@@ -6,11 +6,12 @@
 class Window;
 class IMesh;
 class IMaterial;
+class CommandList;
 
 class IGraphicsDevice {
 public:
 	virtual bool Initialize(Window* Win) = 0;
-	virtual void Draw() =0;
+	virtual void ExecuteCommandList(const CommandList& cmdList) =0;
 	virtual void MakeCurrent() = 0;
 	virtual void SwapBuffers() = 0;
 	virtual void Destroy() = 0;

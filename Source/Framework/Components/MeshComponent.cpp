@@ -7,7 +7,7 @@
 MeshComponent::MeshComponent() : BaseComponent() {}
 MeshComponent::MeshComponent(Actor* Owner, const std::string& Name) : BaseComponent(Owner, Name) {}
 
-void MeshComponent::Draw() {
+void MeshComponent::Draw(CommandList& CmdList) {
 	Actor* Owner = GetOwner();
 	if (!Owner) {
 		return;
@@ -17,11 +17,7 @@ void MeshComponent::Draw() {
 		return;
 	}
 
-	Materials_->Apply();
-
-	Meshes_->Bind();
-
-	
+	CmdList.DrawIndexed(Meshes_.get(), Materials_.get(), FMatrix4::Identity(), 6);
 }
 
 bool MeshComponent::LoadFromFile(const std::string& File) {

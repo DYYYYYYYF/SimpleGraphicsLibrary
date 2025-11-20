@@ -3,6 +3,9 @@
 #include "Logger.hpp"
 #include "Graphics/Backend/OpenGL/GLDevice.h"
 #include "Rendering/Resource/IMesh.h"
+#include "Command/CommandList.h"
+#include "Framework/Components/MeshComponent.h"
+#include "Framework/Actors/Actor.h"
 
 Renderer::Renderer() {
 	GraphicsDevice_ = nullptr;
@@ -44,8 +47,32 @@ bool Renderer::Initialize(Window* Win, BackendAPI Type) {
 	return true;
 }
 
+void Renderer::BeginCommand(CommandList& CmdList) {
+	CmdList.Begin();
+
+	// TODO: 拆分清除指令
+	CmdList.Clear(FVector4(0.2f, 0.3f, 0.3f, 1.0f));
+
+}
+
 void Renderer::Draw() {
-	GraphicsDevice_->Draw();
+	CommandList CmdList;
+	CmdList.Begin();
+
+	// 清除指令
+	CmdList.Clear(FVector4(0.2f, 0.3f, 0.3f, 1.0f));
+
+
+
+	GraphicsDevice_->ExecuteCommandList(CmdList);
+}
+
+void Renderer::DrawScene(CommandList& CmdList) {
+	GraphicsDevice_->ExecuteCommandList(CmdList);
+}
+
+void Renderer::EndCommand(CommandList& CmdList) {
+	CmdList.End();
 }
 
 void Renderer::Destroy() {
@@ -56,10 +83,12 @@ void Renderer::Destroy() {
 
 std::shared_ptr<IMesh> Renderer::CreateMesh(const std::string& Mesh) {
 	std::shared_ptr<IMesh> NewMesh = GraphicsDevice_->CreateMesh();
+	AllMeshes.push_back(NewMesh);
 	return NewMesh;
 }
 
 std::shared_ptr<IMaterial> Renderer::CreateMaterial(const std::string& Mesh) {
 	std::shared_ptr<IMaterial> NewMaterial = GraphicsDevice_->CreateMaterial();
+	AllMaterials.push_back(NewMaterial);
 	return NewMaterial;
 }

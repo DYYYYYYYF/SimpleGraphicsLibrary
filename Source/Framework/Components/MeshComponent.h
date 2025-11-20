@@ -2,6 +2,7 @@
 
 #include "BaseComponent.h"
 #include <memory>
+#include "Rendering/Command/CommandList.h"
 
 class IMesh;
 class IMaterial;
@@ -12,9 +13,12 @@ public:
 	MeshComponent(Actor* Owner, const std::string& Name);
 
 public:
-	ENGINE_FRAMEWORK_API void Draw();
+	ENGINE_FRAMEWORK_API void Draw(CommandList& CmdList);
 
-	bool LoadFromFile(const std::string& File);
+	ENGINE_FRAMEWORK_API bool LoadFromFile(const std::string& File);
+
+	ENGINE_FRAMEWORK_API std::shared_ptr<IMesh> GetMesh() { return Meshes_; }
+	ENGINE_FRAMEWORK_API std::shared_ptr<IMaterial> GetMaterial() { return Materials_; }
 
 private:
 	std::shared_ptr<IMesh> Meshes_;

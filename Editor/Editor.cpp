@@ -3,13 +3,13 @@
 
 #include <Framework/Actors/MeshActor.h>
 
-MeshActor* Model = nullptr;
+std::shared_ptr<MeshActor> Model;
 
 bool Editor::Initialize()
 {
 	AppName_ = "Editor";
 
-	Model = new MeshActor("Model");
+	Model = std::make_shared<MeshActor>("Model");
 	if (!Model) {
 		LOG_ERROR << "Create model failed.";
 	}
@@ -18,8 +18,10 @@ bool Editor::Initialize()
 	return true;
 }
 
-void Editor::InitScene() {
+void Editor::InitScene(Scene& Sce) {
 	Model->BeginPlay();
+
+	Sce.AddToScene(Model);
 }
 
 void Editor::Tick(float DeltaTime)

@@ -1,9 +1,10 @@
-#include "MeshActor.h"
-#include "Framework/Components/MeshComponent.h"
+﻿#include "MeshActor.h"
 
 MeshActor::MeshActor(const std::string& name) : Actor(name){
-	MeshComponent_ = std::make_unique<MeshComponent>(this, "MeshComponent");
+	MeshComponent_ = AddComponent<MeshComponent>(this, "MeshComponent");
 	if (!MeshComponent_) { return; }
+
+	
 
 }
 
@@ -12,5 +13,5 @@ void MeshActor::BeginPlay() {
 }
 
 void MeshActor::Tick(float DeltaTime) {
-	MeshComponent_->Draw();
+	
 }

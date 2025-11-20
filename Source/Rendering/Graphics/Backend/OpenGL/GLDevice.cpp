@@ -9,6 +9,7 @@
 #include "Window/Window.h"
 #include "GLMesh.h"
 #include "GLMaterial.h"
+#include "Command/CommandList.h"
 
 static const double aspect_ratio = 16.0 / 9.0;
 static const int WIDTH = 1200;
@@ -54,11 +55,55 @@ bool GLDevice::Initialize(Window* Win){
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+	glEnableVertexAttribArray(0);
+
 	LOG_INFO << "OpenGL device create successfully.";
 	return true;
 }
 
-void GLDevice::Draw() {
+void GLDevice::ExecuteCommandList(const CommandList& CmdList) {
+	for (const auto& Cmd : CmdList.GetCommands()) {
+		switch (Cmd->Type_)
+		{
+		case CommandType::eClear: {
+			ClearCommand* ClearCmd = static_cast<ClearCommand*>(Cmd.get());
+
+			// 翻译成OpenGL调用
+			glClearColor(ClearCmd->Color_[0],
+				ClearCmd->Color_[1],
+				ClearCmd->Color_[2],
+				ClearCmd->Color_[3]);
+
+			GLint ClearType = 0;
+			if (ClearCmd->ClearColor_) ClearType |= GL_COLOR_BUFFER_BIT;
+			if (ClearCmd->ClearDepth_) ClearType |= GL_DEPTH_BUFFER_BIT;
+			glClear(ClearType);
+			break;
+		}
+		case CommandType::eDrawIndexed: {
+			DrawIndexedCommand* DrawCmd = static_cast<DrawIndexedCommand*>(Cmd.get());
+
+			// 1. 从句柄获取OpenGL资源
+			GLMesh* Mesh = (GLMesh*)DrawCmd->DrawCall_.resources.mesh;
+			GLMaterial* Material = (GLMaterial*)DrawCmd->DrawCall_.resources.material;
+
+			// 2. 绑定状态
+			Material->Apply();
+			Mesh->Bind();
+
+			// 3. 设置Uniform
+			GLShader* Shader = (GLShader*)Material->GetShader().get();
+			if (Shader) {
+				GLint loc = glGetUniformLocation(Shader->GetProgramID(), "uModel");
+				glUniformMatrix4fv(loc, 1, GL_FALSE, DrawCmd->DrawCall_.modelMatrix.data());
+			}
+		
+			// 4. 绘制
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			break;
+		}
+		}
+	}
 	// Object pass
 
 	SwapBuffers();

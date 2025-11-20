@@ -15,7 +15,7 @@ public:
 
 public:
 	EXPORT_API virtual bool Initialize() override;
-	EXPORT_API virtual void InitScene() override;
+	EXPORT_API virtual void InitScene(Scene& Sce) override;
 	EXPORT_API virtual void Tick(float DeltaTime) override;
 	EXPORT_API virtual void Render() override;
 	EXPORT_API virtual void Shutdown() override;

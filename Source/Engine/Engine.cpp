@@ -6,6 +6,9 @@
 #include "Platform/Window/Window.h"
 
 #include "Rendering/Renderer/Renderer.h"
+#include "Scene.h"
+#include "Framework/Actors/Actor.h"
+#include "Framework/Components/MeshComponent.h"
 
 Engine::Engine() {
 	Window_ = nullptr;
@@ -70,8 +73,9 @@ bool Engine::Initialize(IApplication* app) {
 	return true;
 }
 
+Scene Scene_;
 void Engine::Run() {
-	Application_->InitScene();
+	Application_->InitScene(Scene_);
 
 	EventManager& eventManager = EventManager::Instance();
 	while (Running_ && !Window_->ShouldClose()) {
@@ -83,9 +87,18 @@ void Engine::Run() {
 		// Application tick
 		Application_->Tick(0.01f);
 
-		CoreRenderer->Draw();
+		CommandList CmdList;
+		CoreRenderer->BeginCommand(CmdList);
+		std::vector<std::shared_ptr<Actor>> AllActors = Scene_.GetAllActors();
+		for (auto& Act : AllActors) {
+			MeshComponent* MeshComp = Act.get()->GetComponent<MeshComponent>();
+			if (MeshComp) {
+				MeshComp->Draw(CmdList);
+			}
+		}
 
-		// TODO: Render
+		CoreRenderer->DrawScene(CmdList);
+		CoreRenderer->EndCommand(CmdList);
 	}
 }
 

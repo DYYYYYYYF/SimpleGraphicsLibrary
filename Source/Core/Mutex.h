@@ -31,14 +31,14 @@ public:
 class MutexGuard {
 public:
 	explicit MutexGuard(Mutex& mutex)
-		: _mutex(mutex), _locked(false)
+		: Mutex_(mutex), IsLocked_(false)
 	{
-		_locked = _mutex.Lock();
+		IsLocked_ = Mutex_.Lock();
 	}
 
 	~MutexGuard() {
-		if (_locked) {
-			_mutex.UnLock();
+		if (IsLocked_) {
+			Mutex_.UnLock();
 		}
 	}
 
@@ -47,6 +47,6 @@ public:
 	MutexGuard& operator=(const MutexGuard&) = delete;
 
 private:
-	Mutex& _mutex;
-	bool _locked;
+	Mutex& Mutex_;
+	bool IsLocked_;
 };

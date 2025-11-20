@@ -10,16 +10,8 @@ GLMesh::~GLMesh() {
 
 void GLMesh::Bind() const {
 	if (IsLoaded_) {
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		glEnableVertexAttribArray(0);
-
 		glBindVertexArray(VAO_);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_);
-
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glDisableVertexAttribArray(0);
 	}
 }
 

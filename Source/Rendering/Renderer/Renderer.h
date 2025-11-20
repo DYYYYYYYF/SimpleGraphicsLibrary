@@ -2,6 +2,8 @@
 
 #include "RenderModuleAPI.h"
 #include "Graphics/GraphicsAPI.h"
+#include "Command/CommandQueue.h"
+#include "Engine/Scene.h"
 
 #include <string>
 #include <memory>
@@ -20,7 +22,10 @@ public:
 
 public:
 	ENGINE_RENDERING_API virtual bool Initialize(Window* Win, BackendAPI Type);
+	ENGINE_RENDERING_API virtual void BeginCommand(CommandList& CmdList);
 	ENGINE_RENDERING_API virtual void Draw();
+	ENGINE_RENDERING_API virtual void DrawScene(CommandList& CmdList);
+	ENGINE_RENDERING_API virtual void EndCommand(CommandList& CmdList);
 	ENGINE_RENDERING_API virtual void Destroy();
 
 public:
@@ -30,5 +35,8 @@ public:
 protected:
 	std::unique_ptr<IGraphicsDevice> GraphicsDevice_;
 	static Renderer* GlobalRenderer;
+
+	std::vector<std::shared_ptr<IMesh>> AllMeshes;
+	std::vector<std::shared_ptr<IMaterial>> AllMaterials;
 
 };
