@@ -1,33 +1,32 @@
 ﻿#include "Editor.h"
 #include "Logger.hpp"
 
-#ifdef _WIN32
-#define EXPORT_API __declspec(dllexport)
-#else
-#define EXPORT_API __attribute__((visibility("default")))
-#endif
+#include <Framework/Actors/MeshActor.h>
 
-extern "C" {
-	EXPORT_API IApplication* CreateApplication() {
-		return new Editor();
-	}
-
-	EXPORT_API void DestroyApplication(IApplication* app) {
-		delete app;
-	}
-}
+std::shared_ptr<MeshActor> Model;
 
 bool Editor::Initialize()
 {
 	AppName_ = "Editor";
 
+	Model = std::make_shared<MeshActor>("Model");
+	if (!Model) {
+		LOG_ERROR << "Create model failed.";
+	}
+
 	LOG_INFO << "Editor init successfully.";
 	return true;
 }
 
-void Editor::Tick()
-{
+void Editor::InitScene(Scene& Sce) {
+	Model->BeginPlay();
 
+	Sce.AddToScene(Model);
+}
+
+void Editor::Tick(float DeltaTime)
+{
+	Model->Tick(DeltaTime);
 }
 
 void Editor::Render()

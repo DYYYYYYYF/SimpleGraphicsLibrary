@@ -40,6 +40,9 @@ function(add_example target_name source_dir)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:EnginePlatform>
         $<TARGET_FILE_DIR:${target_name}>
+         COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:UL::Logger>
+        $<TARGET_FILE_DIR:${target_name}>
         COMMENT "Copying dlls for ${target_name}"
     )
     

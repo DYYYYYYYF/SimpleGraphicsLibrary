@@ -1,3 +1,65 @@
 ﻿# UncleDon-Logger 日志库
-set(UL_BUILD_EXAMPLE_EXE OFF)			# 关闭Example编译
-add_subdirectory(UncleDon-Logger)
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/UncleDon-Logger)
+    include(FetchContent)
+    message("-- Download UncleDon-Logger Lib...")
+    FetchContent_Declare(
+        UncleDon-Logger
+        GIT_REPOSITORY https://github.com/DYYYYYYYF/UncleDon-Logger.git
+        GIT_TAG 1.0
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+    )
+
+    set(UL_BUILD_EXAMPLE_EXE OFF)           # 关闭Example编译
+    FetchContent_MakeAvailable(UncleDon-Logger)
+else()
+    set(UL_BUILD_EXAMPLE_EXE OFF)			# 关闭Example编译
+    add_subdirectory(UncleDon-Logger)
+endif()
+
+
+# Eigen数学库
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Eigen)
+    include(FetchContent)
+    message("-- Download Eigen Lib...")
+    FetchContent_Declare(
+        Eigen
+        GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+        GIT_TAG 5.0.0
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+    )
+
+    set(EIGEN_BUILD_DOC OFF CACHE BOOL "" FORCE)
+    set(EIGEN_BUILD_PKGCONFIG OFF CACHE BOOL "" FORCE)
+
+    FetchContent_MakeAvailable(Eigen)
+    set(Eigen_SOURCE_DIR GLOBAL Eigen)
+        
+    message(STATUS "Eigen源码路径: ${eigen_SOURCE_DIR}")
+    message(STATUS "Eigen构建路径: ${eigen_BINARY_DIR}")    
+else()
+    add_subdirectory(Eigen)
+    set(Eigen_SOURCE_DIR GLOBAL Eigen)
+endif()
+
+# Json库
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/nlohmann-json)
+    include(FetchContent)
+    message("-- Download nlohmann-json Lib...")
+    FetchContent_Declare(
+        nlohmann-json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG 3.12.0
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+    )
+
+    FetchContent_MakeAvailable(nlohmann-json)
+
+    message(STATUS "nlohmann-json源码路径: ${nlohmann-json_SOURCE_DIR}")
+    message(STATUS "nlohmann-json构建路径: ${nlohmann-json_BINARY_DIR}")    
+
+else()
+    add_subdirectory(nlohmann-json)
+endif()

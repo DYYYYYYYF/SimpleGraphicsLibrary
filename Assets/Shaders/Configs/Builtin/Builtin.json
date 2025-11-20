@@ -1,0 +1,14 @@
+{
+    "Name" : "BuiltinShader",
+    "Stages" : 
+    [
+        { 
+            "Name" : "vert",
+            "Source" : "/Builtin/Builtin.vert"
+        },
+        {
+            "Name" : "frag",
+            "Source" : "/Builtin/Builtin.frag"
+        }
+    ]
+}

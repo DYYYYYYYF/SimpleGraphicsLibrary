@@ -5,6 +5,11 @@
 #include "Core/EventManager.h"
 #include "Platform/Window/Window.h"
 
+#include "Rendering/Renderer/Renderer.h"
+#include "Scene.h"
+#include "Framework/Actors/Actor.h"
+#include "Framework/Components/MeshComponent.h"
+
 Engine::Engine() {
 	Window_ = nullptr;
 	Running_ = false;
@@ -56,13 +61,22 @@ bool Engine::Initialize(IApplication* app) {
 		return false;
 	});
 
+	// Rendering
+	CoreRenderer = new Renderer();
+	if (!CoreRenderer || !CoreRenderer->Initialize(Window_, BackendAPI::eOpenGL)) {
+		return false;
+	}
+
 	// TODO: Managers  Renderer  Subsystems Window
 
 	LOG_INFO << "Engine create successfully.";
 	return true;
 }
 
+Scene Scene_;
 void Engine::Run() {
+	Application_->InitScene(Scene_);
+
 	EventManager& eventManager = EventManager::Instance();
 	while (Running_ && !Window_->ShouldClose()) {
 		// 处理窗口消息
@@ -71,9 +85,20 @@ void Engine::Run() {
 		eventManager.ProcessEvents();
 
 		// Application tick
-		Application_->Tick();
+		Application_->Tick(0.01f);
 
-		// TODO: Render
+		CommandList CmdList;
+		CoreRenderer->BeginCommand(CmdList);
+		std::vector<std::shared_ptr<Actor>> AllActors = Scene_.GetAllActors();
+		for (auto& Act : AllActors) {
+			MeshComponent* MeshComp = Act.get()->GetComponent<MeshComponent>();
+			if (MeshComp) {
+				MeshComp->Draw(CmdList);
+			}
+		}
+
+		CoreRenderer->DrawScene(CmdList);
+		CoreRenderer->EndCommand(CmdList);
 	}
 }
 

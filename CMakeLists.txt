@@ -44,11 +44,18 @@ option(ENGINE_BUILD_EDITOR "Build editor" ON)
 option(ENGINE_BUILD_AUDIO "Build audio module" OFF)
 option(ENGINE_BUILD_PHYSICS "Build physics module" OFF)
 
-option(ENGINE_ENABLE_OPENGL "Enable OpenGL backend" ON)
 option(ENGINE_ENABLE_VULKAN "Enable Vulkan backend" ON)
 
 if(WIN32)
+    option(ENGINE_ENABLE_METAL "Enable Metal backend" OFF)
+    option(ENGINE_ENABLE_OPENGL "Enable OpenGL backend" ON)
     option(ENGINE_ENABLE_DX12 "Enable DirectX12 backend" ON)
+endif()
+
+if(APPLE)
+    option(ENGINE_ENABLE_METAL "Enable Metal backend" ON)
+    option(ENGINE_ENABLE_OPENGL "Enable OpenGL backend" OFF)
+    option(ENGINE_ENABLE_DX12 "Enable DirectX12 backend" OFF)
 endif()
 
 # ============================================================================
@@ -56,7 +63,7 @@ endif()
 # ============================================================================
 
 if(MSVC)
-    add_compile_options(/W4 /permissive- /MP)
+    add_compile_options(/W4 /permissive- /MP /utf-8)
     add_compile_definitions(
         _CRT_SECURE_NO_WARNINGS
         NOMINMAX
@@ -125,4 +132,5 @@ message(STATUS "Graphics Backends:")
 message(STATUS "  OpenGL:        ${ENGINE_ENABLE_OPENGL}")
 message(STATUS "  DirectX12:     ${ENGINE_ENABLE_DX12}")
 message(STATUS "  Vulkan:        ${ENGINE_ENABLE_VULKAN}")
+message(STATUS "  METAL:         ${ENGINE_ENABLE_METAL}")
 message(STATUS "========================================")
