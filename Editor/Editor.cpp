@@ -3,7 +3,7 @@
 
 #include <Framework/Actors/MeshActor.h>
 
-std::shared_ptr<MeshActor> Model;
+std::shared_ptr<MeshActor> Model = nullptr;
 
 bool Editor::Initialize()
 {
@@ -36,6 +36,7 @@ void Editor::Render()
 
 void Editor::Shutdown()
 {
+	Model.reset();
 	LOG_INFO << "Editor shutdown.";
 }
 

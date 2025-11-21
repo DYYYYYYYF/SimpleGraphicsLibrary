@@ -5,6 +5,7 @@
 class Window;
 class IApplication;
 class Renderer;
+class Scene;
 
 class Engine {
 public:
@@ -26,4 +27,5 @@ protected:
 
 	Renderer* CoreRenderer;
 
+	Scene* Scene_;
 };

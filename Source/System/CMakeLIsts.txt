@@ -1,0 +1,29 @@
+﻿project(EngineSystem)
+
+# Core库
+set(SYSTEM_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/ResourceSystem.cpp
+)
+
+set(SYSTEM_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/EngineSystem.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/ResourceSystem.h
+)
+
+# 创建System库
+add_library(EngineSystem SHARED ${SYSTEM_SOURCES} ${SYSTEM_HEADERS})
+
+# 通用第三方库
+target_link_libraries(EngineSystem 
+    EngineCore
+    EnginePlatform
+    EngineRendering
+)
+
+# 确保源文件也能找到头文件
+target_include_directories(EngineSystem PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+# 宏
+target_compile_definitions(EngineSystem PRIVATE ENGINE_SYSTEM_EXPORTS)

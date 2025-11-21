@@ -85,7 +85,14 @@ void GLDevice::ExecuteCommandList(const CommandList& CmdList) {
 
 			// 1. 从句柄获取OpenGL资源
 			GLMesh* Mesh = (GLMesh*)DrawCmd->DrawCall_.resources.mesh;
+			if (!Mesh) {
+				return;
+			}
+
 			GLMaterial* Material = (GLMaterial*)DrawCmd->DrawCall_.resources.material;
+			if (!Material) {
+				return;
+			}
 
 			// 2. 绑定状态
 			Material->Apply();
@@ -191,8 +198,7 @@ void GLDevice::Destroy() {
 }
 
 std::shared_ptr<IMesh> GLDevice::CreateMesh(const std::string& AssetPath) {
-	std::shared_ptr<IMesh> NewMesh = std::make_shared<GLMesh>(AssetPath);
-	return NewMesh;
+	return std::make_shared<GLMesh>(AssetPath);
 }
 
 std::shared_ptr<IMaterial> GLDevice::CreateMaterial(const std::string& AssetPath) {

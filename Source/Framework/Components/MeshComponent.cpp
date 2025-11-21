@@ -4,9 +4,21 @@
 #include "Rendering/Resource/IMesh.h"
 #include "Rendering/Resource/IMaterial.h"
 #include "Platform/File/JsonObject.h"
+#include "System/ResourceSystem.h"
 
 MeshComponent::MeshComponent() : BaseComponent() {}
 MeshComponent::MeshComponent(Actor* Owner, const std::string& Name) : BaseComponent(Owner, Name) {}
+MeshComponent::~MeshComponent() {
+	ResourceSystem& RS = ResourceSystem::Instance();
+	if (Meshes_) {
+		RS.Release(Meshes_->GetID());
+		Meshes_.reset();
+	}
+	if (Materials_) {
+		RS.Release(Materials_->GetID());
+		Materials_.reset();
+	}
+}
 
 void MeshComponent::Draw(CommandList& CmdList) {
 	Actor* Owner = GetOwner();
@@ -18,7 +30,11 @@ void MeshComponent::Draw(CommandList& CmdList) {
 		return;
 	}
 
-	CmdList.DrawIndexed(Meshes_.get(), Materials_.get(), FMatrix4::Identity(), 6);
+	if (!GetMesh() || !GetMaterial()) {
+		return;
+	}
+
+	CmdList.DrawIndexed(GetMesh().get(), GetMaterial().get(), FMatrix4::Identity(), 6);
 }
 
 bool MeshComponent::LoadFromFile(const std::string& FilePath) {
@@ -28,15 +44,18 @@ bool MeshComponent::LoadFromFile(const std::string& FilePath) {
 	}
 	
 	JsonObject Content = MeshSrc.ReadBytes();
-	std::string MeshAsset = Content.Get("MeshAsset").GetString();
-	std::string MaterialAsset = Content.Get("MaterialAsset").GetString();
+	ResourceSystem& RS = ResourceSystem::Instance();
 
-	Meshes_ =  Renderer::Instance()->CreateMesh(MeshAsset);
+	// 加载Mesh
+	std::string MeshAsset = Content.Get("MeshAsset").GetString();
+	Meshes_ = RS.Acquire(ResourceType::eMesh, MeshAsset);
 	if (!Meshes_) {
 		return false;
 	}
 
-	Materials_ = Renderer::Instance()->CreateMaterial(MaterialAsset);
+	// 加载材质
+	std::string MaterialAsset = Content.Get("MaterialAsset").GetString();
+	Materials_ = RS.Acquire(ResourceType::eMaterial, MaterialAsset);
 	if (!Materials_) {
 		return false;
 	}

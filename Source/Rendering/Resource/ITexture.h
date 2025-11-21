@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "IResource.h"
+
 enum class TextureSlot : uint32_t {
 	eAlbedo = 0,      // 基础颜色
 	eNormal = 1,      // 法线
@@ -15,7 +17,10 @@ enum class TextureSlot : uint32_t {
 	// ...
 };
 
-class ITexture {
+class ITexture : public IResource{
+public:
+	ITexture() { Type_ = ResourceType::eTexture; }
+
 public:
 	virtual bool Load(const std::string& path) = 0;
 	virtual void Unload() = 0;
@@ -24,8 +29,4 @@ public:
 	virtual void Unbind() const = 0;
 
 	virtual void* GetNativeHandle() const = 0;
-	virtual bool IsValid() const { return IsValid_; }
-
-protected:
-	bool IsValid_;
 };

@@ -1,10 +1,13 @@
 ﻿#pragma once
 
+#include "IResource.h"
 #include "Core/BaseMath.h"
 #include <vector>
-#include <string>
 
-class IMesh {
+class IMesh : public IResource {
+public:
+	IMesh() { Type_ = ResourceType::eMesh; }
+
 public:
 	struct Vertex {
 		FVector3 position;
@@ -14,9 +17,6 @@ public:
 	};
 
 public:
-	virtual void Load(const std::string& mesh) = 0;
-	virtual void UnLoad() = 0;
-
 	virtual void Bind() const = 0;
 	virtual void Unbind() const = 0;
 

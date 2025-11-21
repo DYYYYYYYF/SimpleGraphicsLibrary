@@ -27,7 +27,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 #   ↓
 # Rendering (依赖 Core, Graphics) - 渲染系统
 #   ↓
-# Resource (依赖 Core, Graphics, Rendering) - 资源管理
+# System (依赖 Core, Graphics, Rendering) - 系统管理
 #   ↓
 # Scene (依赖 Core, Rendering) - 场景系统
 #   ↓
@@ -53,14 +53,14 @@ add_subdirectory(Platform)
 message(STATUS "[3/9] Configuring Rendering...")
 add_subdirectory(Rendering)
 
-## 第四层：资源管理
+## 第四层：系统管理
+message(STATUS "[5/9] Configuring System...")
+add_subdirectory(System)
+
+## 第五层：ECS
 message(STATUS "[4/9] Configuring Framework...")
 add_subdirectory(Framework)
 
-## 第五层：资源管理
-#message(STATUS "[5/9] Configuring Resource...")
-#add_subdirectory(Resource)
-#
 ## 第六层：场景系统
 #message(STATUS "[6/9] Configuring Scene...")
 #add_subdirectory(Scene)

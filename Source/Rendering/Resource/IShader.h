@@ -1,19 +1,19 @@
 ﻿#pragma once
 
+#include "IResource.h"
 #include "Core/BaseMath.h"
-#include <string>
 
 enum class ShaderStage {
 	eVertex = 0,
 	eFragment
 };
 
-class IShader {
+class IShader : public IResource{
 public:
+	IShader() { Type_ = ResourceType::eShader; }
 
+public:
 	// 使用和管理
-	virtual bool Load(const std::string& path) = 0;
-	virtual void Unload() = 0;
 	virtual void Bind() = 0;
 	virtual void Unbind() = 0;
 
@@ -25,11 +25,4 @@ public:
 	virtual void SetVec4(const std::string& name, const FVector4& value) = 0;
 	virtual void SetMat3(const std::string& name, const FMatrix3& value) = 0;
 	virtual void SetMat4(const std::string& name, const FMatrix4& value) = 0;
-
-	std::string GetName() const { return Name_; }
-	bool IsValid() const { return IsValid_; }
-
-protected:
-	std::string Name_;
-	bool IsValid_;
 };

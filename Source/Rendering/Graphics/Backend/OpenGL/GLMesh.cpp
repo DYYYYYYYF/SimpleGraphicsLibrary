@@ -1,11 +1,16 @@
 ﻿#include "GLMesh.h"
+#include <Logger.hpp>
 
 GLMesh::GLMesh(const std::string& mesh) : VAO_(NULL), VBO_(NULL), EBO_(NULL) {
-	Load(mesh);
+	if (!Load(mesh)) {
+		return;
+	}
+
+	IsValid_ = true;
 }
 
 GLMesh::~GLMesh() {
-	UnLoad();
+	Unload();
 }
 
 void GLMesh::Bind() const {
@@ -21,7 +26,9 @@ void GLMesh::Unbind() const {
 	}
 }
 
-void GLMesh::Load(const std::string& mesh) {
+bool GLMesh::Load(const std::string& mesh) {
+	Name_ = "";
+
 	Vertex V1 = { FVector3(-0.5f,  0.5f, 0.0f), FVector3(0.0f, 0.0f, 1.0f), FVector2(0, 0), FVector3(0.0f, 0.0f, 0.0f) };
 	Vertex V2 = { FVector3(-0.5f, -0.5f, 0.0f), FVector3(0.0f, 0.0f, 1.0f), FVector2(0, 1), FVector3(0.0f, 0.0f, 0.0f) };
 	Vertex V3 = { FVector3(0.5f, -0.5f, 0.0f), FVector3(0.0f, 0.0f, 1.0f), FVector2(1, 0), FVector3(0.0f, 0.0f, 0.0f) };
@@ -39,6 +46,10 @@ void GLMesh::Load(const std::string& mesh) {
 	};
 
 	Setup();
+
+	LOG_DEBUG << "Mesh '" << Name_ << "' loaded.";
+	IsLoaded_ = true;
+	return true;
 }
 
 void GLMesh::Setup(){
@@ -76,10 +87,9 @@ void GLMesh::Setup(){
 		(void*)offsetof(Vertex, tangent));
 
 	glBindVertexArray(0);
-	IsLoaded_ = true;
 }
 
-void GLMesh::UnLoad() {
+void GLMesh::Unload() {
 	if (IsLoaded_) {
 		glDeleteVertexArrays(1, &VAO_);
 		VAO_ = NULL;
@@ -90,4 +100,6 @@ void GLMesh::UnLoad() {
 		glDeleteBuffers(1, &EBO_);
 		EBO_ = NULL;
 	}
+
+	LOG_DEBUG << "Mesh '" << Name_ << "' unloaded.";
 }
