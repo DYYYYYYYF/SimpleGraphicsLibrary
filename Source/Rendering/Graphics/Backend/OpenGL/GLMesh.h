@@ -9,8 +9,8 @@ public:
 	virtual ~GLMesh();
 
 public:
-	virtual void Load(const std::string& mesh) override;
-	virtual void UnLoad() override;
+	virtual bool Load(const std::string& path) override;
+	virtual void Unload() override;
 
 	virtual void Bind() const override;
 	virtual void Unbind() const override;

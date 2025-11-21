@@ -10,10 +10,13 @@ GLShader::GLShader() {
 
 GLShader::GLShader(const std::string& AssetPath) {
 	ProgramID_ = NULL;
-	IsValid_ = false;
 
 	// 加载Shader
-	Load(AssetPath);
+	if (!Load(AssetPath)) {
+		return;
+	}
+
+	IsValid_ = true;
 }
 
 GLShader::~GLShader() {
@@ -23,11 +26,13 @@ GLShader::~GLShader() {
 bool GLShader::Load(const std::string& AssetPath) {
 	File ShaderFile("../Assets/Shaders/Configs" + AssetPath);
 	if (!ShaderFile.IsExist()) {
+		LOG_ERROR << "Shader file '" << AssetPath << "' is not exist!";
 		return false;
 	}
 
 	JsonObject ShaderObj(ShaderFile);
 	if (!ShaderObj.IsObject()) {
+		LOG_ERROR << "Shader file '" << AssetPath << "' is invalid json!";
 		return false;
 	}
 
@@ -98,6 +103,7 @@ bool GLShader::Load(const std::string& AssetPath) {
 
 	Bind();
 
+	LOG_DEBUG << "Shader '" << Name_ << "' loaded.";
 	IsValid_ = true;
 	return true;
 }
@@ -111,6 +117,8 @@ void GLShader::Unload() {
 
 		glDeleteProgram(ProgramID_);
 	}
+
+	LOG_DEBUG << "Shader '" << Name_ << "' unloaded.";
 }
 
 void GLShader::Bind() {

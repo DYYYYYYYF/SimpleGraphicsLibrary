@@ -12,7 +12,7 @@ Renderer::Renderer() {
 }
 
 Renderer::~Renderer() {
-
+	
 }
 
 Renderer* Renderer::GlobalRenderer = nullptr;
@@ -79,12 +79,12 @@ void Renderer::Destroy() {
 	if (GraphicsDevice_) {
 		GraphicsDevice_->Destroy();
 	}
+
+	LOG_INFO << "Renderer destroyed.";
 }
 
 std::shared_ptr<IMesh> Renderer::CreateMesh(const std::string& AssetPath) {
-	std::shared_ptr<IMesh> NewMesh = GraphicsDevice_->CreateMesh(AssetPath);
-	AllMeshes.push_back(NewMesh);
-	return NewMesh;
+	return GraphicsDevice_->CreateMesh(AssetPath);
 }
 
 std::shared_ptr<IMaterial> Renderer::CreateMaterial(const std::string& AssetPath) {

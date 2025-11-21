@@ -36,7 +36,7 @@ protected:
 	std::unique_ptr<IGraphicsDevice> GraphicsDevice_;
 	static Renderer* GlobalRenderer;
 
-	std::vector<std::shared_ptr<IMesh>> AllMeshes;
+	std::vector<std::weak_ptr<IMesh>> AllMeshes;
 	std::vector<std::shared_ptr<IMaterial>> AllMaterials;
 
 };

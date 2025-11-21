@@ -10,7 +10,7 @@ public:
 	virtual ~GLMaterial();
 
 public:
-	virtual void Load(const std::string& filename) override;
+	virtual bool Load(const std::string& filename) override;
 	virtual void Unload() override;
 
 	virtual void Apply() const override;

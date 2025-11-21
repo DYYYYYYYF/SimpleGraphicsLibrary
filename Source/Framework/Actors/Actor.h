@@ -14,11 +14,13 @@ class Actor : public BaseObject {
 public:
 	ENGINE_FRAMEWORK_API Actor();
 	ENGINE_FRAMEWORK_API Actor(const std::string& Name);
+	ENGINE_FRAMEWORK_API virtual ~Actor();
 
 	// 虚函数
 public:
 	ENGINE_FRAMEWORK_API virtual void BeginPlay() {};
 	ENGINE_FRAMEWORK_API virtual void Tick(float DeltaTime);
+	ENGINE_FRAMEWORK_API virtual void Destroy() {};
 
 	// -------------------------- 通用函数 ------------------------------------
 public:

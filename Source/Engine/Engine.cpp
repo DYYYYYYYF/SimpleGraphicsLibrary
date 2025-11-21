@@ -9,11 +9,13 @@
 #include "Scene.h"
 #include "Framework/Actors/Actor.h"
 #include "Framework/Components/MeshComponent.h"
+#include "System/ResourceSystem.h"
 
 Engine::Engine() {
 	Window_ = nullptr;
 	Running_ = false;
 	Application_ = nullptr;
+	Scene_ = nullptr;
 }
 
 Engine& Engine::GetInstance() {
@@ -64,18 +66,31 @@ bool Engine::Initialize(IApplication* app) {
 	// Rendering
 	CoreRenderer = new Renderer();
 	if (!CoreRenderer || !CoreRenderer->Initialize(Window_, BackendAPI::eOpenGL)) {
+		LOG_ERROR << "Renderer init failed!";
+		return false;
+	}
+
+	ResourceSystem& ResourceSys= ResourceSystem::Instance();
+	if (!ResourceSys.Initialize()) {
+		LOG_ERROR << "ResourceSystem init failed!";
 		return false;
 	}
 
 	// TODO: Managers  Renderer  Subsystems Window
 
+	// 创建场景
+	Scene_ = new Scene();
+	if (!Scene_ || !Scene_->Initialize()) {
+		LOG_ERROR << "Scene init failed!";
+		return false;
+	}
+
 	LOG_INFO << "Engine create successfully.";
 	return true;
 }
 
-Scene Scene_;
 void Engine::Run() {
-	Application_->InitScene(Scene_);
+	Application_->InitScene(*Scene_);
 
 	EventManager& eventManager = EventManager::Instance();
 	while (Running_ && !Window_->ShouldClose()) {
@@ -89,7 +104,7 @@ void Engine::Run() {
 
 		CommandList CmdList;
 		CoreRenderer->BeginCommand(CmdList);
-		std::vector<std::shared_ptr<Actor>> AllActors = Scene_.GetAllActors();
+		std::vector<std::shared_ptr<Actor>> AllActors = Scene_->GetAllActors();
 		for (auto& Act : AllActors) {
 			MeshComponent* MeshComp = Act.get()->GetComponent<MeshComponent>();
 			if (MeshComp) {
@@ -103,6 +118,17 @@ void Engine::Run() {
 }
 
 void Engine::Shutdown() {
+	Scene_->Clear();
+
+	ResourceSystem& ResourceSys = ResourceSystem::Instance();
+	ResourceSys.Shutdown();
+
+	if (CoreRenderer) {
+		CoreRenderer->Destroy();
+		delete(CoreRenderer);
+		CoreRenderer = nullptr;
+	}
+
 	EventManager::Instance().UnsubscribeAll();
 
 	if (Window_) {

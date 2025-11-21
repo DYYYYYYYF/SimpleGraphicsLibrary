@@ -109,11 +109,10 @@ std::vector<std::string> JsonObject::GetKeys() const {
 	return keys;
 }
 
-bool JsonObject::SaveToFile(const File& file) const {
+bool JsonObject::SaveToFile(File file) const {
 	try {
 		std::string content = Dump(2);
-		// 假设File有WriteString方法
-		// file.WriteString(content);
+		file.WriteBytes(content.c_str(), content.size());
 		return true;
 	}
 	catch (...) {

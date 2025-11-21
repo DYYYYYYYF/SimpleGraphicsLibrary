@@ -1,4 +1,4 @@
-project(EngineFramework)
+ï»¿project(EngineFramework)
 
 file(GLOB FRAMEWORK_SOURCES 
     "${CMAKE_CURRENT_SOURCE_DIR}/Actors/*.cpp" 
@@ -10,11 +10,11 @@ file(GLOB FRAMEWORK_SOURCES
 message(${FRAMEWORK_SOURCES})
 add_library(EngineFramework SHARED ${FRAMEWORK_SOURCES})
 
-# Á´½Ó¿â
 target_link_libraries(EngineFramework PRIVATE
     EngineCore
     EnginePlatform
     EngineRendering
+    EngineSystem
 )
 
 target_compile_definitions(EngineFramework PRIVATE ENGINE_FRAMEWORK_EXPORTS)

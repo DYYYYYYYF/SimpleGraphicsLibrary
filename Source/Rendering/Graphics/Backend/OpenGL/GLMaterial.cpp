@@ -4,28 +4,33 @@
 #include "Resource/ITexture.h"
 #include "GLShader.h"
 #include "Platform/File/JsonObject.h"
+#include <Logger.hpp>
 
-GLMaterial::GLMaterial() { Name_ = "";  IsValid_ = false; }
+GLMaterial::GLMaterial() { Name_ = ""; }
 
 GLMaterial::GLMaterial(const std::string& filename) {
-	IsValid_ = false;
+	if (!Load(filename)) {
+		return;
+	}
 
-	Load(filename);
+	IsValid_ = true;
 }
 
 GLMaterial::~GLMaterial() {
 	Unload();
 }
 
-void GLMaterial::Load(const std::string& filename) {
+bool GLMaterial::Load(const std::string& filename) {
 	File MaterialFile("../Assets/Materials" + filename);
 	if (!MaterialFile.IsExist()) {
-		return;
+		LOG_ERROR << "Material file '" << filename << "' is not exist!";
+		return false;
 	}
 
 	JsonObject MaterialObj(MaterialFile);
 	if (!MaterialObj.IsObject()) {
-		return;
+		LOG_ERROR << "Material file '" << filename << "' is invalid json!";
+		return false;
 	}
 
 	// 加载数据
@@ -33,7 +38,8 @@ void GLMaterial::Load(const std::string& filename) {
 
 	JsonObject UBOData = MaterialObj.Get("MaterialUBO");
 	if (!UBOData.IsObject()) {
-		return;
+		LOG_ERROR << "Material file '" << filename << "' is invalid json!";
+		return false;
 	}
 
 	JsonObject AlbedoData = UBOData.Get("Albedo");
@@ -68,18 +74,30 @@ void GLMaterial::Load(const std::string& filename) {
 
 	std::string ShaderAsset = MaterialObj.Get("UsedShader").GetString();
 	Shader_ = std::make_shared<GLShader>(filename);
+	if (!Shader_) {
+		return false;
+	}
 
 	// 创建Buffer
 	glGenBuffers(1, &UBO_);
 	glBindBuffer(GL_UNIFORM_BUFFER, UBO_);
 
+	LOG_DEBUG << "Material '" << Name_ << "' loaded.";
 	IsValid_ = true;
+	return true;
 }
 
 void GLMaterial::Unload() {
+	if (Shader_) {
+		Shader_->Unload();
+		Shader_.reset();
+	}
+
 	if (UBO_ != NULL) {
 		glDeleteBuffers(1, &UBO_);
 	}
+
+	LOG_DEBUG << "Material '" << Name_ << "' unloaded.";
 }
 
 void GLMaterial::Apply() const {

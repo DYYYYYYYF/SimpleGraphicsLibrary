@@ -6,6 +6,7 @@ set(RENDERING_SOURCES
 )
 set(RENDERING_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/Renderer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Resource/IResource.h
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
