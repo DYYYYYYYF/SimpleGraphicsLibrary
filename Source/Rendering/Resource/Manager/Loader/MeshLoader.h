@@ -1,6 +1,10 @@
 ﻿#pragma once
 
+#include "RenderModuleAPI.h"
 #include <string>
+#include <memory>
+
+class IMesh;
 
 class MeshLoader {
 public:

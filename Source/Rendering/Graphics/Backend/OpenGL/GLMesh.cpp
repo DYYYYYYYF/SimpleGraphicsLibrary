@@ -2,7 +2,6 @@
 #include "GLMaterial.h"
 #include <Logger.hpp>
 #include "Platform/File/JsonObject.h"
-#include "Resource/Manager/Loader/MeshLoader.h"
 #include "Resource/Manager/ResourceManager.h"
 
 GLMesh::GLMesh(const std::string& FilePath) : VAO_(NULL), VBO_(NULL), EBO_(NULL) {
@@ -32,7 +31,7 @@ void GLMesh::Unbind() const {
 
 bool GLMesh::Load(const std::string& FilePath) {
 	// 读取配置
-	File MeshSrc("../Assets/Meshes" + FilePath);
+	File MeshSrc(MESH_CONFIG_PATH + FilePath);
 	if (!MeshSrc.IsExist()) {
 		return false;
 	}
@@ -40,32 +39,23 @@ bool GLMesh::Load(const std::string& FilePath) {
 	JsonObject Content = JsonObject(MeshSrc.ReadBytes());
 	Name_ = Content.Get("Name").GetString();
 
-	// MeshAsset
-	const std::string& MeshAsset = Content.Get("MeshAsset").GetString();
-	if (!MeshLoader::Load(MeshAsset)) {
-		LOG_ERROR << "Load mesh asset '" << Name_ <<"' failed.";
-		return false;
-	}
-
 	// 加载材质
 	JsonObject MaterialContent = Content.Get("MaterialConfig");
 	if (MaterialContent.IsArray()) {
 		size_t MaterialConfigCount = MaterialContent.Size();
 		for (size_t i = 0; i < MaterialConfigCount; ++i) {
-			// 先加载
+			// 获取信息
 			JsonObject MaterialConfig = MaterialContent.ArrayItemAt(i);
 			const std::string& MaterialName = MaterialConfig.Get("Name").GetString();
 			const std::string& MaterialConfigPath = MaterialConfig.Get("MaterialConfig").GetString();
-			ResourceManager::Instance().LoadResource(ResourceType::eMaterial, MaterialConfigPath);
 
-			// 再保存
-			std::shared_ptr<IMaterial> Mat = std::dynamic_pointer_cast<IMaterial>(
-				ResourceManager::Instance().Acquire(ResourceType::eMaterial, MaterialName)
+			// 加载材质配置
+			std::shared_ptr<IMaterial> Mat = DynamicCast<IMaterial>(
+				ResourceManager::Instance().LoadResource(ResourceType::eMaterial, MaterialConfigPath)
 			);
 
-			if (Mat) {
-				Materials_.push_back(Mat);
-			}
+			if (!Mat) continue;
+			Materials_.push_back(Mat);
 		}
 	}
 

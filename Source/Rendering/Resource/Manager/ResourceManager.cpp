@@ -2,7 +2,9 @@
 #include "Rendering/Renderer/Renderer.h"
 #include "Platform/File/JsonObject.h"
 #include "Resource/IShader.h"
+#include "Loader/MaterialLoader.h"
 #include <Logger.hpp>
+#include "Loader/MeshLoader.h"
 
 ResourceManager& ResourceManager::Instance() {
 	static ResourceManager GlobalResourceSys;
@@ -133,6 +135,13 @@ std::shared_ptr<IResource> ResourceManager::LoadMeshResource(const std::string& 
 		return nullptr;
 	}
 
+	// MeshAsset
+	const std::string& MeshAsset = Content.Get("MeshAsset").GetString();
+	if (!MeshLoader::Load(MeshAsset)) {
+		LOG_ERROR << "Load mesh asset '" << Name << "' failed.";
+		return nullptr;
+	}
+
 	std::shared_ptr<IMesh> Mesh = Renderer::Instance()->CreateMesh(filename);
 	if (!Mesh || !Mesh->IsValid()) {
 		return nullptr;
@@ -157,9 +166,15 @@ std::shared_ptr<IResource> ResourceManager::LoadMaterialResource(const std::stri
 		return nullptr;
 	}
 
-	std::shared_ptr<IMaterial> Material = Renderer::Instance()->CreateMaterial(filename);
+	MaterialDesc Desc;
+	if (MaterialLoader::Load(filename, Desc)) {
+		// TODO: 初始化 Material
+	}
+
+	std::shared_ptr<IMaterial> Material = Renderer::Instance()->CreateMaterial(Desc);
 	if (!Material || !Material->IsValid()) {
-		return nullptr;
+		LOG_WARN << "TODO: Need use default material.";
+		LOG_ERROR << "Load material asset failed!";
 	}
 
 	uint64_t ID = Material->GetID();

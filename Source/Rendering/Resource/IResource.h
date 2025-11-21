@@ -4,6 +4,10 @@
 #include <string>
 #include "Core/UniqueID.h"
 
+#ifndef DynamicCast
+#define DynamicCast std::dynamic_pointer_cast
+#endif
+
 enum class ResourceType {
 	eMesh = 0,
 	eMaterial,

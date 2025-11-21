@@ -87,8 +87,8 @@ std::shared_ptr<IMesh> Renderer::CreateMesh(const std::string& AssetPath) {
 	return GraphicsDevice_->CreateMesh(AssetPath);
 }
 
-std::shared_ptr<IMaterial> Renderer::CreateMaterial(const std::string& AssetPath) {
-	return GraphicsDevice_->CreateMaterial(AssetPath);
+std::shared_ptr<IMaterial> Renderer::CreateMaterial(const struct MaterialDesc& AssetDesc) {
+	return GraphicsDevice_->CreateMaterial(AssetDesc);
 }
 
 std::shared_ptr<IShader> Renderer::CreateShader(const std::string& AssetPath) {

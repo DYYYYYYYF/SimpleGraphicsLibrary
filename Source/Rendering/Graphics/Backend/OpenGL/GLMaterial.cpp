@@ -17,8 +17,25 @@ GLMaterial::GLMaterial(const std::string& filename) {
 	IsValid_ = true;
 }
 
+GLMaterial::GLMaterial(const MaterialDesc& Desc) {
+	if (!Load(Desc)) {
+		return;
+	}
+
+	IsValid_ = true;
+}
+
 GLMaterial::~GLMaterial() {
 	Unload();
+}
+
+bool GLMaterial::Load(const MaterialDesc& Desc) {
+	const MaterialDesc& Descs = Desc;
+
+	LOG_WARN << "Should Continue coding...";
+
+
+	return true;
 }
 
 bool GLMaterial::Load(const std::string& filename) {
@@ -43,7 +60,7 @@ bool GLMaterial::Load(const std::string& filename) {
 		return false;
 	}
 
-	JsonObject AlbedoData = UBOData.Get("Albedo");
+	/*JsonObject AlbedoData = UBOData.Get("Albedo");
 	if (AlbedoData.IsArray() && AlbedoData.Size() == 4) {
 		MaterialUBO_.Albedo_ = FVector4(
 			AlbedoData.ArrayItemAt(0).GetFloat(),
@@ -71,17 +88,13 @@ bool GLMaterial::Load(const std::string& filename) {
 			MetallicRoughnessAOData.ArrayItemAt(2).GetFloat(),
 			MetallicRoughnessAOData.ArrayItemAt(3).GetFloat()
 		);
-	}
+	}*/
 
 	std::string ShaderAsset = MaterialObj.Get("UsedShader").GetString();
 	Shader_ = DynamicCast<IShader>(ResourceManager::Instance().LoadResource(ResourceType::eShader, ShaderAsset));
 	if (!Shader_) {
 		return false;
 	}
-
-	// 创建Buffer
-	glGenBuffers(1, &UBO_);
-	glBindBuffer(GL_UNIFORM_BUFFER, UBO_);
 
 	LOG_DEBUG << "Material '" << Name_ << "' loaded.";
 	IsValid_ = true;
@@ -91,10 +104,6 @@ bool GLMaterial::Load(const std::string& filename) {
 void GLMaterial::Unload() {
 	if (Shader_) {
 		Shader_.reset();
-	}
-
-	if (UBO_ != NULL) {
-		glDeleteBuffers(1, &UBO_);
 	}
 
 	LOG_DEBUG << "Material '" << Name_ << "' unloaded.";
@@ -112,8 +121,7 @@ void GLMaterial::Apply() const {
 }
 
 void GLMaterial::ApplyUniformBuffer() const {
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(MaterialUBO), &MaterialUBO_, GL_DYNAMIC_DRAW);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 0, UBO_);	// param2对应的binding=0
+	Shader_->UploadMaterial(*this);
 }
 
 void GLMaterial::ApplyTextures() const {
