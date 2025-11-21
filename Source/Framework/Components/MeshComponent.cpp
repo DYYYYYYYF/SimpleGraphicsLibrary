@@ -4,19 +4,19 @@
 #include "Rendering/Resource/IMesh.h"
 #include "Rendering/Resource/IMaterial.h"
 #include "Platform/File/JsonObject.h"
-#include "System/ResourceSystem.h"
+#include "Rendering/Resource/Manager/ResourceManager.h"
+
+#ifndef DynmicCast
+#define DynmicCast std::dynamic_pointer_cast
+#endif
 
 MeshComponent::MeshComponent() : BaseComponent() {}
 MeshComponent::MeshComponent(Actor* Owner, const std::string& Name) : BaseComponent(Owner, Name) {}
 MeshComponent::~MeshComponent() {
-	ResourceSystem& RS = ResourceSystem::Instance();
+	ResourceManager& RS = ResourceManager::Instance();
 	if (Meshes_) {
 		RS.Release(Meshes_->GetID());
 		Meshes_.reset();
-	}
-	if (Materials_) {
-		RS.Release(Materials_->GetID());
-		Materials_.reset();
 	}
 }
 
@@ -26,37 +26,28 @@ void MeshComponent::Draw(CommandList& CmdList) {
 		return;
 	}
 
-	if (!Materials_) {
+	IMesh* CurrentMesh = GetMesh().get();
+	if (!CurrentMesh) {
 		return;
 	}
 
-	if (!GetMesh() || !GetMaterial()) {
-		return;
-	}
+	uint64_t MaterialCount = CurrentMesh->GetMaterialCount();
+	for (uint64_t i = 0; i < MaterialCount; ++i) {
+		IMaterial* Material = CurrentMesh->GetMaterial(i).get();
+		if (!Material) {
+			continue;
+		}
 
-	CmdList.DrawIndexed(GetMesh().get(), GetMaterial().get(), FMatrix4::Identity(), 6);
+		CmdList.DrawIndexed(GetMesh().get(), Material, FMatrix4::Identity(), 6);
+	}
 }
 
 bool MeshComponent::LoadFromFile(const std::string& FilePath) {
-	File MeshSrc("../Assets/Meshes" + FilePath);
-	if (!MeshSrc.IsExist()) {
-		return false;
-	}
 	
-	JsonObject Content = MeshSrc.ReadBytes();
-	ResourceSystem& RS = ResourceSystem::Instance();
-
-	// 加载Mesh
-	std::string MeshAsset = Content.Get("MeshAsset").GetString();
-	Meshes_ = RS.Acquire(ResourceType::eMesh, MeshAsset);
+	// 加载资产
+	ResourceManager& RS = ResourceManager::Instance();
+	Meshes_ = DynmicCast<IMesh>(RS.LoadResource(ResourceType::eMesh, FilePath));
 	if (!Meshes_) {
-		return false;
-	}
-
-	// 加载材质
-	std::string MaterialAsset = Content.Get("MaterialAsset").GetString();
-	Materials_ = RS.Acquire(ResourceType::eMaterial, MaterialAsset);
-	if (!Materials_) {
 		return false;
 	}
 

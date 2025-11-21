@@ -19,11 +19,12 @@ public:
 	ENGINE_FRAMEWORK_API bool LoadFromFile(const std::string& FilePath);
 
 	ENGINE_FRAMEWORK_API std::shared_ptr<IMesh> GetMesh() { return std::dynamic_pointer_cast<IMesh>(Meshes_); }
-	ENGINE_FRAMEWORK_API std::shared_ptr<IMaterial> GetMaterial() { return std::dynamic_pointer_cast<IMaterial>(Materials_); }
+	ENGINE_FRAMEWORK_API void SetMesh(std::shared_ptr<IResource> Mesh) {
+		if (Meshes_) Meshes_.reset();
+		Meshes_ = std::dynamic_pointer_cast<IMesh>(Meshes_); 
+	}
 
 private:
 	std::shared_ptr<IResource> Meshes_;
-	std::shared_ptr<IResource> Materials_;
-
 
 };

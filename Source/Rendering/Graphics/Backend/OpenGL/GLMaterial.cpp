@@ -4,6 +4,7 @@
 #include "Resource/ITexture.h"
 #include "GLShader.h"
 #include "Platform/File/JsonObject.h"
+#include "Resource/Manager/ResourceManager.h"
 #include <Logger.hpp>
 
 GLMaterial::GLMaterial() { Name_ = ""; }
@@ -21,7 +22,7 @@ GLMaterial::~GLMaterial() {
 }
 
 bool GLMaterial::Load(const std::string& filename) {
-	File MaterialFile("../Assets/Materials" + filename);
+	File MaterialFile(MATERIAL_CONFIG_PATH + filename);
 	if (!MaterialFile.IsExist()) {
 		LOG_ERROR << "Material file '" << filename << "' is not exist!";
 		return false;
@@ -73,7 +74,7 @@ bool GLMaterial::Load(const std::string& filename) {
 	}
 
 	std::string ShaderAsset = MaterialObj.Get("UsedShader").GetString();
-	Shader_ = std::make_shared<GLShader>(filename);
+	Shader_ = DynamicCast<IShader>(ResourceManager::Instance().LoadResource(ResourceType::eShader, ShaderAsset));
 	if (!Shader_) {
 		return false;
 	}
@@ -89,7 +90,6 @@ bool GLMaterial::Load(const std::string& filename) {
 
 void GLMaterial::Unload() {
 	if (Shader_) {
-		Shader_->Unload();
 		Shader_.reset();
 	}
 

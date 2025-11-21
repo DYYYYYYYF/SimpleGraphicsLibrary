@@ -4,6 +4,8 @@
 #include "Core/BaseMath.h"
 #include <vector>
 
+class IMaterial;
+
 class IMesh : public IResource {
 public:
 	IMesh() { Type_ = ResourceType::eMesh; }
@@ -25,8 +27,12 @@ public:
 	// 获取原始数据（用于物理碰撞等）
 	const std::vector<Vertex>& GetVertices() const { return Vertices_; }
 	const std::vector<unsigned int>& GetIndices() const { return Indices_; }
+	std::shared_ptr<IMaterial> GetMaterial(uint64_t i) { return i < Materials_.size() ? Materials_[i] : nullptr; }
+	const std::vector<std::shared_ptr<IMaterial>>& GetMaterials() const { return Materials_; }
+	uint64_t GetMaterialCount() const { return Materials_.size(); }
 
 protected:
 	std::vector<Vertex> Vertices_;
 	std::vector<uint32_t> Indices_;
+	std::vector<std::shared_ptr<IMaterial>> Materials_;
 };
