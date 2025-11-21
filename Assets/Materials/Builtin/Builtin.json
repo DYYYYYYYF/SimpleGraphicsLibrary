@@ -1,6 +1,6 @@
 {
     "Name": "BuiltinMaterial",
-    "MaterialUBO" : {
+    "MaterialParams" : {
         "Albedo" : [1.0, 1.0, 1.0, 1.0],
         "Emissive" : [0.0, 0.0, 0.0, 1.0],
         "MetallicRoughnessAO" : [0.0, 0.0, 1.0, 1.0]

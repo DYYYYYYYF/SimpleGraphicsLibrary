@@ -6,25 +6,6 @@
 #include <memory>
 #include <unordered_map>
 
-#ifndef MESH_CONFIG_PATH
-#define MESH_CONFIG_PATH "../Assets/Meshes"
-#endif
-#ifndef MATERIAL_CONFIG_PATH
-#define MATERIAL_CONFIG_PATH "../Assets/Materials"
-#endif
-#ifndef SHADER_CONFIG_PATH
-#define SHADER_CONFIG_PATH "../Assets/Shaders/Configs"
-#endif
-#ifndef SHADER_ASSET_PATH
-#define SHADER_ASSET_PATH "../Assets/Shaders/Sources"
-#endif
-#ifndef TEXTURE_ASSET_PATH
-#define TEXTURE_ASSET_PATH "../Assets/Textures"
-#endif
-
-#ifndef DynamicCast
-#define DynamicCast std::dynamic_pointer_cast
-#endif
 
 class ResourceManager {
 public:

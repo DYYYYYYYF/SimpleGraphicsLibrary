@@ -1,4 +1,5 @@
 ﻿#include "GLShader.h"
+#include "GLMaterial.h"
 #include "Platform/File/JsonObject.h"
 #include "Resource/Manager/ResourceManager.h"
 #include <Logger.hpp>
@@ -69,7 +70,9 @@ bool GLShader::Load(const std::string& AssetPath) {
 		}
 	}
 
-	
+	// 初始化Buffer
+	glGenBuffers(1, &MaterialUBO_);
+	glBindBuffer(GL_UNIFORM_BUFFER, MaterialUBO_);
 
 	// 初始化ShaderProgram
 	ProgramID_ = glCreateProgram();
@@ -112,6 +115,11 @@ void GLShader::Unload() {
 		}
 
 		glDeleteProgram(ProgramID_);
+	}
+
+
+	if (MaterialUBO_ != NULL) {
+		glDeleteBuffers(1, &MaterialUBO_);
 	}
 
 	LOG_DEBUG << "Shader '" << Name_ << "' unloaded.";
@@ -203,3 +211,116 @@ void GLShader::SetVec4(const std::string& name, const FVector4& value){ glUnifor
 // GL_FALSE这里意味着cloumn-major 方式读取
 void GLShader::SetMat3(const std::string& name, const FMatrix3& value){ glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, value.data()); }
 void GLShader::SetMat4(const std::string& name, const FMatrix4& value) { glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, value.data()); }
+
+void GLShader::UploadMaterial(const IMaterial& Mat) {
+	const ShaderUniformLayout& layout = MaterialLayout_;
+
+	// 构建 CPU 端 buffer
+	std::vector<uint8_t> buffer(layout.blockSize);
+
+	// 遍历 material 的参数
+	for (auto& kv : Mat.GetUniforms())
+	{
+		const std::string& name = kv.first;
+		const MaterialValue& value = kv.second;
+
+		if (!layout.uniforms.count(name))
+			continue;
+
+		const UniformInfo& info = layout.uniforms.at(name);
+
+		// 写入对应的 offset
+		memcpy(buffer.data() + info.offset, value.data.data(), info.size);
+	}
+
+	// 上传 GPU
+	glBindBuffer(GL_UNIFORM_BUFFER, MaterialUBO_);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, layout.blockSize, buffer.data());
+	glBindBufferBase(GL_UNIFORM_BUFFER, layout.binding, MaterialUBO_);
+}
+
+void GLShader::ReflectUnifromBlock() {
+	GLuint program = ProgramID_;
+
+	// 1. 查询 uniform block blockIndex
+	const char* blockName = "MaterialBlock";
+	GLuint blockIndex = glGetUniformBlockIndex(program, blockName);
+	if (blockIndex == GL_INVALID_INDEX) {
+		LOG_ERROR << "Shader missing MaterialBlock!";
+		return;
+	}
+
+	MaterialLayout_.blockIndex = blockIndex;
+
+	// 2. 获取 block 的大小
+	GLint blockSize = 0;
+	glGetActiveUniformBlockiv(program, blockIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
+	MaterialLayout_.blockSize = blockSize;
+
+	// 3. 获取 block 内包含的 uniform 数量
+	GLint numUniforms = 0;
+	glGetActiveUniformBlockiv(program, blockIndex, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &numUniforms);
+
+	// 4. 获取 block 中 uniform 的索引
+	std::vector<GLint> uniformIndices(numUniforms);
+	glGetActiveUniformBlockiv(program, blockIndex, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, uniformIndices.data());
+
+	// 5. 查询每个 uniform 的名称、类型、offset 等
+	for (int i = 0; i < numUniforms; i++)
+	{
+		char name[256];
+		GLsizei length = 0;
+		GLenum type = 0;
+		GLint size = 0;
+
+		GLuint index = uniformIndices[i];
+
+		// uniform 名字
+		glGetActiveUniform(program, index, sizeof(name), &length, &size, &type, name);
+
+		// 查询 offset
+		GLint offset = 0;
+		glGetActiveUniformsiv(program, 1, &index, GL_UNIFORM_OFFSET, &offset);
+
+		UniformInfo info;
+		info.offset = offset;
+		info.type = MapStd140Type(type);
+		info.size = ComputeTypeSize(info.type);
+
+		MaterialLayout_.uniforms[name] = info;
+	}
+
+	// 6. 查询绑定点(binding = X)
+	GLint binding = 0;
+	glGetActiveUniformBlockiv(program, blockIndex, GL_UNIFORM_BLOCK_BINDING, &binding);
+	MaterialLayout_.binding = binding;
+}
+
+MaterialValue::Type GLShader::MapStd140Type(GLenum Type) {
+	switch (Type)
+	{
+	case GL_FLOAT:          return MaterialValue::Type::Float;
+	case GL_FLOAT_VEC2:     return MaterialValue::Type::Vector2;
+	case GL_FLOAT_VEC3:     return MaterialValue::Type::Vector3; // vec3 在 std140 中按 vec4 对齐
+	case GL_FLOAT_VEC4:     return MaterialValue::Type::Vector4;
+	case GL_FLOAT_MAT4:     return MaterialValue::Type::Matrix4;
+	default:
+		LOG_ERROR << "Unsupported UBO type: " << (int)Type;
+		return MaterialValue::Type::Vector4;
+	}
+}
+
+int GLShader::ComputeTypeSize(MaterialValue::Type Type)
+{
+	switch (Type)
+	{
+	case MaterialValue::Type::Float:          return 4;
+	case MaterialValue::Type::Vector2:     return 8;
+	case MaterialValue::Type::Vector3:     return 16; // vec3 在 std140 中按 vec4 对齐
+	case MaterialValue::Type::Vector4:     return 16;
+	case MaterialValue::Type::Matrix4:     return 64;
+	default:
+		LOG_ERROR << "Unsupported UBO type: " << (int)Type;
+		return 16;
+	}
+}

@@ -9,6 +9,26 @@
 
 class IShader;
 
+struct MaterialValue {
+	enum class Type {
+		Float,
+		Vector2,
+		Vector3,
+		Vector4,
+		Matrix4
+	};
+
+	Type type;
+	std::vector<float> data; // 通用存储
+};
+
+struct MaterialDesc {
+	std::string Name;
+	std::string ShaderPath;
+	std::unordered_map<std::string, MaterialValue> Uniforms;
+	std::unordered_map<TextureSlot, std::string> TexturePaths;
+};
+
 class IMaterial : public IResource {
 public:
 	IMaterial() { Type_ = ResourceType::eMaterial; }
@@ -27,6 +47,7 @@ public:
 	};
 
 public:
+	virtual bool Load(const MaterialDesc& Desc) = 0;
 	virtual void Apply() const = 0;
 	virtual void Unbind() const = 0;
 
@@ -46,11 +67,11 @@ public:
 	}
 
 	std::shared_ptr<IShader> GetShader() { return Shader_; }
+	std::unordered_map<std::string, MaterialValue> GetUniforms()const { return Uniforms; }
 
 protected:
 	// 材质参数
-	MaterialUBO MaterialUBO_;
-
+	std::unordered_map<std::string, MaterialValue> Uniforms;
 	// Shader引用（共享）
 	std::shared_ptr<IShader> Shader_;
 	// 纹理引用（共享所有权）

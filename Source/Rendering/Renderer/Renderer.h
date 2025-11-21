@@ -32,7 +32,7 @@ public:
 
 public:
 	ENGINE_RENDERING_API std::shared_ptr<IMesh> CreateMesh(const std::string& AssetPath);
-	ENGINE_RENDERING_API std::shared_ptr<IMaterial> CreateMaterial(const std::string& AssetPath);
+	ENGINE_RENDERING_API std::shared_ptr<IMaterial> CreateMaterial(const struct MaterialDesc& AssetDesc);
 	ENGINE_RENDERING_API std::shared_ptr<IShader> CreateShader(const std::string& AssetPath);
 	ENGINE_RENDERING_API std::shared_ptr<ITexture> CreateTexture(const std::string& AssetPath);
 
