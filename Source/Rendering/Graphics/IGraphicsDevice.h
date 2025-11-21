@@ -7,6 +7,8 @@
 class Window;
 class IMesh;
 class IMaterial;
+class IShader;
+class ITexture;
 class CommandList;
 
 class IGraphicsDevice {
@@ -20,6 +22,8 @@ public:
 public:
 	virtual std::shared_ptr<IMesh> CreateMesh(const std::string& AssetPath) = 0;
 	virtual std::shared_ptr<IMaterial> CreateMaterial(const std::string& AssetPath) = 0;
+	virtual std::shared_ptr<IShader> CreateShader(const std::string& AssetPath) = 0;
+	virtual std::shared_ptr<ITexture> CreateTexture(const std::string& AssetPath) = 0;
 
 public:
 	BackendAPI GetBackendAPI() { return BackendAPI_; }

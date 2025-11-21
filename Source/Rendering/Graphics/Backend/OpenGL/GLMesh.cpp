@@ -1,8 +1,12 @@
 ﻿#include "GLMesh.h"
+#include "GLMaterial.h"
 #include <Logger.hpp>
+#include "Platform/File/JsonObject.h"
+#include "Resource/Manager/Loader/MeshLoader.h"
+#include "Resource/Manager/ResourceManager.h"
 
-GLMesh::GLMesh(const std::string& mesh) : VAO_(NULL), VBO_(NULL), EBO_(NULL) {
-	if (!Load(mesh)) {
+GLMesh::GLMesh(const std::string& FilePath) : VAO_(NULL), VBO_(NULL), EBO_(NULL) {
+	if (!Load(FilePath)) {
 		return;
 	}
 
@@ -26,8 +30,44 @@ void GLMesh::Unbind() const {
 	}
 }
 
-bool GLMesh::Load(const std::string& mesh) {
-	Name_ = "";
+bool GLMesh::Load(const std::string& FilePath) {
+	// 读取配置
+	File MeshSrc("../Assets/Meshes" + FilePath);
+	if (!MeshSrc.IsExist()) {
+		return false;
+	}
+
+	JsonObject Content = JsonObject(MeshSrc.ReadBytes());
+	Name_ = Content.Get("Name").GetString();
+
+	// MeshAsset
+	const std::string& MeshAsset = Content.Get("MeshAsset").GetString();
+	if (!MeshLoader::Load(MeshAsset)) {
+		LOG_ERROR << "Load mesh asset '" << Name_ <<"' failed.";
+		return false;
+	}
+
+	// 加载材质
+	JsonObject MaterialContent = Content.Get("MaterialConfig");
+	if (MaterialContent.IsArray()) {
+		size_t MaterialConfigCount = MaterialContent.Size();
+		for (size_t i = 0; i < MaterialConfigCount; ++i) {
+			// 先加载
+			JsonObject MaterialConfig = MaterialContent.ArrayItemAt(i);
+			const std::string& MaterialName = MaterialConfig.Get("Name").GetString();
+			const std::string& MaterialConfigPath = MaterialConfig.Get("MaterialConfig").GetString();
+			ResourceManager::Instance().LoadResource(ResourceType::eMaterial, MaterialConfigPath);
+
+			// 再保存
+			std::shared_ptr<IMaterial> Mat = std::dynamic_pointer_cast<IMaterial>(
+				ResourceManager::Instance().Acquire(ResourceType::eMaterial, MaterialName)
+			);
+
+			if (Mat) {
+				Materials_.push_back(Mat);
+			}
+		}
+	}
 
 	Vertex V1 = { FVector3(-0.5f,  0.5f, 0.0f), FVector3(0.0f, 0.0f, 1.0f), FVector2(0, 0), FVector3(0.0f, 0.0f, 0.0f) };
 	Vertex V2 = { FVector3(-0.5f, -0.5f, 0.0f), FVector3(0.0f, 0.0f, 1.0f), FVector2(0, 1), FVector3(0.0f, 0.0f, 0.0f) };
@@ -90,6 +130,10 @@ void GLMesh::Setup(){
 }
 
 void GLMesh::Unload() {
+	for (auto& Material : Materials_) {
+		Material.reset();
+	}
+
 	if (IsLoaded_) {
 		glDeleteVertexArrays(1, &VAO_);
 		VAO_ = NULL;

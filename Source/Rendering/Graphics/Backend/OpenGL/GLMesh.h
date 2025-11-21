@@ -5,11 +5,11 @@
 
 class GLMesh : public IMesh {
 public:
-	GLMesh(const std::string& mesh);
+	GLMesh(const std::string& FilePath);
 	virtual ~GLMesh();
 
 public:
-	virtual bool Load(const std::string& path) override;
+	virtual bool Load(const std::string& FilePath) override;
 	virtual void Unload() override;
 
 	virtual void Bind() const override;

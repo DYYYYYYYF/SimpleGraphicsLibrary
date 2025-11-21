@@ -1,5 +1,6 @@
 ﻿#include "GLShader.h"
 #include "Platform/File/JsonObject.h"
+#include "Resource/Manager/ResourceManager.h"
 #include <Logger.hpp>
 
 GLShader::GLShader() {
@@ -24,22 +25,17 @@ GLShader::~GLShader() {
 }
 
 bool GLShader::Load(const std::string& AssetPath) {
-	File ShaderFile("../Assets/Shaders/Configs" + AssetPath);
-	if (!ShaderFile.IsExist()) {
-		LOG_ERROR << "Shader file '" << AssetPath << "' is not exist!";
+	// 读取配置
+	File ShaderAsset(SHADER_CONFIG_PATH + AssetPath);
+	if (!ShaderAsset.IsExist()) {
 		return false;
 	}
 
-	JsonObject ShaderObj(ShaderFile);
-	if (!ShaderObj.IsObject()) {
-		LOG_ERROR << "Shader file '" << AssetPath << "' is invalid json!";
-		return false;
-	}
-
-	Name_ = ShaderObj.Get("Name").GetString();
+	JsonObject Content = JsonObject(ShaderAsset.ReadBytes());
+	Name_ = Content.Get("Name").GetString();
 
 	// Stages
-	JsonObject StageObj = ShaderObj.Get("Stages");
+	JsonObject StageObj = Content.Get("Stages");
 	if (StageObj.IsArray() && StageObj.Size() > 0) {
 		for (int i = 0; i < StageObj.Size(); ++i) {
 			// 具体的阶段 vert geom frag comp

@@ -54,8 +54,8 @@ message(STATUS "[3/9] Configuring Rendering...")
 add_subdirectory(Rendering)
 
 ## 第四层：系统管理
-message(STATUS "[5/9] Configuring System...")
-add_subdirectory(System)
+# message(STATUS "[5/9] Configuring System...")
+# add_subdirectory(System)
 
 ## 第五层：ECS
 message(STATUS "[4/9] Configuring Framework...")

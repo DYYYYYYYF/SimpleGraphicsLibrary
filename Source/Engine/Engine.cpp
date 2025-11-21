@@ -9,7 +9,7 @@
 #include "Scene.h"
 #include "Framework/Actors/Actor.h"
 #include "Framework/Components/MeshComponent.h"
-#include "System/ResourceSystem.h"
+#include "Rendering/Resource/Manager/ResourceManager.h"
 
 Engine::Engine() {
 	Window_ = nullptr;
@@ -70,7 +70,7 @@ bool Engine::Initialize(IApplication* app) {
 		return false;
 	}
 
-	ResourceSystem& ResourceSys= ResourceSystem::Instance();
+	ResourceManager& ResourceSys = ResourceManager::Instance();
 	if (!ResourceSys.Initialize()) {
 		LOG_ERROR << "ResourceSystem init failed!";
 		return false;
@@ -120,7 +120,7 @@ void Engine::Run() {
 void Engine::Shutdown() {
 	Scene_->Clear();
 
-	ResourceSystem& ResourceSys = ResourceSystem::Instance();
+	ResourceManager& ResourceSys = ResourceManager::Instance();
 	ResourceSys.Shutdown();
 
 	if (CoreRenderer) {

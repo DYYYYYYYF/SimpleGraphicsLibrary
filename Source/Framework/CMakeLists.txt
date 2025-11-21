@@ -14,7 +14,6 @@ target_link_libraries(EngineFramework PRIVATE
     EngineCore
     EnginePlatform
     EngineRendering
-    EngineSystem
 )
 
 target_compile_definitions(EngineFramework PRIVATE ENGINE_FRAMEWORK_EXPORTS)

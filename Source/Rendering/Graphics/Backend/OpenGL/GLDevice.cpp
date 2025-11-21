@@ -5,10 +5,11 @@
 #include "Logger.hpp"
 #include "glad/wglext.h"
 #include "File/File.h"
-#include "GLShader.h"
 #include "Window/Window.h"
 #include "GLMesh.h"
 #include "GLMaterial.h"
+#include "GLShader.h"
+#include "GLTexture.h"
 #include "Command/CommandList.h"
 
 static const double aspect_ratio = 16.0 / 9.0;
@@ -202,9 +203,15 @@ std::shared_ptr<IMesh> GLDevice::CreateMesh(const std::string& AssetPath) {
 }
 
 std::shared_ptr<IMaterial> GLDevice::CreateMaterial(const std::string& AssetPath) {
-	std::shared_ptr<IMaterial> NewMaterial = std::make_shared<GLMaterial>(AssetPath);
-	return NewMaterial;
+	return std::make_shared<GLMaterial>(AssetPath);
 }
 
+std::shared_ptr<IShader> GLDevice::CreateShader(const std::string& AssetPath) {
+	return std::make_shared<GLShader>(AssetPath);
+}
+
+std::shared_ptr<ITexture> GLDevice::CreateTexture(const std::string& AssetPath) {
+	return std::make_shared<GLTexture>(AssetPath);
+}
 
 #endif
