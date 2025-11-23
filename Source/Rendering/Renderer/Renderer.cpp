@@ -1,11 +1,12 @@
 ﻿#include "Renderer.h"
 
-#include "Logger.hpp"
 #include "Graphics/Backend/OpenGL/GLDevice.h"
 #include "Rendering/Resource/IMesh.h"
 #include "Command/CommandList.h"
 #include "Framework/Components/MeshComponent.h"
 #include "Framework/Actors/Actor.h"
+
+#include <Logger.hpp>
 
 Renderer::Renderer() {
 	GraphicsDevice_ = nullptr;
@@ -27,6 +28,7 @@ Renderer* Renderer::Instance() {
 bool Renderer::Initialize(Window* Win, BackendAPI Type) {
 	switch (Type)
 	{
+#ifdef ENGINE_OPENGL_ENABLED
 	case BackendAPI::eOpenGL:
 	{
 		LOG_INFO << "Backend API Type: OpenGL.";
@@ -36,6 +38,7 @@ bool Renderer::Initialize(Window* Win, BackendAPI Type) {
 			return false;
 		}
 	} break;
+#endif
 	default:
 	{
 		LOG_ERROR << "Create graphics device failed! Must select a type for backend api type";

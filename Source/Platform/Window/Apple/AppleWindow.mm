@@ -3,7 +3,7 @@
 #include "Window/WindowImpl.h"
 #include "Core/Event.h"
 #include "Core/EventManager.h"
-#include <iostream>
+#include <Logger.hpp>
 #include <stdexcept>
 #include <unordered_map>
 
