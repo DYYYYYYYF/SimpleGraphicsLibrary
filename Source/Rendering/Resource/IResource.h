@@ -1,12 +1,17 @@
 ﻿#pragma once
 
 #include "RenderModuleAPI.h"
-#include <string>
 #include "Core/UniqueID.h"
+#include <string>
 
 #ifndef DynamicCast
 #define DynamicCast std::dynamic_pointer_cast
 #endif
+
+struct IResourceDesc {
+	std::string Name;
+	std::string FilePath;
+};
 
 enum class ResourceType {
 	eMesh = 0,

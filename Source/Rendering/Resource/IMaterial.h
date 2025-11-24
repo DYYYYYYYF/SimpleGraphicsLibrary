@@ -22,8 +22,7 @@ struct MaterialValue {
 	std::vector<float> data; // 通用存储
 };
 
-struct MaterialDesc {
-	std::string Name;
+struct MaterialDesc : public IResourceDesc {
 	std::string ShaderPath;
 	std::unordered_map<std::string, MaterialValue> Uniforms;
 	std::unordered_map<TextureSlot, std::string> TexturePaths;

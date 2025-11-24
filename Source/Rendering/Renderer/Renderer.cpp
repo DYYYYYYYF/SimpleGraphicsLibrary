@@ -86,8 +86,8 @@ void Renderer::Destroy() {
 	LOG_INFO << "Renderer destroyed.";
 }
 
-std::shared_ptr<IMesh> Renderer::CreateMesh(const std::string& AssetPath) {
-	return GraphicsDevice_->CreateMesh(AssetPath);
+std::shared_ptr<IMesh> Renderer::CreateMesh(const struct MeshDesc& AssetDesc) {
+	return GraphicsDevice_->CreateMesh(AssetDesc);
 }
 
 std::shared_ptr<IMaterial> Renderer::CreateMaterial(const struct MaterialDesc& AssetDesc) {

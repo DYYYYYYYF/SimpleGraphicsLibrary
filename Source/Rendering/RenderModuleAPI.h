@@ -16,7 +16,10 @@
 
 // 资源路径
 #ifndef MESH_CONFIG_PATH
-#define MESH_CONFIG_PATH "../Assets/Meshes"
+#define MESH_CONFIG_PATH "../Assets/Meshes/Configs"
+#endif
+#ifndef MESH_ASSET_PATH
+#define MESH_ASSET_PATH "../Assets/Meshes/Sources"
 #endif
 #ifndef MATERIAL_CONFIG_PATH
 #define MATERIAL_CONFIG_PATH "../Assets/Materials"

@@ -16,6 +16,7 @@ public:
 	ENGINE_RENDERING_API virtual void Shutdown();
 
 	ENGINE_RENDERING_API std::shared_ptr<IResource> LoadResource(ResourceType Type, const std::string& filename);
+	ENGINE_RENDERING_API std::shared_ptr<IResource> LoadResourceFromDescriptor(ResourceType Type, IResourceDesc* Desc);
 
 	ENGINE_RENDERING_API std::shared_ptr<IResource> Acquire(ResourceType Type, const std::string& Name);
 	ENGINE_RENDERING_API std::shared_ptr<IResource> Acquire(uint64_t ID);

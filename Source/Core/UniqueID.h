@@ -10,6 +10,10 @@
 #include <thread>
 #include <functional>
 
+#ifndef INVALID_ID
+#define INVALID_ID 0xFFFF
+#endif
+
 // UUID风格的唯一ID生成器
 class UUID {
 public:

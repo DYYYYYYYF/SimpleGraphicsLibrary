@@ -35,6 +35,11 @@ foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR}/Lib/${CONFIG})
 endforeach()
 
+# 第三方库
+message(STATUS "Configuring Third-Party Libraries...")
+add_subdirectory(ThirdParty)
+
+
 # ============================================================================
 # 构建选项
 # ============================================================================
@@ -73,6 +78,9 @@ else()
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+# 不需要Debug后缀
+set(CMAKE_DEBUG_POSTFIX "")
+
 # ============================================================================
 # 平台检测
 # ============================================================================
@@ -92,10 +100,6 @@ endif()
 message(STATUS "========================================")
 message(STATUS "Configuring GameEngine")
 message(STATUS "========================================")
-
-# 第三方库
-message(STATUS "Configuring Third-Party Libraries...")
-add_subdirectory(ThirdParty)
 
 # 引擎源代码
 message(STATUS "Configuring Engine Source...")

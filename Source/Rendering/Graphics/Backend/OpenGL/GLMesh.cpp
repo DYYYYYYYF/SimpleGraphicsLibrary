@@ -3,13 +3,19 @@
 #include "Platform/File/JsonObject.h"
 #include "Resource/Manager/ResourceManager.h"
 #include <Logger.hpp>
+#include "Command/CommandList.h"
+#include "Renderer/Renderer.h"
+
+GLMesh::GLMesh(const MeshDesc& AssetDesc) {
+	if (!Load(AssetDesc)) {
+		return;
+	}
+}
 
 GLMesh::GLMesh(const std::string& FilePath) : VAO_(NULL), VBO_(NULL), EBO_(NULL) {
 	if (!Load(FilePath)) {
 		return;
 	}
-
-	IsValid_ = true;
 }
 
 GLMesh::~GLMesh() {
@@ -29,6 +35,39 @@ void GLMesh::Unbind() const {
 	}
 }
 
+bool GLMesh::Load(const struct MeshDesc& AssetDesc) {
+	// 基础信息
+	Name_ = AssetDesc.Name;
+
+	// 材质
+	for (size_t i = 0; i < AssetDesc.Materials.size(); ++i) {
+		MaterialDesc MatDesc = AssetDesc.Materials[i];
+
+		std::shared_ptr<IMaterial> Mat = DynamicCast<IMaterial>(
+			ResourceManager::Instance().LoadResourceFromDescriptor(ResourceType::eMaterial, &MatDesc)
+		);
+
+		if (!Mat) continue;
+		Materials_.push_back(Mat);
+	}
+
+	// 顶点数据
+	Vertices_ = AssetDesc.Vertices;
+	Indices_ = AssetDesc.Indices;
+	SubMeshes_ = AssetDesc.SubMeshes;
+	if (Vertices_.size() == 0 || Indices_.size() == 0 || SubMeshes_.size() == 0) {
+		LOG_ERROR << "Invalid vertex data.";
+		return false;
+	}
+
+	Setup();
+
+	LOG_DEBUG << "Mesh '" << Name_ << "' loaded.";
+	IsLoaded_ = true;
+	IsValid_ = true;
+	return true;
+}
+
 bool GLMesh::Load(const std::string& FilePath) {
 	// 读取配置
 	File MeshSrc(MESH_CONFIG_PATH + FilePath);
@@ -46,10 +85,8 @@ bool GLMesh::Load(const std::string& FilePath) {
 		for (size_t i = 0; i < MaterialConfigCount; ++i) {
 			// 获取信息
 			JsonObject MaterialConfig = MaterialContent.ArrayItemAt(i);
-			const std::string& MaterialName = MaterialConfig.Get("Name").GetString();
-			const std::string& MaterialConfigPath = MaterialConfig.Get("MaterialConfig").GetString();
-
 			// 加载材质配置
+			const std::string& MaterialConfigPath = MaterialConfig.Get("MaterialConfig").GetString();
 			std::shared_ptr<IMaterial> Mat = DynamicCast<IMaterial>(
 				ResourceManager::Instance().LoadResource(ResourceType::eMaterial, MaterialConfigPath)
 			);
@@ -79,6 +116,7 @@ bool GLMesh::Load(const std::string& FilePath) {
 
 	LOG_DEBUG << "Mesh '" << Name_ << "' loaded.";
 	IsLoaded_ = true;
+	IsValid_ = true;
 	return true;
 }
 
@@ -136,4 +174,16 @@ void GLMesh::Unload() {
 	}
 
 	LOG_DEBUG << "Mesh '" << Name_ << "' unloaded.";
+}
+
+void GLMesh::Draw(CommandList& CmdList) {
+
+	for (const SubMeshDesc& SubMesh : SubMeshes_) {
+		IMaterial* Material = GetMaterial(SubMesh.MaterialIndex).get();
+		if (!Material) {
+			continue;
+		}
+
+		CmdList.DrawIndexed(this, Material, FMatrix4::Identity(), SubMesh.IndexCount, SubMesh.BaseIndex);
+	}
 }

@@ -58,6 +58,7 @@ target_include_directories(EngineRendering
         ${CMAKE_CURRENT_SOURCE_DIR}
 
     PRIVATE
+        assimp::assimp
         $<$<BOOL:${ENGINE_ENABLE_OPENGL}>: Graphics/Backend/OpenGL/glad>
 )
 
@@ -66,6 +67,7 @@ target_link_libraries(EngineRendering
     PRIVATE
         EngineCore
         EnginePlatform
+        assimp::assimp
         $<$<BOOL:${ENGINE_ENABLE_OPENGL}>:OpenGL::GL>
 )
 

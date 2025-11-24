@@ -23,7 +23,7 @@ struct ShaderUniformLayout {
 	std::unordered_map<std::string, UniformInfo> uniforms;
 };
 
-struct ShaderDesc {
+struct ShaderDesc : public IResourceDesc{
 	std::string Name;
 	std::unordered_map<ShaderStage, std::string> Stages;
 };

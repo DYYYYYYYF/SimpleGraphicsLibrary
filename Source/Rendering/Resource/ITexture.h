@@ -12,8 +12,11 @@ enum class TextureSlot : uint32_t {
 	eHeight = 6,      // 高度图
 	eOpacity = 7,     // 不透明度
 
+	eDiffuse,
+	eSpecular,
+
 	// 可扩展到15（大多数平台保证至少16个）
-	Custom0 = 8,
+	Custom0,
 	// ...
 };
 

@@ -1,6 +1,6 @@
 {
     "Name": "BuiltinMesh",
-    "MeshAsset" : "/Builtin/Builtin.json",
+    "MeshAsset" : "/Cube/Cube.gltf",
     "MaterialConfig" : [
         {"Name" : "BuiltinMaterial", "MaterialConfig" : "/Builtin/Builtin.json"}
     ]

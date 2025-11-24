@@ -1,4 +1,4 @@
-#include "MaterialLoader.h"
+﻿#include "MaterialLoader.h"
 #include "Resource/IMaterial.h"
 #include "Platform/File/JsonObject.h"
 #include <Logger.hpp>

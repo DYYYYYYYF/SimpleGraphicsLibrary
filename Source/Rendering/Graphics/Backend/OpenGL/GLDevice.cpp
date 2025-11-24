@@ -107,7 +107,7 @@ void GLDevice::ExecuteCommandList(const CommandList& CmdList) {
 			}
 		
 			// 4. 绘制
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, DrawCmd->DrawCall_.indexCount, GL_UNSIGNED_INT, 0);
 			break;
 		}
 		}
@@ -198,8 +198,8 @@ void GLDevice::Destroy() {
 	LOG_INFO << "Destroying OpenGL device.";
 }
 
-std::shared_ptr<IMesh> GLDevice::CreateMesh(const std::string& AssetPath) {
-	return std::make_shared<GLMesh>(AssetPath);
+std::shared_ptr<IMesh> GLDevice::CreateMesh(const struct MeshDesc& AssetDesc) {
+	return std::make_shared<GLMesh>(AssetDesc);
 }
 
 std::shared_ptr<IMaterial> GLDevice::CreateMaterial(const struct MaterialDesc& AssetDesc) {

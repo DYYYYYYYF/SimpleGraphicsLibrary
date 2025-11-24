@@ -31,15 +31,7 @@ void MeshComponent::Draw(CommandList& CmdList) {
 		return;
 	}
 
-	uint64_t MaterialCount = CurrentMesh->GetMaterialCount();
-	for (uint64_t i = 0; i < MaterialCount; ++i) {
-		IMaterial* Material = CurrentMesh->GetMaterial(i).get();
-		if (!Material) {
-			continue;
-		}
-
-		CmdList.DrawIndexed(GetMesh().get(), Material, FMatrix4::Identity(), 6);
-	}
+	CurrentMesh->Draw(CmdList);
 }
 
 bool MeshComponent::LoadFromFile(const std::string& FilePath) {

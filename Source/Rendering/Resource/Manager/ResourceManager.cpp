@@ -54,6 +54,57 @@ std::shared_ptr<IResource> ResourceManager::LoadResource(ResourceType Type, cons
 	return nullptr;
 }
 
+std::shared_ptr<IResource> ResourceManager::LoadResourceFromDescriptor(ResourceType Type, IResourceDesc* Desc) {
+	uint64_t ID = INVALID_ID;
+	std::shared_ptr<IResource> Resource = nullptr;
+
+	switch (Type)
+	{
+	case ResourceType::eMesh:
+	{
+		const MeshDesc* MDesc = (MeshDesc*)Desc;
+		if (!MDesc) return nullptr;
+
+		Resource = Renderer::Instance()->CreateMesh(*MDesc);
+		if (!Resource || !Resource->IsValid()) {
+			return nullptr;
+		}
+
+		ID = Resource->GetID();
+		if (ID == INVALID_ID) return nullptr;
+
+		MeshNameMap_[Desc->Name] = ID;
+	} break;
+	case ResourceType::eMaterial:
+	{
+		const MaterialDesc* MDesc = (MaterialDesc*)Desc;
+		if (!MDesc) return nullptr;
+
+		Resource = Renderer::Instance()->CreateMaterial(*MDesc);
+		if (!Resource || !Resource->IsValid()) {
+			return nullptr;
+		}
+
+		ID = Resource->GetID();
+		if (ID == INVALID_ID) return nullptr;
+
+		MeshNameMap_[Desc->Name] = ID;
+	} break;
+		/*case ResourceType::eShader:
+
+			break;
+		case ResourceType::eTexture:
+
+			break;*/
+	}
+
+	if (Resource) {
+		Resources_[ID] = Resource;
+	}
+
+	return Resource;
+}
+
 std::shared_ptr<IResource> ResourceManager::Acquire(ResourceType Type, const std::string& Name) {
 	uint64_t ResourceID = 0xFF;
 
@@ -137,21 +188,13 @@ std::shared_ptr<IResource> ResourceManager::LoadMeshResource(const std::string& 
 	}
 
 	// MeshAsset
-	const std::string& MeshAsset = Content.Get("MeshAsset").GetString();
-	if (!MeshLoader::Load(MeshAsset)) {
-		LOG_ERROR << "Load mesh asset '" << Name << "' failed.";
-		return nullptr;
+	MeshDesc Desc;
+	if (!MeshLoader::Load(Content.Get("MeshAsset").GetString(), Desc)) {
+		// TODO: 失败时使用 Built-in Material
+		LOG_WARN << "Load mesh '" << filename << "' failed! Use built-in mesh.";
 	}
 
-	std::shared_ptr<IMesh> Mesh = Renderer::Instance()->CreateMesh(filename);
-	if (!Mesh || !Mesh->IsValid()) {
-		return nullptr;
-	}
-
-	uint64_t ID = Mesh->GetID();
-	MeshNameMap_[Name] = ID;
-	Resources_[ID] = Mesh;
-	return Mesh;
+	return LoadResourceFromDescriptor(ResourceType::eMesh, &Desc);
 }
 
 std::shared_ptr<IResource> ResourceManager::LoadMaterialResource(const std::string& filename) {
@@ -173,16 +216,7 @@ std::shared_ptr<IResource> ResourceManager::LoadMaterialResource(const std::stri
 		LOG_WARN << "Load material '" << filename << "' failed! Use built-in material.";
 	}
 
-	std::shared_ptr<IMaterial> Material = Renderer::Instance()->CreateMaterial(Desc);
-	if (!Material || !Material->IsValid()) {
-		LOG_WARN << "TODO: Need use default material.";
-		LOG_ERROR << "Load material asset failed!";
-	}
-
-	uint64_t ID = Material->GetID();
-	MaterialNameMap_[Name] = ID;
-	Resources_[ID] = Material;
-	return Material;
+	return LoadResourceFromDescriptor(ResourceType::eMaterial, &Desc);
 }
 
 std::shared_ptr<IResource> ResourceManager::LoadShaderResource(const std::string& filename) {
@@ -204,15 +238,7 @@ std::shared_ptr<IResource> ResourceManager::LoadShaderResource(const std::string
 		LOG_WARN << "Load shader '" << filename << "' failed! Use built-in shader.";
 	}
 
-	std::shared_ptr<IShader> Shader = Renderer::Instance()->CreateShader(Desc);
-	if (!Shader || !Shader->IsValid()) {
-		return nullptr;
-	}
-
-	uint64_t ID = Shader->GetID();
-	MaterialNameMap_[Name] = ID;
-	Resources_[ID] = Shader;
-	return Shader;
+	return LoadResourceFromDescriptor(ResourceType::eShader, &Desc);
 }
 
 std::shared_ptr<IResource> ResourceManager::LoadTextureResource(const std::string& filename) {
