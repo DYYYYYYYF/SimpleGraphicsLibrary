@@ -2,7 +2,6 @@
 
 #include "RenderModuleAPI.h"
 #include <string>
-#include <memory>
 
 class IMaterial;
 

@@ -6,7 +6,8 @@
 
 enum class ShaderStage {
 	eVertex = 0,
-	eFragment
+	eFragment,
+	eUnknow
 };
 
 struct UniformInfo {
@@ -22,12 +23,18 @@ struct ShaderUniformLayout {
 	std::unordered_map<std::string, UniformInfo> uniforms;
 };
 
+struct ShaderDesc {
+	std::string Name;
+	std::unordered_map<ShaderStage, std::string> Stages;
+};
+
 class IShader : public IResource{
 public:
 	IShader() { Type_ = ResourceType::eShader; }
 
 public:
 	// 使用和管理
+	virtual bool Load(const ShaderDesc& Desc) = 0;
 	virtual void Bind() = 0;
 	virtual void Unbind() = 0;
 

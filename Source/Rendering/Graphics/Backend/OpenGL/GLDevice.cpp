@@ -206,8 +206,8 @@ std::shared_ptr<IMaterial> GLDevice::CreateMaterial(const struct MaterialDesc& A
 	return std::make_shared<GLMaterial>(AssetDesc);
 }
 
-std::shared_ptr<IShader> GLDevice::CreateShader(const std::string& AssetPath) {
-	return std::make_shared<GLShader>(AssetPath);
+std::shared_ptr<IShader> GLDevice::CreateShader(const struct ShaderDesc& AssetDesc) {
+	return std::make_shared<GLShader>(AssetDesc);
 }
 
 std::shared_ptr<ITexture> GLDevice::CreateTexture(const std::string& AssetPath) {

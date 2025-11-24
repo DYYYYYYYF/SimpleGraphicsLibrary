@@ -94,8 +94,8 @@ std::shared_ptr<IMaterial> Renderer::CreateMaterial(const struct MaterialDesc& A
 	return GraphicsDevice_->CreateMaterial(AssetDesc);
 }
 
-std::shared_ptr<IShader> Renderer::CreateShader(const std::string& AssetPath) {
-	return GraphicsDevice_->CreateShader(AssetPath);
+std::shared_ptr<IShader> Renderer::CreateShader(const struct ShaderDesc& AssetDesc) {
+	return GraphicsDevice_->CreateShader(AssetDesc);
 }
 
 std::shared_ptr<ITexture> Renderer::CreateTexture(const std::string& AssetPath) {

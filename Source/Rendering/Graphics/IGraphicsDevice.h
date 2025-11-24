@@ -22,7 +22,7 @@ public:
 public:
 	virtual std::shared_ptr<IMesh> CreateMesh(const std::string& AssetPath) = 0;
 	virtual std::shared_ptr<IMaterial> CreateMaterial(const struct MaterialDesc& AssetPath) = 0;
-	virtual std::shared_ptr<IShader> CreateShader(const std::string& AssetPath) = 0;
+	virtual std::shared_ptr<IShader> CreateShader(const struct ShaderDesc& AssetDesc) = 0;
 	virtual std::shared_ptr<ITexture> CreateTexture(const std::string& AssetPath) = 0;
 
 public:

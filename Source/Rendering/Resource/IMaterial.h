@@ -40,12 +40,6 @@ public:
 		bool enabled = true;
 	};
 
-	struct MaterialUBO {
-		FVector4 Albedo_ = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
-		FVector4 MetallicRoughnessAO_ = FVector4(0.0f, 0.0f, 1.0f, 1.0f);
-		FVector4 Emissive_ = FVector4(0.0f, 0.0f, 0.0f, 1.0f);
-	};
-
 public:
 	virtual bool Load(const MaterialDesc& Desc) = 0;
 	virtual void Apply() const = 0;
@@ -67,11 +61,11 @@ public:
 	}
 
 	std::shared_ptr<IShader> GetShader() { return Shader_; }
-	std::unordered_map<std::string, MaterialValue> GetUniforms()const { return Uniforms; }
+	std::unordered_map<std::string, MaterialValue> GetUniforms()const { return Uniforms_; }
 
 protected:
 	// 材质参数
-	std::unordered_map<std::string, MaterialValue> Uniforms;
+	std::unordered_map<std::string, MaterialValue> Uniforms_;
 	// Shader引用（共享）
 	std::shared_ptr<IShader> Shader_;
 	// 纹理引用（共享所有权）

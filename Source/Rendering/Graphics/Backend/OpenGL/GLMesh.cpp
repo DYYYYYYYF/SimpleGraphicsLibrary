@@ -1,8 +1,8 @@
 ﻿#include "GLMesh.h"
 #include "GLMaterial.h"
-#include <Logger.hpp>
 #include "Platform/File/JsonObject.h"
 #include "Resource/Manager/ResourceManager.h"
+#include <Logger.hpp>
 
 GLMesh::GLMesh(const std::string& FilePath) : VAO_(NULL), VBO_(NULL), EBO_(NULL) {
 	if (!Load(FilePath)) {

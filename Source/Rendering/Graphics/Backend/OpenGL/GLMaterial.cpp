@@ -30,11 +30,22 @@ GLMaterial::~GLMaterial() {
 }
 
 bool GLMaterial::Load(const MaterialDesc& Desc) {
-	const MaterialDesc& Descs = Desc;
+	// 加载Uniform数据
+	Name_ = Desc.Name;
+	Uniforms_ = Desc.Uniforms;
 
-	LOG_WARN << "Should Continue coding...";
+	// 加载Shader资产
+	std::string ShaderAsset = Desc.ShaderPath;;
+	Shader_ = DynamicCast<IShader>(ResourceManager::Instance().LoadResource(ResourceType::eShader, ShaderAsset));
+	if (!Shader_) {
+		return false;
+	}
 
+	// 加载Texture资产
+	Desc.TexturePaths;
 
+	LOG_DEBUG << "Material '" << Name_ << "' loaded.";
+	IsValid_ = true;
 	return true;
 }
 

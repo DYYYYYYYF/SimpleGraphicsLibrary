@@ -5,6 +5,7 @@
 #include "Loader/MaterialLoader.h"
 #include <Logger.hpp>
 #include "Loader/MeshLoader.h"
+#include "Loader/ShaderLoader.h"
 
 ResourceManager& ResourceManager::Instance() {
 	static ResourceManager GlobalResourceSys;
@@ -60,7 +61,7 @@ std::shared_ptr<IResource> ResourceManager::Acquire(ResourceType Type, const std
 	{
 	case ResourceType::eMesh: {
 		if (MaterialNameMap_.find(Name) == MaterialNameMap_.end()) {
-			LOG_WARN << "Can not find resource '" << Name << "', return nullptr";
+			LOG_WARN << "Can not find mesh resource '" << Name << "', return nullptr";
 			return nullptr;
 		}
 		else {
@@ -69,7 +70,7 @@ std::shared_ptr<IResource> ResourceManager::Acquire(ResourceType Type, const std
 	} break;
 	case ResourceType::eMaterial:
 		if (MaterialNameMap_.find(Name) == MaterialNameMap_.end()) {
-			LOG_WARN << "Can not find resource '" << Name << "', return nullptr";
+			LOG_WARN << "Can not find material resource '" << Name << "', return nullptr";
 			return nullptr;
 		}
 		else {
@@ -167,8 +168,9 @@ std::shared_ptr<IResource> ResourceManager::LoadMaterialResource(const std::stri
 	}
 
 	MaterialDesc Desc;
-	if (MaterialLoader::Load(filename, Desc)) {
-		// TODO: 初始化 Material
+	if (!MaterialLoader::Load(filename, Desc)) {
+		// TODO: 失败时使用 Built-in Material
+		LOG_WARN << "Load material '" << filename << "' failed! Use built-in material.";
 	}
 
 	std::shared_ptr<IMaterial> Material = Renderer::Instance()->CreateMaterial(Desc);
@@ -196,7 +198,13 @@ std::shared_ptr<IResource> ResourceManager::LoadShaderResource(const std::string
 		return nullptr;
 	}
 
-	std::shared_ptr<IShader> Shader = Renderer::Instance()->CreateShader(filename);
+	ShaderDesc Desc;
+	if (!ShaderLoader::Load(filename, Desc)) {
+		// TODO: 失败时使用 Built-in Shader
+		LOG_WARN << "Load shader '" << filename << "' failed! Use built-in shader.";
+	}
+
+	std::shared_ptr<IShader> Shader = Renderer::Instance()->CreateShader(Desc);
 	if (!Shader || !Shader->IsValid()) {
 		return nullptr;
 	}

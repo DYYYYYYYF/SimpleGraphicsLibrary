@@ -19,8 +19,6 @@ bool MaterialLoader::Load(const std::string& FilePath, struct MaterialDesc& Desc
 		const std::string& Key = Keys[i];
 		const JsonObject& Value = MaterialParams.Get(Key);
 
-		std::string Dump = Value.Dump();
-
 		MaterialValue MatVal;
 		if (Value.IsNumber()) {
 			MatVal.type = MaterialValue::Type::Float;
@@ -38,7 +36,9 @@ bool MaterialLoader::Load(const std::string& FilePath, struct MaterialDesc& Desc
 			else if (size == 16) MatVal.type = MaterialValue::Type::Matrix4;
 		}
 
-		Desc.Uniforms[Key] = MatVal;
+		std::string MKey = "MaterialUBO." + Key;
+		LOG_WARN << "Uniform key name '" << MKey << "' is hard coding...";
+		Desc.Uniforms[MKey] = MatVal;
 	}
 
 	return true;

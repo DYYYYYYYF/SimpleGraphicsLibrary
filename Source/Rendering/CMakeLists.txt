@@ -6,13 +6,15 @@ set(RENDERING_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/ResourceManager.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/Loader/MeshLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/Loader/MaterialLoader.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/Loader/ShaderLoader.cpp
 )
 set(RENDERING_HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/Renderer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Resource/IResource.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/ResourceManager.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/Renderer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/Loader/MeshLoader.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/Loader/MaterialLoader.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/Loader/ShaderLoader.h
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

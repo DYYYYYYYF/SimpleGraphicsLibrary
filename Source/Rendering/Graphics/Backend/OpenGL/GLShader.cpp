@@ -10,6 +10,14 @@ GLShader::GLShader() {
 	IsValid_ = false;
 }
 
+GLShader::GLShader(const ShaderDesc& Desc) {
+	if (!Load(Desc)) {
+		return;
+	}
+
+	IsValid_ = true;
+}
+
 GLShader::GLShader(const std::string& AssetPath) {
 	ProgramID_ = NULL;
 
@@ -25,48 +33,16 @@ GLShader::~GLShader() {
 	Unload();
 }
 
-bool GLShader::Load(const std::string& AssetPath) {
-	// 读取配置
-	File ShaderAsset(SHADER_CONFIG_PATH + AssetPath);
-	if (!ShaderAsset.IsExist()) {
-		return false;
-	}
+bool GLShader::Load(const ShaderDesc& Desc) {
+	Name_ = Desc.Name;
+	for (const auto& StageDesc : Desc.Stages) {
+		// 添加阶段
+		const ShaderStage Type = StageDesc.first;
+		const std::string& Source = StageDesc.second;
+		std::string StageSource = SHADER_ASSET_PATH + Source;
 
-	JsonObject Content = JsonObject(ShaderAsset.ReadBytes());
-	Name_ = Content.Get("Name").GetString();
-
-	// Stages
-	JsonObject StageObj = Content.Get("Stages");
-	if (StageObj.IsArray() && StageObj.Size() > 0) {
-		for (int i = 0; i < StageObj.Size(); ++i) {
-			// 具体的阶段 vert geom frag comp
-			JsonObject Stage = StageObj.ArrayItemAt(i);
-			if (!Stage.IsObject()) {
-				continue;
-			}
-
-			// 添加阶段
-			std::string StageName = Stage.Get("Name").GetString();
-			std::string StageSource = "../Assets/Shaders/Sources" + Stage.Get("Source").GetString();
-
-			if (StageName.compare("vert") == 0) {
-				if (!AddStage(StageSource, ShaderStage::eVertex)) {
-					return false;
-				}
-			}
-			else if (StageName.compare("geom") == 0) {
-				LOG_WARN << "Engine not support geom shader yet!";
-				continue;
-			}
-			else if (StageName.compare("frag") == 0) {
-				if (!AddStage(StageSource, ShaderStage::eFragment)) {
-					continue;
-				}
-			}
-			else if (StageName.compare("comp") == 0) {
-				LOG_WARN << "Engine not support comp shader yet!";
-				continue;
-			}
+		if (!AddStage(StageSource, Type)) {
+			continue;
 		}
 	}
 
@@ -100,11 +76,21 @@ bool GLShader::Load(const std::string& AssetPath) {
 		return false;
 	}
 
+	// 反射Uniform
+	ReflectUnifromBlock();
+	// 反射后可以知道BlockSize，初始化Buffer大小
+	glBufferData(GL_UNIFORM_BUFFER, MaterialLayout_.blockSize, nullptr, GL_DYNAMIC_DRAW);
+
+	// 绑定Shader
 	Bind();
 
 	LOG_DEBUG << "Shader '" << Name_ << "' loaded.";
-	IsValid_ = true;
 	return true;
+}
+
+bool GLShader::Load(const std::string& AssetPath) {
+	LOG_WARN << "Load shader '" << AssetPath << "' failed! Please load shader with 'ShaderDesc'.";
+	return false; 
 }
 
 void GLShader::Unload() {
@@ -243,10 +229,10 @@ void GLShader::ReflectUnifromBlock() {
 	GLuint program = ProgramID_;
 
 	// 1. 查询 uniform block blockIndex
-	const char* blockName = "MaterialBlock";
+	const char* blockName = "MaterialUBO";
 	GLuint blockIndex = glGetUniformBlockIndex(program, blockName);
 	if (blockIndex == GL_INVALID_INDEX) {
-		LOG_ERROR << "Shader missing MaterialBlock!";
+		LOG_ERROR << "Shader missing MaterialUBO!";
 		return;
 	}
 
