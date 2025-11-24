@@ -43,11 +43,17 @@ bool GLMesh::Load(const struct MeshDesc& AssetDesc) {
 	for (size_t i = 0; i < AssetDesc.Materials.size(); ++i) {
 		MaterialDesc MatDesc = AssetDesc.Materials[i];
 
-		std::shared_ptr<IMaterial> Mat = DynamicCast<IMaterial>(
-			ResourceManager::Instance().LoadResourceFromDescriptor(ResourceType::eMaterial, &MatDesc)
-		);
+		std::shared_ptr<IMaterial> Mat = DynamicCast<IMaterial>(ResourceManager::Instance().Acquire(ResourceType::eMaterial, MatDesc.Name));
+		if (!Mat) {
+			Mat = DynamicCast<IMaterial>(
+				ResourceManager::Instance().LoadResourceFromDescriptor(ResourceType::eMaterial, &MatDesc)
+			);
+		}
 
-		if (!Mat) continue;
+		if (!Mat) {
+			LOG_WARN << "Load material '" << MatDesc.Name << "' failed! Use built-in material!";
+			Mat = DynamicCast<IMaterial>(ResourceManager::Instance().Acquire(ResourceType::eMaterial, BUILTIN_PBR_MATERIAL));
+		}
 		Materials_.push_back(Mat);
 	}
 
@@ -69,54 +75,6 @@ bool GLMesh::Load(const struct MeshDesc& AssetDesc) {
 }
 
 bool GLMesh::Load(const std::string& FilePath) {
-	// 读取配置
-	File MeshSrc(MESH_CONFIG_PATH + FilePath);
-	if (!MeshSrc.IsExist()) {
-		return false;
-	}
-
-	JsonObject Content = JsonObject(MeshSrc.ReadBytes());
-	Name_ = Content.Get("Name").GetString();
-
-	// 加载材质
-	JsonObject MaterialContent = Content.Get("MaterialConfig");
-	if (MaterialContent.IsArray()) {
-		size_t MaterialConfigCount = MaterialContent.Size();
-		for (size_t i = 0; i < MaterialConfigCount; ++i) {
-			// 获取信息
-			JsonObject MaterialConfig = MaterialContent.ArrayItemAt(i);
-			// 加载材质配置
-			const std::string& MaterialConfigPath = MaterialConfig.Get("MaterialConfig").GetString();
-			std::shared_ptr<IMaterial> Mat = DynamicCast<IMaterial>(
-				ResourceManager::Instance().LoadResource(ResourceType::eMaterial, MaterialConfigPath)
-			);
-
-			if (!Mat) continue;
-			Materials_.push_back(Mat);
-		}
-	}
-
-	Vertex V1 = { FVector3(-0.5f,  0.5f, 0.0f), FVector3(0.0f, 0.0f, 1.0f), FVector2(0, 0), FVector3(0.0f, 0.0f, 0.0f) };
-	Vertex V2 = { FVector3(-0.5f, -0.5f, 0.0f), FVector3(0.0f, 0.0f, 1.0f), FVector2(0, 1), FVector3(0.0f, 0.0f, 0.0f) };
-	Vertex V3 = { FVector3(0.5f, -0.5f, 0.0f), FVector3(0.0f, 0.0f, 1.0f), FVector2(1, 0), FVector3(0.0f, 0.0f, 0.0f) };
-	Vertex V4 = { FVector3(0.5f,  0.5f, 0.0f), FVector3(0.0f, 0.0f, 1.0f), FVector2(1, 1), FVector3(0.0f, 0.0f, 0.0f) };
-	// 顶点数据（位置 + 纹理坐标）
-	Vertices_ = { V1, V2, V3, V4};
-
-	Indices_ = {
-		// 注意索引从0开始! 
-		// 此例的索引(0,1,2,3)就是顶点数组vertices的下标，
-		// 这样可以由下标代表顶点组合成矩形
-
-		0, 1, 2, // 第一个三角形
-		0, 2, 3
-	};
-
-	Setup();
-
-	LOG_DEBUG << "Mesh '" << Name_ << "' loaded.";
-	IsLoaded_ = true;
-	IsValid_ = true;
 	return true;
 }
 

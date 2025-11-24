@@ -6,6 +6,10 @@
 #include <memory>
 #include <unordered_map>
 
+#define BUILTIN_RECTANGLE_MESH "BuiltinRectangle"
+#define BUILTIN_PBR_SHADER "BuiltinShader"
+#define BUILTIN_PBR_MATERIAL "BuiltinMaterial"
+
 
 class ResourceManager {
 public:

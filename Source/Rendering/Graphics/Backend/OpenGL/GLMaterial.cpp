@@ -36,9 +36,16 @@ bool GLMaterial::Load(const MaterialDesc& Desc) {
 
 	// 加载Shader资产
 	std::string ShaderAsset = Desc.ShaderPath;;
-	Shader_ = DynamicCast<IShader>(ResourceManager::Instance().LoadResource(ResourceType::eShader, ShaderAsset));
+	Shader_ = DynamicCast<IShader>(ResourceManager::Instance().Acquire(ResourceType::eShader, ShaderAsset));
 	if (!Shader_) {
-		return false;
+		Shader_ = DynamicCast<IShader>(
+			ResourceManager::Instance().LoadResource(ResourceType::eShader, ShaderAsset)
+		);
+	}
+
+	if (!Shader_) {
+		LOG_WARN << "Load shader '" << Desc.Name << "' failed! Use built-in shader!";
+		Shader_ = DynamicCast<IShader>(ResourceManager::Instance().Acquire(ResourceType::eShader, BUILTIN_PBR_SHADER));
 	}
 
 	// 加载Texture资产

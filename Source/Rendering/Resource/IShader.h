@@ -24,7 +24,6 @@ struct ShaderUniformLayout {
 };
 
 struct ShaderDesc : public IResourceDesc{
-	std::string Name;
 	std::unordered_map<ShaderStage, std::string> Stages;
 };
 
