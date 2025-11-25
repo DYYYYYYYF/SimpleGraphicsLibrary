@@ -87,6 +87,7 @@ void Engine::Run() {
 		// Application tick
 		Application_->Tick(0.01f);
 
+<<<<<<< Updated upstream
 		CommandList CmdList;
 		CoreRenderer->BeginCommand(CmdList);
 		std::vector<std::shared_ptr<Actor>> AllActors = Scene_.GetAllActors();
@@ -95,6 +96,43 @@ void Engine::Run() {
 			if (MeshComp) {
 				MeshComp->Draw(CmdList);
 			}
+=======
+		Render();
+
+		Frc.EndFrame();
+	}
+}
+
+void Engine::FixedTick(float DeltaTime) {
+	(void)DeltaTime;
+}
+
+void Engine::Tick(float DeltaTime) {
+	// Application tick
+	Application_->Tick(DeltaTime);
+}
+
+void Engine::Render() {
+	CommandList CmdList;
+	CoreRenderer->BeginCommand(CmdList);
+	std::vector<std::shared_ptr<Actor>> AllActors = Scene_->GetAllActors();
+
+	// 先摄像机
+	for (auto& Act : AllActors) {
+		CameraActor* Camera = DynamicCast<CameraActor>(Act).get();
+		if (Camera) {
+			TransformComponent* TransformComp = Camera->GetComponent<TransformComponent>();
+			if (!TransformComp) continue;
+			const FVector3& Location = TransformComp->GetPosition();
+
+			CameraComponent* CameraComp = Camera->GetComponent<CameraComponent>();
+			if (!CameraComp) continue;
+			const FMatrix4& ViewMatrix = CameraComp->GetViewMatrix(Location);
+			const FMatrix4& ProjMatrix = CameraComp->GetProjectionMatrix();
+
+			CmdList.SetViewProjection(ViewMatrix, ProjMatrix);
+			break;
+>>>>>>> Stashed changes
 		}
 
 		CoreRenderer->DrawScene(CmdList);

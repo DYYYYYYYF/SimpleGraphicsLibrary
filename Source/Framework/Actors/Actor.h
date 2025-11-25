@@ -19,6 +19,19 @@ public:
 public:
 	ENGINE_FRAMEWORK_API virtual void BeginPlay() {};
 	ENGINE_FRAMEWORK_API virtual void Tick(float DeltaTime);
+<<<<<<< Updated upstream
+=======
+	ENGINE_FRAMEWORK_API virtual void Destroy() {};
+
+	// ----------------------- 通用组件函数 ------------------------------------
+public:
+	ENGINE_FRAMEWORK_API FVector3 GetActorLocation() const;
+	ENGINE_FRAMEWORK_API void SetActorLocation(const FVector3& Location);
+	ENGINE_FRAMEWORK_API FVector3 GetActorRotation() const;
+	ENGINE_FRAMEWORK_API void SetActorRotation(const FVector3& Rotation);
+	ENGINE_FRAMEWORK_API FVector3 GetActorScale() const;
+	ENGINE_FRAMEWORK_API void SetActorScale(const FVector3& Scale);
+>>>>>>> Stashed changes
 
 	// -------------------------- 通用函数 ------------------------------------
 public:
