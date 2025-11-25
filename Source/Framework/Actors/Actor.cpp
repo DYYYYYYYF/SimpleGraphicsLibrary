@@ -7,55 +7,7 @@ Actor::Actor() {
 
 Actor::Actor(const std::string& Name) : Name_(Name) {
 	// 添加必备的Transform组件
-<<<<<<< Updated upstream
 	//m_Transform = AddComponent<TransformComponent>();
-=======
-	TransformComponent_ = CreateComponent<TransformComponent>(this, "TransformComponent");
-	if (!TransformComponent_) {
-		return;
-	}
-
-}
-
-Actor::~Actor() {
-	for (auto& Child : Children_) {
-		Child.reset();
-	}
-
-	for (auto& Comp : Components_) {
-		Comp.second.reset();
-	}
-}
-
-FVector3 Actor::GetActorLocation() const {
-	if (!TransformComponent_) return FVector3();
-	return TransformComponent_->GetPosition();
-}
-
-void Actor::SetActorLocation(const FVector3& Location) {
-	if (!TransformComponent_) return ;
-	TransformComponent_->SetPosition(Location);
-}
-
-FVector3 Actor::GetActorRotation() const {
-	if (!TransformComponent_) return FVector3();
-	return TransformComponent_->GetRotationEuler();
-}
-
-void Actor::SetActorRotation(const FVector3& Rotation) {
-	if (!TransformComponent_) return;
-	TransformComponent_->SetRotationEuler(Rotation);
-}
-
-FVector3 Actor::GetActorScale() const {
-	if (!TransformComponent_) return FVector3();
-	return TransformComponent_->GetScale();
-}
-
-void Actor::SetActorScale(const FVector3& Scale) {
-	if (!TransformComponent_) return;
-	TransformComponent_->SetScale(Scale);
->>>>>>> Stashed changes
 }
 
 void Actor::AddChild(std::unique_ptr<Actor> child) {
