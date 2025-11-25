@@ -13,7 +13,7 @@ Renderer::Renderer() {
 }
 
 Renderer::~Renderer() {
-
+	
 }
 
 Renderer* Renderer::GlobalRenderer = nullptr;
@@ -82,16 +82,22 @@ void Renderer::Destroy() {
 	if (GraphicsDevice_) {
 		GraphicsDevice_->Destroy();
 	}
+
+	LOG_INFO << "Renderer destroyed.";
 }
 
-std::shared_ptr<IMesh> Renderer::CreateMesh(const std::string& AssetPath) {
-	std::shared_ptr<IMesh> NewMesh = GraphicsDevice_->CreateMesh(AssetPath);
-	AllMeshes.push_back(NewMesh);
-	return NewMesh;
+std::shared_ptr<IMesh> Renderer::CreateMesh(const struct MeshDesc& AssetDesc) {
+	return GraphicsDevice_->CreateMesh(AssetDesc);
 }
 
-std::shared_ptr<IMaterial> Renderer::CreateMaterial(const std::string& AssetPath) {
-	std::shared_ptr<IMaterial> NewMaterial = GraphicsDevice_->CreateMaterial(AssetPath);
-	AllMaterials.push_back(NewMaterial);
-	return NewMaterial;
+std::shared_ptr<IMaterial> Renderer::CreateMaterial(const struct MaterialDesc& AssetDesc) {
+	return GraphicsDevice_->CreateMaterial(AssetDesc);
+}
+
+std::shared_ptr<IShader> Renderer::CreateShader(const struct ShaderDesc& AssetDesc) {
+	return GraphicsDevice_->CreateShader(AssetDesc);
+}
+
+std::shared_ptr<ITexture> Renderer::CreateTexture(const std::string& AssetPath) {
+	return GraphicsDevice_->CreateTexture(AssetPath);
 }

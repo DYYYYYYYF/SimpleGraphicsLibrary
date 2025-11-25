@@ -50,7 +50,7 @@ public:
 	ENGINE_PLATFORM_API std::vector<std::string> GetKeys() const;
 
 	// 文件操作
-	ENGINE_PLATFORM_API bool SaveToFile(const File& file) const;
+	ENGINE_PLATFORM_API bool SaveToFile(File file) const;
 	ENGINE_PLATFORM_API bool LoadFromFile(const File& file);
 
 	// 实用方法

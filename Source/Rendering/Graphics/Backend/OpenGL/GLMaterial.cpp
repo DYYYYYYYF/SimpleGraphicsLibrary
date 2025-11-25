@@ -4,82 +4,55 @@
 #include "Resource/ITexture.h"
 #include "GLShader.h"
 #include "Platform/File/JsonObject.h"
+#include "Resource/Manager/ResourceManager.h"
+#include <Logger.hpp>
 
-GLMaterial::GLMaterial() { Name_ = "";  IsValid_ = false; }
+GLMaterial::GLMaterial() { Name_ = ""; }
+GLMaterial::GLMaterial(const MaterialDesc& Desc) {
+	if (!Load(Desc)) {
+		return;
+	}
 
-GLMaterial::GLMaterial(const std::string& filename) {
-	IsValid_ = false;
-
-	Load(filename);
+	IsValid_ = true;
 }
 
 GLMaterial::~GLMaterial() {
 	Unload();
 }
 
-void GLMaterial::Load(const std::string& filename) {
-	File MaterialFile("../Assets/Materials" + filename);
-	if (!MaterialFile.IsExist()) {
-		return;
-	}
+bool GLMaterial::Load(const MaterialDesc& Desc) {
+	// 加载Uniform数据
+	Name_ = Desc.Name;
+	Uniforms_ = Desc.Uniforms;
 
-	JsonObject MaterialObj(MaterialFile);
-	if (!MaterialObj.IsObject()) {
-		return;
-	}
-
-	// 加载数据
-	Name_ = MaterialObj.Get("Name").GetString();
-
-	JsonObject UBOData = MaterialObj.Get("MaterialUBO");
-	if (!UBOData.IsObject()) {
-		return;
-	}
-
-	JsonObject AlbedoData = UBOData.Get("Albedo");
-	if (AlbedoData.IsArray() && AlbedoData.Size() == 4) {
-		MaterialUBO_.Albedo_ = FVector4(
-			AlbedoData.ArrayItemAt(0).GetFloat(),
-			AlbedoData.ArrayItemAt(1).GetFloat(),
-			AlbedoData.ArrayItemAt(2).GetFloat(),
-			AlbedoData.ArrayItemAt(3).GetFloat()
+	// 加载Shader资产
+	std::string ShaderAsset = Desc.ShaderPath;;
+	Shader_ = DynamicCast<IShader>(ResourceManager::Instance().Acquire(ResourceType::eShader, ShaderAsset));
+	if (!Shader_) {
+		Shader_ = DynamicCast<IShader>(
+			ResourceManager::Instance().LoadResource(ResourceType::eShader, ShaderAsset)
 		);
 	}
 
-	JsonObject EmissiveData = UBOData.Get("Emissive");
-	if (EmissiveData.IsArray() && AlbedoData.Size() == 4) {
-		MaterialUBO_.Albedo_ = FVector4(
-			EmissiveData.ArrayItemAt(0).GetFloat(),
-			EmissiveData.ArrayItemAt(1).GetFloat(),
-			EmissiveData.ArrayItemAt(2).GetFloat(),
-			EmissiveData.ArrayItemAt(3).GetFloat()
-		);
+	if (!Shader_) {
+		LOG_WARN << "Load shader '" << Desc.Name << "' failed! Use built-in shader!";
+		Shader_ = DynamicCast<IShader>(ResourceManager::Instance().Acquire(ResourceType::eShader, BUILTIN_PBR_SHADER));
 	}
 
-	JsonObject MetallicRoughnessAOData = UBOData.Get("MetallicRoughnessAO");
-	if (MetallicRoughnessAOData.Get("MetallicRoughnessAO").IsArray() && AlbedoData.Size() == 4) {
-		MaterialUBO_.Albedo_ = FVector4(
-			MetallicRoughnessAOData.ArrayItemAt(0).GetFloat(),
-			MetallicRoughnessAOData.ArrayItemAt(1).GetFloat(),
-			MetallicRoughnessAOData.ArrayItemAt(2).GetFloat(),
-			MetallicRoughnessAOData.ArrayItemAt(3).GetFloat()
-		);
-	}
+	// 加载Texture资产
+	Desc.TexturePaths;
 
-	std::string ShaderAsset = MaterialObj.Get("UsedShader").GetString();
-	Shader_ = std::make_shared<GLShader>(filename);
-
-	// 创建Buffer
-	glGenBuffers(1, &UBO_);
-	glBindBuffer(GL_UNIFORM_BUFFER, UBO_);
-
+	LOG_DEBUG << "Material '" << Name_ << "' loaded.";
 	IsValid_ = true;
+	return true;
 }
 
 void GLMaterial::Unload() {
-	if (UBO_ != NULL) {
-		glDeleteBuffers(1, &UBO_);
+	if (Shader_) {
+		Shader_.reset();
 	}
+
+	LOG_DEBUG << "Material '" << Name_ << "' unloaded.";
 }
 
 void GLMaterial::Apply() const {
@@ -94,8 +67,7 @@ void GLMaterial::Apply() const {
 }
 
 void GLMaterial::ApplyUniformBuffer() const {
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(MaterialUBO), &MaterialUBO_, GL_DYNAMIC_DRAW);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 0, UBO_);	// param2对应的binding=0
+	Shader_->UploadMaterial(*this);
 }
 
 void GLMaterial::ApplyTextures() const {

@@ -6,11 +6,11 @@
 class GLMaterial : public IMaterial {
 public:
 	GLMaterial();
-	GLMaterial(const std::string& filename);
+	GLMaterial(const struct MaterialDesc& Desc);
 	virtual ~GLMaterial();
 
 public:
-	virtual void Load(const std::string& filename) override;
+	virtual bool Load(const MaterialDesc& Desc) override;
 	virtual void Unload() override;
 
 	virtual void Apply() const override;
@@ -21,7 +21,4 @@ private:
 	void ApplyTextures() const;
 	void SetTextureFlag(TextureSlot slot, bool enabled) const;
 
-
-private:
-	GLuint UBO_;
 };

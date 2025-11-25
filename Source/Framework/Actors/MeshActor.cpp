@@ -4,8 +4,6 @@ MeshActor::MeshActor(const std::string& name) : Actor(name){
 	MeshComponent_ = CreateComponent<MeshComponent>(this, "MeshComponent");
 	if (!MeshComponent_) { return; }
 
-	
-
 }
 
 void MeshActor::BeginPlay() {

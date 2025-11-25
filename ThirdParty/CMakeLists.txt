@@ -63,3 +63,25 @@ if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/nlohmann-json)
 else()
     add_subdirectory(nlohmann-json)
 endif()
+
+# assimp库
+set(ASSIMP_INJECT_DEBUG_POSTFIX OFF CACHE BOOL "Disable assimp debug postfix")  # 编译debug文件不带d后缀
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "Disable assimp tests")                   # 不编译 assimp 的测试
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "Disable assimp tools")            # 不编译 assimp 的工具（如 assimp viewer、assimp_cmd）
+set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "Disable assimp samples")               # 不编译 assimp 的样例
+
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/assimp)
+    include(FetchContent)
+    message("-- Download assimp Lib...")
+    FetchContent_Declare(
+        assimp
+        GIT_REPOSITORY https://github.com/assimp/assimp.git
+        GIT_TAG v5.3.1
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+    )
+
+    FetchContent_MakeAvailable(assimp)
+else()
+    add_subdirectory(assimp)
+endif()

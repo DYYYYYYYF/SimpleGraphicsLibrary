@@ -4,40 +4,50 @@
 #include "Rendering/Resource/IMesh.h"
 #include "Rendering/Resource/IMaterial.h"
 #include "Platform/File/JsonObject.h"
+#include "Rendering/Resource/Manager/ResourceManager.h"
+#include "Framework/Actors/Actor.h"
+
+#ifndef DynmicCast
+#define DynmicCast std::dynamic_pointer_cast
+#endif
 
 MeshComponent::MeshComponent() : BaseComponent() {}
 MeshComponent::MeshComponent(Actor* Owner, const std::string& Name) : BaseComponent(Owner, Name) {}
+MeshComponent::~MeshComponent() {
+	ResourceManager& RS = ResourceManager::Instance();
+	if (MeshAsset_) {
+		RS.Release(MeshAsset_->GetID());
+		MeshAsset_.reset();
+	}
+}
 
 void MeshComponent::Draw(CommandList& CmdList) {
 	Actor* Owner = GetOwner();
-	if (!Owner) {
+	if (!Owner || !MeshAsset_) {
 		return;
 	}
 
-	if (!Materials_) {
-		return;
-	}
+	FMatrix4 ModelMatrix = FMatrix4::Identity();
+	TransformComponent* TransformComp = Owner->GetComponent<TransformComponent>();
+	if (TransformComp) ModelMatrix = TransformComp->GetModelMatrix();
 
-	CmdList.DrawIndexed(Meshes_.get(), Materials_.get(), FMatrix4::Identity(), 6);
+	const std::vector<SubMeshDesc>& SubMeshes = MeshAsset_->GetSubMeshes();
+	for (const SubMeshDesc& SubMesh : SubMeshes) {
+		IMaterial* Material = MeshAsset_->GetMaterial(SubMesh.MaterialIndex).get();
+		if (!Material) {
+			continue;
+		}
+
+		CmdList.DrawIndexed(MeshAsset_.get(), Material, ModelMatrix, SubMesh.IndexCount, SubMesh.BaseIndex);
+	}
 }
 
 bool MeshComponent::LoadFromFile(const std::string& FilePath) {
-	File MeshSrc("../Assets/Meshes" + FilePath);
-	if (!MeshSrc.IsExist()) {
-		return false;
-	}
 	
-	JsonObject Content = MeshSrc.ReadBytes();
-	std::string MeshAsset = Content.Get("MeshAsset").GetString();
-	std::string MaterialAsset = Content.Get("MaterialAsset").GetString();
-
-	Meshes_ =  Renderer::Instance()->CreateMesh(MeshAsset);
-	if (!Meshes_) {
-		return false;
-	}
-
-	Materials_ = Renderer::Instance()->CreateMaterial(MaterialAsset);
-	if (!Materials_) {
+	// 加载资产
+	ResourceManager& RS = ResourceManager::Instance();
+	MeshAsset_ = DynmicCast<IMesh>(RS.LoadResource(ResourceType::eMesh, FilePath));
+	if (!MeshAsset_) {
 		return false;
 	}
 

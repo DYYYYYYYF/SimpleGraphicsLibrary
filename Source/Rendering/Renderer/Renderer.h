@@ -12,6 +12,8 @@ class Window;
 class IGraphicsDevice;
 class IMesh;
 class IMaterial;
+class IShader;
+class ITexture;
 
 class Renderer {
 public:
@@ -29,14 +31,12 @@ public:
 	ENGINE_RENDERING_API virtual void Destroy();
 
 public:
-	ENGINE_RENDERING_API std::shared_ptr<IMesh> CreateMesh(const std::string& AssetPath);
-	ENGINE_RENDERING_API std::shared_ptr<IMaterial> CreateMaterial(const std::string& AssetPath);
+	ENGINE_RENDERING_API std::shared_ptr<IMesh> CreateMesh(const struct MeshDesc& AssetDesc);
+	ENGINE_RENDERING_API std::shared_ptr<IMaterial> CreateMaterial(const struct MaterialDesc& AssetDesc);
+	ENGINE_RENDERING_API std::shared_ptr<IShader> CreateShader(const struct ShaderDesc& AssetDesc);
+	ENGINE_RENDERING_API std::shared_ptr<ITexture> CreateTexture(const std::string& AssetPath);
 
 protected:
 	std::unique_ptr<IGraphicsDevice> GraphicsDevice_;
 	static Renderer* GlobalRenderer;
-
-	std::vector<std::shared_ptr<IMesh>> AllMeshes;
-	std::vector<std::shared_ptr<IMaterial>> AllMaterials;
-
 };
