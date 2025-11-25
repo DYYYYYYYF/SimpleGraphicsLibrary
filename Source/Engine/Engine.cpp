@@ -10,6 +10,7 @@
 #include "Framework/Actors/CameraActor.h"
 #include "Framework/Components/MeshComponent.h"
 #include "Rendering/Resource/Manager/ResourceManager.h"
+#include "FrameRateController.h"
 
 Engine::Engine() {
 	Window_ = nullptr;
@@ -90,51 +91,76 @@ bool Engine::Initialize(IApplication* app) {
 }
 
 void Engine::Run() {
+	// 加载场景
 	Application_->InitScene(*Scene_);
+	// 帧率控制
+	FrameRateController Frc(144, 60);
 
-	EventManager& eventManager = EventManager::Instance();
+	// Tick
 	while (Running_ && !Window_->ShouldClose()) {
+		Frc.BeginFrame();
+		// 固定逻辑帧（物理 / AI）
+		if (Frc.ShouldRunFixedUpdate())
+		{
+			FixedTick(Frc.GetFixedDeltaTime());
+		}
+
 		// 处理窗口消息
 		Window_->ProcessMessages();
 		// 处理全局事件队列
-		eventManager.ProcessEvents();
+		EventManager::Instance().ProcessEvents();
 
-		// Application tick
-		Application_->Tick(0.01f);
+		Tick(Frc.GetDeltaTime());
 
-		CommandList CmdList;
-		CoreRenderer->BeginCommand(CmdList);
-		std::vector<std::shared_ptr<Actor>> AllActors = Scene_->GetAllActors();
+		Render();
 
-		// 先摄像机
-		for (auto& Act : AllActors) {
-			CameraActor* Camera = DynamicCast<CameraActor>(Act).get();
-			if (Camera) {
-				TransformComponent* TransformComp = Camera->GetComponent<TransformComponent>();
-				if (!TransformComp) continue;
-				const FVector3& Location = TransformComp->GetPosition();
-
-				CameraComponent* CameraComp = Camera->GetComponent<CameraComponent>();
-				if (!CameraComp) continue;
-				const FMatrix4& ViewMatrix = CameraComp->GetViewMatrix(Location);
-				const FMatrix4& ProjMatrix = CameraComp->GetProjectionMatrix();
-
-				CmdList.SetViewProjection(ViewMatrix, ProjMatrix);
-				break;
-			}
-		}
-
-		// 后网格
-		for (auto& Act : AllActors) {
-			MeshComponent* MeshComp = Act.get()->GetComponent<MeshComponent>();
-			if (MeshComp) {
-				MeshComp->Draw(CmdList);
-			}
-		}
-
-		CoreRenderer->DrawScene(CmdList);
-		CoreRenderer->EndCommand(CmdList);
+		Frc.EndFrame();
+		printf("FPS = %.1f\n", Frc.GetFPS());
 	}
+}
+
+void Engine::FixedTick(float DeltaTime) {
+	(void)DeltaTime;
+}
+
+void Engine::Tick(float DeltaTime) {
+	// Application tick
+	Application_->Tick(DeltaTime);
+}
+
+void Engine::Render() {
+	CommandList CmdList;
+	CoreRenderer->BeginCommand(CmdList);
+	std::vector<std::shared_ptr<Actor>> AllActors = Scene_->GetAllActors();
+
+	// 先摄像机
+	for (auto& Act : AllActors) {
+		CameraActor* Camera = DynamicCast<CameraActor>(Act).get();
+		if (Camera) {
+			TransformComponent* TransformComp = Camera->GetComponent<TransformComponent>();
+			if (!TransformComp) continue;
+			const FVector3& Location = TransformComp->GetPosition();
+
+			CameraComponent* CameraComp = Camera->GetComponent<CameraComponent>();
+			if (!CameraComp) continue;
+			const FMatrix4& ViewMatrix = CameraComp->GetViewMatrix(Location);
+			const FMatrix4& ProjMatrix = CameraComp->GetProjectionMatrix();
+
+			CmdList.SetViewProjection(ViewMatrix, ProjMatrix);
+			break;
+		}
+	}
+
+	// 后网格
+	for (auto& Act : AllActors) {
+		MeshComponent* MeshComp = Act.get()->GetComponent<MeshComponent>();
+		if (MeshComp) {
+			MeshComp->Draw(CmdList);
+		}
+	}
+
+	CoreRenderer->DrawScene(CmdList);
+	CoreRenderer->EndCommand(CmdList);
 }
 
 void Engine::Shutdown() {
