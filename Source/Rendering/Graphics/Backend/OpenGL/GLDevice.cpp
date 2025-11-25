@@ -5,10 +5,11 @@
 #include "Logger.hpp"
 #include "glad/wglext.h"
 #include "File/File.h"
-#include "GLShader.h"
 #include "Window/Window.h"
 #include "GLMesh.h"
 #include "GLMaterial.h"
+#include "GLShader.h"
+#include "GLTexture.h"
 #include "Command/CommandList.h"
 
 static const double aspect_ratio = 16.0 / 9.0;
@@ -85,7 +86,14 @@ void GLDevice::ExecuteCommandList(const CommandList& CmdList) {
 
 			// 1. 从句柄获取OpenGL资源
 			GLMesh* Mesh = (GLMesh*)DrawCmd->DrawCall_.resources.mesh;
+			if (!Mesh) {
+				return;
+			}
+
 			GLMaterial* Material = (GLMaterial*)DrawCmd->DrawCall_.resources.material;
+			if (!Material) {
+				return;
+			}
 
 			// 2. 绑定状态
 			Material->Apply();
@@ -94,12 +102,20 @@ void GLDevice::ExecuteCommandList(const CommandList& CmdList) {
 			// 3. 设置Uniform
 			GLShader* Shader = (GLShader*)Material->GetShader().get();
 			if (Shader) {
-				GLint loc = glGetUniformLocation(Shader->GetProgramID(), "uModel");
-				glUniformMatrix4fv(loc, 1, GL_FALSE, DrawCmd->DrawCall_.modelMatrix.data());
+				const FMatrix4& ModelMatrix = DrawCmd->DrawCall_.modelMatrix;
+				const FMatrix4& ViewMatrix = CmdList.GetViewMatrix();
+				const FMatrix4& ProjMatrix = CmdList.GetProjMatrix();
+
+				GLint ModelMatrixLoc = glGetUniformLocation(Shader->GetProgramID(), "ModelMat");
+				GLint ViewMatrixatrixLoc = glGetUniformLocation(Shader->GetProgramID(), "ViewMat");
+				GLint ProjMatrixatrixLoc = glGetUniformLocation(Shader->GetProgramID(), "ProjMat");
+				glUniformMatrix4fv(ModelMatrixLoc, 1, GL_FALSE, ModelMatrix.data());
+				glUniformMatrix4fv(ViewMatrixatrixLoc, 1, GL_FALSE, ViewMatrix.data());
+				glUniformMatrix4fv(ProjMatrixatrixLoc, 1, GL_FALSE, ProjMatrix.data());
 			}
 		
 			// 4. 绘制
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, DrawCmd->DrawCall_.indexCount, GL_UNSIGNED_INT, 0);
 			break;
 		}
 		}
@@ -190,15 +206,20 @@ void GLDevice::Destroy() {
 	LOG_INFO << "Destroying OpenGL device.";
 }
 
-std::shared_ptr<IMesh> GLDevice::CreateMesh(const std::string& AssetPath) {
-	std::shared_ptr<IMesh> NewMesh = std::make_shared<GLMesh>(AssetPath);
-	return NewMesh;
+std::shared_ptr<IMesh> GLDevice::CreateMesh(const struct MeshDesc& AssetDesc) {
+	return std::make_shared<GLMesh>(AssetDesc);
 }
 
-std::shared_ptr<IMaterial> GLDevice::CreateMaterial(const std::string& AssetPath) {
-	std::shared_ptr<IMaterial> NewMaterial = std::make_shared<GLMaterial>(AssetPath);
-	return NewMaterial;
+std::shared_ptr<IMaterial> GLDevice::CreateMaterial(const struct MaterialDesc& AssetDesc) {
+	return std::make_shared<GLMaterial>(AssetDesc);
 }
 
+std::shared_ptr<IShader> GLDevice::CreateShader(const struct ShaderDesc& AssetDesc) {
+	return std::make_shared<GLShader>(AssetDesc);
+}
+
+std::shared_ptr<ITexture> GLDevice::CreateTexture(const std::string& AssetPath) {
+	return std::make_shared<GLTexture>(AssetPath);
+}
 
 #endif

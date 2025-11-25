@@ -2,7 +2,9 @@
 message(STATUS "Building GameEngine Editor")
 
 file(GLOB EDITOR_SOURCES 
+    "${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp" 
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp" 
+    "${CMAKE_CURRENT_SOURCE_DIR}/Source/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
 )
 

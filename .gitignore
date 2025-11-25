@@ -48,6 +48,7 @@ CMakeSettings.json
 # MacOS
 /build
 .cache
+.DS_Store
 
 # Compile cmake proj
 /Bin

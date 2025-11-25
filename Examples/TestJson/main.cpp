@@ -54,6 +54,9 @@ int main() {
 	obj.Merge(obj2);
 	std::cout << "合并后: " << obj.Dump(2) << std::endl;
 
+	File WrittedFile("./JsonFile.json");
+	obj.SaveToFile(WrittedFile);
+
 	return 0;
 }
 

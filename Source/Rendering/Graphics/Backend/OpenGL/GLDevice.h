@@ -20,8 +20,10 @@ public:
 	virtual void SwapBuffers() override;
 	virtual void Destroy() override;
 
-	virtual std::shared_ptr<IMesh> CreateMesh(const std::string& AssetPath) override;
-	virtual std::shared_ptr<IMaterial> CreateMaterial(const std::string& AssetPath) override;
+	virtual std::shared_ptr<IMesh> CreateMesh(const struct MeshDesc& AssetDesc) override;
+	virtual std::shared_ptr<IMaterial> CreateMaterial(const struct MaterialDesc& AssetDesc) override;
+	virtual std::shared_ptr<IShader> CreateShader(const struct ShaderDesc& AssetDesc) override;
+	virtual std::shared_ptr<ITexture> CreateTexture(const std::string& AssetPath) override;
 
 private:
 	bool InitOpenGLContext();
@@ -32,7 +34,6 @@ private:
 
 	// OpenGL properties
 	GLuint textureID;
-	GLuint VAO, VBO, EBO;
 	GLuint FBO;
 
 	// OpenGL handle

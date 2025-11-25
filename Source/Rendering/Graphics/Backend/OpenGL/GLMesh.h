@@ -5,12 +5,12 @@
 
 class GLMesh : public IMesh {
 public:
-	GLMesh(const std::string& mesh);
+	GLMesh(const struct MeshDesc& AssetDesc);
 	virtual ~GLMesh();
 
 public:
-	virtual void Load(const std::string& mesh) override;
-	virtual void UnLoad() override;
+	virtual bool Load(const struct MeshDesc& AssetDesc) override;
+	virtual void Unload() override;
 
 	virtual void Bind() const override;
 	virtual void Unbind() const override;

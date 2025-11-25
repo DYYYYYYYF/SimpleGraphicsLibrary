@@ -3,9 +3,18 @@
 # 源文件
 set(RENDERING_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/Renderer.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/ResourceManager.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/Loader/MeshLoader.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/Loader/MaterialLoader.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/Loader/ShaderLoader.cpp
 )
 set(RENDERING_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/Resource/IResource.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/ResourceManager.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/Renderer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/Loader/MeshLoader.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/Loader/MaterialLoader.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Resource/Manager/Loader/ShaderLoader.h
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -20,6 +29,7 @@ if(ENGINE_ENABLE_OPENGL)
        Graphics/Backend/OpenGL/GLShader.cpp
        Graphics/Backend/OpenGL/GLMesh.cpp
        Graphics/Backend/OpenGL/GLMaterial.cpp
+       Graphics/Backend/OpenGL/GLTexture.cpp
        Graphics/Backend/OpenGL/glad/glad.c
     )
     list(APPEND RENDERING_HEADERS
@@ -27,6 +37,7 @@ if(ENGINE_ENABLE_OPENGL)
         Graphics/Backend/OpenGL/GLShader.h
         Graphics/Backend/OpenGL/GLMesh.h
         Graphics/Backend/OpenGL/GLMaterial.h
+        Graphics/Backend/OpenGL/GLTexture.h
         Graphics/Backend/OpenGL/glad/glad.h
         Graphics/Backend/OpenGL/glad/KHR/khrplatform.h
     )
@@ -47,6 +58,7 @@ target_include_directories(EngineRendering
         ${CMAKE_CURRENT_SOURCE_DIR}
 
     PRIVATE
+        assimp::assimp
         $<$<BOOL:${ENGINE_ENABLE_OPENGL}>: Graphics/Backend/OpenGL/glad>
 )
 
@@ -55,6 +67,7 @@ target_link_libraries(EngineRendering
     PRIVATE
         EngineCore
         EnginePlatform
+        assimp::assimp
         $<$<BOOL:${ENGINE_ENABLE_OPENGL}>:OpenGL::GL>
 )
 

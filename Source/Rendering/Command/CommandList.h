@@ -109,6 +109,16 @@ public:
 		IsSorted_ = true;
 	}
 
+	void SetViewProjection(const FMatrix4& View, const FMatrix4& Projection) {
+		ViewMatrix_ = View;
+		ProjMatrix_ = Projection;
+	}
+
+	void SetViewMatrix(const FMatrix4& View) { ViewMatrix_ = View; }
+	void SetProjMatrix(const FMatrix4& Proj) { ProjMatrix_ = Proj; }
+	const FMatrix4& GetViewMatrix() const { return ViewMatrix_; }
+	const FMatrix4& GetProjMatrix() const { return ProjMatrix_; }
+
 	// 获取DrawCall数量
 	size_t GetDrawCallCount() const {
 		return DrawCalls_.size();
@@ -124,6 +134,10 @@ public:
 private:
 	std::vector<std::unique_ptr<RenderCommand>> Commands_;
 	std::vector<DrawCall> DrawCalls_;  // 专门存储DrawCall用于批处理
+
+	// VP矩阵
+	FMatrix4 ViewMatrix_;
+	FMatrix4 ProjMatrix_;
 
 	bool IsSorted_ = false;
 	bool IsRecording_ = true;

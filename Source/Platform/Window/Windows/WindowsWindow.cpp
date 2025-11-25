@@ -59,7 +59,7 @@ bool WindowsWindowImpl::Create() {
 	hwnd_ = CreateWindowExW(
 		0,                          // 扩展样式
 		WINDOW_CLASS_NAME,          // 窗口类名
-		wTitle.c_str(),            // 窗口标题
+		(LPCWSTR)title_.c_str(),            // 窗口标题
 		windowStyle,               // 窗口样式
 		x_,                        // X位置
 		y_,                        // Y位置

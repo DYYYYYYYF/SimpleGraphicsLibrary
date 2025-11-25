@@ -1,11 +1,18 @@
 ﻿#include "GLMesh.h"
+#include "GLMaterial.h"
+#include "Platform/File/JsonObject.h"
+#include "Resource/Manager/ResourceManager.h"
+#include <Logger.hpp>
+#include "Renderer/Renderer.h"
 
-GLMesh::GLMesh(const std::string& mesh) : VAO_(NULL), VBO_(NULL), EBO_(NULL) {
-	Load(mesh);
+GLMesh::GLMesh(const MeshDesc& AssetDesc) {
+	if (!Load(AssetDesc)) {
+		return;
+	}
 }
 
 GLMesh::~GLMesh() {
-	UnLoad();
+	Unload();
 }
 
 void GLMesh::Bind() const {
@@ -21,24 +28,43 @@ void GLMesh::Unbind() const {
 	}
 }
 
-void GLMesh::Load(const std::string& mesh) {
-	Vertex V1 = { FVector3(-0.5f,  0.5f, 0.0f), FVector3(0.0f, 0.0f, 1.0f), FVector2(0, 0), FVector3(0.0f, 0.0f, 0.0f) };
-	Vertex V2 = { FVector3(-0.5f, -0.5f, 0.0f), FVector3(0.0f, 0.0f, 1.0f), FVector2(0, 1), FVector3(0.0f, 0.0f, 0.0f) };
-	Vertex V3 = { FVector3(0.5f, -0.5f, 0.0f), FVector3(0.0f, 0.0f, 1.0f), FVector2(1, 0), FVector3(0.0f, 0.0f, 0.0f) };
-	Vertex V4 = { FVector3(0.5f,  0.5f, 0.0f), FVector3(0.0f, 0.0f, 1.0f), FVector2(1, 1), FVector3(0.0f, 0.0f, 0.0f) };
-	// 顶点数据（位置 + 纹理坐标）
-	Vertices_ = { V1, V2, V3, V4};
+bool GLMesh::Load(const struct MeshDesc& AssetDesc) {
+	// 基础信息
+	Name_ = AssetDesc.Name;
 
-	Indices_ = {
-		// 注意索引从0开始! 
-		// 此例的索引(0,1,2,3)就是顶点数组vertices的下标，
-		// 这样可以由下标代表顶点组合成矩形
+	// 材质
+	for (size_t i = 0; i < AssetDesc.Materials.size(); ++i) {
+		MaterialDesc MatDesc = AssetDesc.Materials[i];
 
-		0, 1, 2, // 第一个三角形
-		0, 2, 3
-	};
+		std::shared_ptr<IMaterial> Mat = DynamicCast<IMaterial>(ResourceManager::Instance().Acquire(ResourceType::eMaterial, MatDesc.Name));
+		if (!Mat) {
+			Mat = DynamicCast<IMaterial>(
+				ResourceManager::Instance().LoadResourceFromDescriptor(ResourceType::eMaterial, &MatDesc)
+			);
+		}
+
+		if (!Mat) {
+			LOG_WARN << "Load material '" << MatDesc.Name << "' failed! Use built-in material!";
+			Mat = DynamicCast<IMaterial>(ResourceManager::Instance().Acquire(ResourceType::eMaterial, BUILTIN_PBR_MATERIAL));
+		}
+		Materials_.push_back(Mat);
+	}
+
+	// 顶点数据
+	Vertices_ = AssetDesc.Vertices;
+	Indices_ = AssetDesc.Indices;
+	SubMeshes_ = AssetDesc.SubMeshes;
+	if (Vertices_.size() == 0 || Indices_.size() == 0 || SubMeshes_.size() == 0) {
+		LOG_ERROR << "Invalid vertex data.";
+		return false;
+	}
 
 	Setup();
+
+	LOG_DEBUG << "Mesh '" << Name_ << "' loaded.";
+	IsLoaded_ = true;
+	IsValid_ = true;
+	return true;
 }
 
 void GLMesh::Setup(){
@@ -76,10 +102,13 @@ void GLMesh::Setup(){
 		(void*)offsetof(Vertex, tangent));
 
 	glBindVertexArray(0);
-	IsLoaded_ = true;
 }
 
-void GLMesh::UnLoad() {
+void GLMesh::Unload() {
+	for (auto& Material : Materials_) {
+		Material.reset();
+	}
+
 	if (IsLoaded_) {
 		glDeleteVertexArrays(1, &VAO_);
 		VAO_ = NULL;
@@ -90,4 +119,6 @@ void GLMesh::UnLoad() {
 		glDeleteBuffers(1, &EBO_);
 		EBO_ = NULL;
 	}
+
+	LOG_DEBUG << "Mesh '" << Name_ << "' unloaded.";
 }

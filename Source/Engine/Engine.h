@@ -5,6 +5,7 @@
 class Window;
 class IApplication;
 class Renderer;
+class Scene;
 
 class Engine {
 public:
@@ -18,6 +19,14 @@ public:
 	ENGINE_ENGINE_API void Run();
 	ENGINE_ENGINE_API void Shutdown();
 
+private:
+	// 固定帧
+	void FixedTick(float DeltaTime);
+	// 每帧操作
+	void Tick(float DeltaTime);
+	// 渲染
+	void Render();
+
 protected:
 	Window* Window_;
 
@@ -26,4 +35,5 @@ protected:
 
 	Renderer* CoreRenderer;
 
+	Scene* Scene_;
 };
