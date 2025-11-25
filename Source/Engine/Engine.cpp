@@ -115,7 +115,6 @@ void Engine::Run() {
 		Render();
 
 		Frc.EndFrame();
-		printf("FPS = %.1f\n", Frc.GetFPS());
 	}
 }
 
