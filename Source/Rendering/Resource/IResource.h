@@ -2,11 +2,8 @@
 
 #include "RenderModuleAPI.h"
 #include "Core/UniqueID.h"
+#include "Core/DynamicCast.h"
 #include <string>
-
-#ifndef DynamicCast
-#define DynamicCast std::dynamic_pointer_cast
-#endif
 
 struct IResourceDesc {
 	std::string Name;
@@ -23,7 +20,6 @@ enum class ResourceType {
 class IResource {
 public:
 	IResource() : UniqueID_(UUID::Generate()), RefCount(0), IsValid_(false){}
-	virtual bool Load(const std::string& path) = 0;
 	virtual void Unload() = 0;
 
 public:

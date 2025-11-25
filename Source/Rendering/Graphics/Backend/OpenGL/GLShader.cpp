@@ -18,17 +18,6 @@ GLShader::GLShader(const ShaderDesc& Desc) {
 	IsValid_ = true;
 }
 
-GLShader::GLShader(const std::string& AssetPath) {
-	ProgramID_ = NULL;
-
-	// 加载Shader
-	if (!Load(AssetPath)) {
-		return;
-	}
-
-	IsValid_ = true;
-}
-
 GLShader::~GLShader() {
 	Unload();
 }
@@ -86,11 +75,6 @@ bool GLShader::Load(const ShaderDesc& Desc) {
 
 	LOG_DEBUG << "Shader '" << Name_ << "' loaded.";
 	return true;
-}
-
-bool GLShader::Load(const std::string& AssetPath) {
-	LOG_WARN << "Load shader '" << AssetPath << "' failed! Please load shader with 'ShaderDesc'.";
-	return false; 
 }
 
 void GLShader::Unload() {

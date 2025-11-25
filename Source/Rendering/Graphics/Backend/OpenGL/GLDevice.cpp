@@ -102,8 +102,16 @@ void GLDevice::ExecuteCommandList(const CommandList& CmdList) {
 			// 3. 设置Uniform
 			GLShader* Shader = (GLShader*)Material->GetShader().get();
 			if (Shader) {
-				GLint loc = glGetUniformLocation(Shader->GetProgramID(), "uModel");
-				glUniformMatrix4fv(loc, 1, GL_FALSE, DrawCmd->DrawCall_.modelMatrix.data());
+				const FMatrix4& ModelMatrix = DrawCmd->DrawCall_.modelMatrix;
+				const FMatrix4& ViewMatrix = CmdList.GetViewMatrix();
+				const FMatrix4& ProjMatrix = CmdList.GetProjMatrix();
+
+				GLint ModelMatrixLoc = glGetUniformLocation(Shader->GetProgramID(), "ModelMat");
+				GLint ViewMatrixatrixLoc = glGetUniformLocation(Shader->GetProgramID(), "ViewMat");
+				GLint ProjMatrixatrixLoc = glGetUniformLocation(Shader->GetProgramID(), "ProjMat");
+				glUniformMatrix4fv(ModelMatrixLoc, 1, GL_FALSE, ModelMatrix.data());
+				glUniformMatrix4fv(ViewMatrixatrixLoc, 1, GL_FALSE, ViewMatrix.data());
+				glUniformMatrix4fv(ProjMatrixatrixLoc, 1, GL_FALSE, ProjMatrix.data());
 			}
 		
 			// 4. 绘制

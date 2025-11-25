@@ -8,13 +8,11 @@ class GLShader : public IShader {
 public:
 	GLShader();
 	GLShader(const ShaderDesc& Desc);
-	GLShader(const std::string& AssetPath);
 	virtual ~GLShader();
 
 public:
 	// 使用和管理
 	virtual bool Load(const ShaderDesc& Desc) override;
-	virtual bool Load(const std::string& AssetPath) override;
 	virtual void Unload() override;
 	virtual void Bind() override;
 	virtual void Unbind() override;

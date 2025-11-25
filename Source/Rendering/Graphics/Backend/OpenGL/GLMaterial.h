@@ -6,13 +6,11 @@
 class GLMaterial : public IMaterial {
 public:
 	GLMaterial();
-	GLMaterial(const std::string& filename);
 	GLMaterial(const struct MaterialDesc& Desc);
 	virtual ~GLMaterial();
 
 public:
 	virtual bool Load(const MaterialDesc& Desc) override;
-	virtual bool Load(const std::string& filename) override;
 	virtual void Unload() override;
 
 	virtual void Apply() const override;

@@ -3,17 +3,10 @@
 #include "Platform/File/JsonObject.h"
 #include "Resource/Manager/ResourceManager.h"
 #include <Logger.hpp>
-#include "Command/CommandList.h"
 #include "Renderer/Renderer.h"
 
 GLMesh::GLMesh(const MeshDesc& AssetDesc) {
 	if (!Load(AssetDesc)) {
-		return;
-	}
-}
-
-GLMesh::GLMesh(const std::string& FilePath) : VAO_(NULL), VBO_(NULL), EBO_(NULL) {
-	if (!Load(FilePath)) {
 		return;
 	}
 }
@@ -74,10 +67,6 @@ bool GLMesh::Load(const struct MeshDesc& AssetDesc) {
 	return true;
 }
 
-bool GLMesh::Load(const std::string& FilePath) {
-	return true;
-}
-
 void GLMesh::Setup(){
 	glGenVertexArrays(1, &VAO_);
 	glGenBuffers(1, &VBO_);
@@ -132,16 +121,4 @@ void GLMesh::Unload() {
 	}
 
 	LOG_DEBUG << "Mesh '" << Name_ << "' unloaded.";
-}
-
-void GLMesh::Draw(CommandList& CmdList) {
-
-	for (const SubMeshDesc& SubMesh : SubMeshes_) {
-		IMaterial* Material = GetMaterial(SubMesh.MaterialIndex).get();
-		if (!Material) {
-			continue;
-		}
-
-		CmdList.DrawIndexed(this, Material, FMatrix4::Identity(), SubMesh.IndexCount, SubMesh.BaseIndex);
-	}
 }

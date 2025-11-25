@@ -6,7 +6,6 @@
 
 class IMaterial;
 struct MaterialDesc;
-class CommandList;
 
 struct Vertex {
 	FVector3 position;
@@ -44,13 +43,12 @@ public:
 	virtual void Bind() const = 0;
 	virtual void Unbind() const = 0;
 
-	virtual void Draw(CommandList& CmdList) = 0;
-
 	uint32_t GetIndexCount() const { return (uint32_t)Indices_.size(); }
 
 	// 获取原始数据（用于物理碰撞等）
 	const std::vector<Vertex>& GetVertices() const { return Vertices_; }
 	const std::vector<unsigned int>& GetIndices() const { return Indices_; }
+	const std::vector<SubMeshDesc>& GetSubMeshes() const { return SubMeshes_; }
 	std::shared_ptr<IMaterial> GetMaterial(uint64_t i) { return i < Materials_.size() ? Materials_[i] : nullptr; }
 	const std::vector<std::shared_ptr<IMaterial>>& GetMaterials() const { return Materials_; }
 	uint64_t GetMaterialCount() const { return Materials_.size(); }

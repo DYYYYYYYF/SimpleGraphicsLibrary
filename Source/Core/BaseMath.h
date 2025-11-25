@@ -2,6 +2,10 @@
 
 #include <Eigen/Dense>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846f
+#endif
+
 using FVector2 = Eigen::Vector2f;
 using FVector3 = Eigen::Vector3f;
 using FVector4 = Eigen::Vector4f;
@@ -10,6 +14,15 @@ using FMatrix4 = Eigen::Matrix4f;
 
 using FVector = Eigen::Vector3f;
 using FMatrix = Eigen::Matrix4f;
+
+using AngleAxis = Eigen::AngleAxisf;
+
+struct Axis{
+public:
+	static inline FVector3 X = FVector(1.0f, 0.0f, 0.0f);
+	static inline FVector3 Y = FVector(0.0f, 1.0f, 0.0f);
+	static inline FVector3 Z = FVector(0.0f, 0.0f, 1.0f);
+};
 
 namespace FMath {
 	template<typename T>

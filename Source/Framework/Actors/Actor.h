@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "BaseObject.h"
-#include "Framework/Components/Component.h"
+#include "Framework/Components/TransformComponent.h"
 
 #include <vector>
 #include <string>
@@ -21,6 +21,17 @@ public:
 	ENGINE_FRAMEWORK_API virtual void BeginPlay() {};
 	ENGINE_FRAMEWORK_API virtual void Tick(float DeltaTime);
 	ENGINE_FRAMEWORK_API virtual void Destroy() {};
+
+	// ----------------------- 通用组件函数 ------------------------------------
+public:
+	ENGINE_FRAMEWORK_API FVector3 GetActorLocation() const;
+	ENGINE_FRAMEWORK_API void SetActorLocation(const FVector3& Location);
+	ENGINE_FRAMEWORK_API FVector3 GetActorRotation() const;
+	ENGINE_FRAMEWORK_API void SetActorRotation(const FVector3& Rotation);
+	ENGINE_FRAMEWORK_API FVector3 GetActorScale() const;
+	ENGINE_FRAMEWORK_API void SetActorScale(const FVector3& Scale);
+	ENGINE_FRAMEWORK_API void RotateDegress(const FVector3& Axis, float Angle);
+	ENGINE_FRAMEWORK_API void RotateRadians(const FVector3& Axis, float Radians);
 
 	// -------------------------- 通用函数 ------------------------------------
 public:
@@ -80,6 +91,9 @@ public:
 		return Components_.find(typeid(T)) != Components_.end();
 	}
 
+protected:
+	// 必备组件（每个Actor都有）
+	TransformComponent* TransformComponent_;
 
 private:
 	std::string Name_;
@@ -87,9 +101,6 @@ private:
 
 	// 组件存储（按类型索引）
 	std::unordered_map<std::type_index, std::unique_ptr<Component>> Components_;
-
-	// 必备组件（每个Actor都有）
-	//TransformComponent* m_Transform;
 
 	// 层次结构
 	Actor* Parent_ = nullptr;

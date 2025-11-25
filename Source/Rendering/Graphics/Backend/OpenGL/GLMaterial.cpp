@@ -8,15 +8,6 @@
 #include <Logger.hpp>
 
 GLMaterial::GLMaterial() { Name_ = ""; }
-
-GLMaterial::GLMaterial(const std::string& filename) {
-	if (!Load(filename)) {
-		return;
-	}
-
-	IsValid_ = true;
-}
-
 GLMaterial::GLMaterial(const MaterialDesc& Desc) {
 	if (!Load(Desc)) {
 		return;
@@ -50,69 +41,6 @@ bool GLMaterial::Load(const MaterialDesc& Desc) {
 
 	// 加载Texture资产
 	Desc.TexturePaths;
-
-	LOG_DEBUG << "Material '" << Name_ << "' loaded.";
-	IsValid_ = true;
-	return true;
-}
-
-bool GLMaterial::Load(const std::string& filename) {
-	File MaterialFile(MATERIAL_CONFIG_PATH + filename);
-	if (!MaterialFile.IsExist()) {
-		LOG_ERROR << "Material file '" << filename << "' is not exist!";
-		return false;
-	}
-
-	JsonObject MaterialObj(MaterialFile);
-	if (!MaterialObj.IsObject()) {
-		LOG_ERROR << "Material file '" << filename << "' is invalid json!";
-		return false;
-	}
-
-	// 加载数据
-	Name_ = MaterialObj.Get("Name").GetString();
-
-	JsonObject UBOData = MaterialObj.Get("MaterialUBO");
-	if (!UBOData.IsObject()) {
-		LOG_ERROR << "Material file '" << filename << "' is invalid json!";
-		return false;
-	}
-
-	/*JsonObject AlbedoData = UBOData.Get("Albedo");
-	if (AlbedoData.IsArray() && AlbedoData.Size() == 4) {
-		MaterialUBO_.Albedo_ = FVector4(
-			AlbedoData.ArrayItemAt(0).GetFloat(),
-			AlbedoData.ArrayItemAt(1).GetFloat(),
-			AlbedoData.ArrayItemAt(2).GetFloat(),
-			AlbedoData.ArrayItemAt(3).GetFloat()
-		);
-	}
-
-	JsonObject EmissiveData = UBOData.Get("Emissive");
-	if (EmissiveData.IsArray() && AlbedoData.Size() == 4) {
-		MaterialUBO_.Albedo_ = FVector4(
-			EmissiveData.ArrayItemAt(0).GetFloat(),
-			EmissiveData.ArrayItemAt(1).GetFloat(),
-			EmissiveData.ArrayItemAt(2).GetFloat(),
-			EmissiveData.ArrayItemAt(3).GetFloat()
-		);
-	}
-
-	JsonObject MetallicRoughnessAOData = UBOData.Get("MetallicRoughnessAO");
-	if (MetallicRoughnessAOData.Get("MetallicRoughnessAO").IsArray() && AlbedoData.Size() == 4) {
-		MaterialUBO_.Albedo_ = FVector4(
-			MetallicRoughnessAOData.ArrayItemAt(0).GetFloat(),
-			MetallicRoughnessAOData.ArrayItemAt(1).GetFloat(),
-			MetallicRoughnessAOData.ArrayItemAt(2).GetFloat(),
-			MetallicRoughnessAOData.ArrayItemAt(3).GetFloat()
-		);
-	}*/
-
-	std::string ShaderAsset = MaterialObj.Get("UsedShader").GetString();
-	Shader_ = DynamicCast<IShader>(ResourceManager::Instance().LoadResource(ResourceType::eShader, ShaderAsset));
-	if (!Shader_) {
-		return false;
-	}
 
 	LOG_DEBUG << "Material '" << Name_ << "' loaded.";
 	IsValid_ = true;

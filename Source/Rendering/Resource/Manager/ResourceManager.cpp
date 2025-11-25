@@ -112,9 +112,9 @@ std::shared_ptr<IResource> ResourceManager::LoadResourceFromDescriptor(ResourceT
 
 		ShaderNameMap_[Desc->Name] = ID;
 	} break;
-							  /*case ResourceType::eTexture:
+	/*case ResourceType::eTexture:
 
-								  break;*/
+		break;*/
 	}
 
 	Resources_[ID] = Resource;
@@ -253,8 +253,7 @@ std::shared_ptr<IResource> ResourceManager::LoadMeshResource(const std::string& 
 	// MeshAsset
 	MeshDesc Desc;
 	if (!MeshLoader::Load(Content.Get("MeshAsset").GetString(), Desc)) {
-		// TODO: 失败时使用 Built-in Material
-		LOG_WARN << "Load mesh '" << filename << "' failed! Use built-in mesh.";
+		LOG_WARN << "Load mesh '" << filename << "' failed!";
 	}
 
 	return LoadResourceFromDescriptor(ResourceType::eMesh, &Desc);
@@ -275,8 +274,8 @@ std::shared_ptr<IResource> ResourceManager::LoadMaterialResource(const std::stri
 
 	MaterialDesc Desc;
 	if (!MaterialLoader::Load(filename, Desc)) {
-		// TODO: 失败时使用 Built-in Material
 		LOG_WARN << "Load material '" << filename << "' failed! Use built-in material.";
+		return Resources_[MaterialNameMap_[BUILTIN_PBR_MATERIAL]];
 	}
 
 	return LoadResourceFromDescriptor(ResourceType::eMaterial, &Desc);
@@ -292,13 +291,13 @@ std::shared_ptr<IResource> ResourceManager::LoadShaderResource(const std::string
 	const std::string& Name = Content.Get("Name").GetString();
 	if (ShaderNameMap_.find(Name) != ShaderNameMap_.end()) {
 		LOG_WARN << "Resource shader '" << Name << "' already exist.";
-		return nullptr;
+		return Resources_[ShaderNameMap_[Name]];
 	}
 
 	ShaderDesc Desc;
 	if (!ShaderLoader::Load(filename, Desc)) {
-		// TODO: 失败时使用 Built-in Shader
 		LOG_WARN << "Load shader '" << filename << "' failed! Use built-in shader.";
+		return Resources_[ShaderNameMap_[BUILTIN_PBR_SHADER]];
 	}
 
 	return LoadResourceFromDescriptor(ResourceType::eShader, &Desc);

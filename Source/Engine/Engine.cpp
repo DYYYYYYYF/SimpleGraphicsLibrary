@@ -7,7 +7,7 @@
 
 #include "Rendering/Renderer/Renderer.h"
 #include "Scene.h"
-#include "Framework/Actors/Actor.h"
+#include "Framework/Actors/CameraActor.h"
 #include "Framework/Components/MeshComponent.h"
 #include "Rendering/Resource/Manager/ResourceManager.h"
 
@@ -105,6 +105,26 @@ void Engine::Run() {
 		CommandList CmdList;
 		CoreRenderer->BeginCommand(CmdList);
 		std::vector<std::shared_ptr<Actor>> AllActors = Scene_->GetAllActors();
+
+		// 先摄像机
+		for (auto& Act : AllActors) {
+			CameraActor* Camera = DynamicCast<CameraActor>(Act).get();
+			if (Camera) {
+				TransformComponent* TransformComp = Camera->GetComponent<TransformComponent>();
+				if (!TransformComp) continue;
+				const FVector3& Location = TransformComp->GetPosition();
+
+				CameraComponent* CameraComp = Camera->GetComponent<CameraComponent>();
+				if (!CameraComp) continue;
+				const FMatrix4& ViewMatrix = CameraComp->GetViewMatrix(Location);
+				const FMatrix4& ProjMatrix = CameraComp->GetProjectionMatrix();
+
+				CmdList.SetViewProjection(ViewMatrix, ProjMatrix);
+				break;
+			}
+		}
+
+		// 后网格
 		for (auto& Act : AllActors) {
 			MeshComponent* MeshComp = Act.get()->GetComponent<MeshComponent>();
 			if (MeshComp) {
