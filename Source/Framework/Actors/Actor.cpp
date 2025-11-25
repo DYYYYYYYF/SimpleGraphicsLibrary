@@ -36,12 +36,12 @@ void Actor::SetActorLocation(const FVector3& Location) {
 
 FVector3 Actor::GetActorRotation() const {
 	if (!TransformComponent_) return FVector3();
-	return TransformComponent_->GetRotation();
+	return TransformComponent_->GetRotationEuler();
 }
 
 void Actor::SetActorRotation(const FVector3& Rotation) {
 	if (!TransformComponent_) return;
-	TransformComponent_->SetRotation(Rotation);
+	TransformComponent_->SetRotationEuler(Rotation);
 }
 
 FVector3 Actor::GetActorScale() const {
@@ -56,12 +56,7 @@ void Actor::SetActorScale(const FVector3& Scale) {
 
 void Actor::RotateDegress(const FVector3& Axis, float Angle) {
 	if (!TransformComponent_) return;
-	TransformComponent_->Rotate(Axis, Angle);
-}
-
-void Actor::RotateRadians(const FVector3& Axis, float Radians) {
-	if (!TransformComponent_) return;
-	TransformComponent_->RotateRad(Axis, Radians);
+	TransformComponent_->RotateLocal(Axis, Angle);
 }
 
 void Actor::AddChild(std::unique_ptr<Actor> child) {

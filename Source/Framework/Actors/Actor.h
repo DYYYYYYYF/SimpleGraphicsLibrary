@@ -31,7 +31,6 @@ public:
 	ENGINE_FRAMEWORK_API FVector3 GetActorScale() const;
 	ENGINE_FRAMEWORK_API void SetActorScale(const FVector3& Scale);
 	ENGINE_FRAMEWORK_API void RotateDegress(const FVector3& Axis, float Angle);
-	ENGINE_FRAMEWORK_API void RotateRadians(const FVector3& Axis, float Radians);
 
 	// -------------------------- 通用函数 ------------------------------------
 public:

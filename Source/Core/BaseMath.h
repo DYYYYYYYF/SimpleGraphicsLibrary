@@ -16,6 +16,7 @@ using FVector = Eigen::Vector3f;
 using FMatrix = Eigen::Matrix4f;
 
 using AngleAxis = Eigen::AngleAxisf;
+using FQuaternion = Eigen::Quaternionf;
 
 struct Axis{
 public:
