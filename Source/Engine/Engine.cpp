@@ -134,7 +134,7 @@ void Engine::Render() {
 
 	// 先摄像机
 	for (auto& Act : AllActors) {
-		CameraActor* Camera = DynamicCast<CameraActor>(Act).get();
+		ACameraActor* Camera = DynamicCast<ACameraActor>(Act).get();
 		if (Camera) {
 			UTransformComponent* TransformComp = Camera->GetComponent<UTransformComponent>();
 			if (!TransformComp) continue;

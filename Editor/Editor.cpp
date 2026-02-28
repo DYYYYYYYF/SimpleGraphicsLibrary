@@ -4,19 +4,19 @@
 #include "Source/RotateCube.h"
 #include <Framework/Actors/CameraActor.h>
 
-std::shared_ptr<RotateCubeActor> Model = nullptr;
-std::shared_ptr<CameraActor> Camera = nullptr;
+std::shared_ptr<ACubeActor> Model = nullptr;
+std::shared_ptr<ACameraActor> Camera = nullptr;
 
 bool Editor::Initialize()
 {
 	AppName_ = "Editor";
 
-	Model = std::make_shared<RotateCubeActor>("Model");
+	Model = std::make_shared<ACubeActor>("Model");
 	if (!Model) {
 		LOG_ERROR << "Create model failed.";
 	}
 
-	Camera = std::make_shared<CameraActor>("Camera");
+	Camera = std::make_shared<ACameraActor>("Camera");
 	if (!Camera) {
 		LOG_ERROR << "Create camera failed.";
 	}

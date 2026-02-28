@@ -1,14 +1,14 @@
 ﻿#include "CameraActor.h"
 
-CameraActor::CameraActor(const std::string& name) : AActor(name) {
+ACameraActor::ACameraActor(const std::string& name) : AActor(name) {
 	CameraComponent_ = CreateComponent<UCameraComponent>(this, "CameraComponent");
 	if (!CameraComponent_) { return; }
 }
 
-void CameraActor::BeginPlay() {
+void ACameraActor::BeginPlay() {
 
 }
 
-void CameraActor::Tick(float DeltaTime) {
+void ACameraActor::Tick(float DeltaTime) {
 	(void)DeltaTime;
 }

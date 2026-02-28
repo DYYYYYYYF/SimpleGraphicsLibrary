@@ -2,9 +2,9 @@
 
 #include "Framework/Actors/CubeActor.h"
 
-class RotateCubeActor : public ACubeActor {
+class ARotateCubeActor : public ACubeActor {
 public:
-	RotateCubeActor(const std::string& Name) : ACubeActor(Name) {}
+	ARotateCubeActor(const std::string& Name) : ACubeActor(Name) {}
 
 public:
 	void Tick(float DeltaTime) override;
