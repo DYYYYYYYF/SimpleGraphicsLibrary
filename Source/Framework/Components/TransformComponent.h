@@ -3,11 +3,11 @@
 #include "BaseComponent.h"
 #include "Core/BaseMath.h"
 
-class TransformComponent : public BaseComponent{
+class UTransformComponent : public UBaseComponent{
 public:
-	TransformComponent();
-	TransformComponent(Actor* Owner, const std::string& Name);
-	~TransformComponent();
+	UTransformComponent();
+	UTransformComponent(AActor* Owner, const std::string& Name);
+	~UTransformComponent();
 
 public:
 	// Position

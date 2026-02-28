@@ -1,10 +1,10 @@
 ﻿#include "CameraComponent.h"
 
-CameraComponent::CameraComponent() : BaseComponent(){}
-CameraComponent::CameraComponent(Actor* Owner, const std::string& Name) : BaseComponent(Owner, Name) {}
-CameraComponent::~CameraComponent() {}
+UCameraComponent::UCameraComponent() : UBaseComponent(){}
+UCameraComponent::UCameraComponent(AActor* Owner, const std::string& Name) : UBaseComponent(Owner, Name) {}
+UCameraComponent::~UCameraComponent() {}
 
-FMatrix4 CameraComponent::GetViewMatrix(const FVector3& CameraPos) const {
+FMatrix4 UCameraComponent::GetViewMatrix(const FVector3& CameraPos) const {
 	if (IsViewDirty_) {
 		ViewMatrix_ = CreateViewMatrix(CameraPos, Target_, Up_);
 		IsViewDirty_ = false;
@@ -13,7 +13,7 @@ FMatrix4 CameraComponent::GetViewMatrix(const FVector3& CameraPos) const {
 }
 
 // 获取投影矩阵
-const FMatrix4& CameraComponent::GetProjectionMatrix() const {
+const FMatrix4& UCameraComponent::GetProjectionMatrix() const {
 	if (IsProjectionDirty_) {
 		if (ProjectionType_ == ProjectionType::Perspective) {
 			ProjectionMatrix_ = CreatePerspectiveMatrix(Fov_, Aspect_, NearPlane_, FarPlane_);
@@ -26,23 +26,23 @@ const FMatrix4& CameraComponent::GetProjectionMatrix() const {
 	return ProjectionMatrix_;
 }
 
-void CameraComponent::SetAspect(float Aspect) {
+void UCameraComponent::SetAspect(float Aspect) {
 	Aspect_ = Aspect;
 	IsProjectionDirty_ = true;
 }
 
-void CameraComponent::SetAspect(float Width, float Height) {
+void UCameraComponent::SetAspect(float Width, float Height) {
 	Aspect_ = Width / Height;
 	IsProjectionDirty_ = true;
 }
 
-void CameraComponent::SetProjectionType(ProjectionType Type) {
+void UCameraComponent::SetProjectionType(ProjectionType Type) {
 	if (Type != ProjectionType_) {
 		ProjectionType_ = Type;
 	}
 }
 
-FMatrix4 CameraComponent::CreateViewMatrix(const FVector3& Eye, const FVector3& Center, const FVector3& Up) const {
+FMatrix4 UCameraComponent::CreateViewMatrix(const FVector3& Eye, const FVector3& Center, const FVector3& Up) const {
 	FVector3 f = (Center - Eye).normalized();  // forward
 	FVector3 s = f.cross(Up).normalized();     // right
 	FVector3 u = s.cross(f);                   // up
@@ -67,7 +67,7 @@ FMatrix4 CameraComponent::CreateViewMatrix(const FVector3& Eye, const FVector3& 
 	return view;
 }
 
-FMatrix4 CameraComponent::CreatePerspectiveMatrix(float FovY, float Aspect, float NearPlane, float FarPlane) const {
+FMatrix4 UCameraComponent::CreatePerspectiveMatrix(float FovY, float Aspect, float NearPlane, float FarPlane) const {
 	float tanHalfFovy = tan(FovY * M_PI / 360.0f);
 
 	FMatrix4 proj = FMatrix4::Zero();
@@ -81,7 +81,7 @@ FMatrix4 CameraComponent::CreatePerspectiveMatrix(float FovY, float Aspect, floa
 	return proj;
 }
 
-FMatrix4 CameraComponent::CreateOrthographicMatrix(float Left, float Right, 
+FMatrix4 UCameraComponent::CreateOrthographicMatrix(float Left, float Right, 
 	float Bottom, float Top, float NearPlane, float FarPlane) const {
 	FMatrix4 proj = FMatrix4::Identity();
 

@@ -7,11 +7,11 @@
 class IMesh;
 class IMaterial;
 
-class MeshComponent : public BaseComponent {
+class UMeshComponent : public UBaseComponent {
 public:
-	MeshComponent();
-	MeshComponent(Actor* Owner, const std::string& Name);
-	virtual ~MeshComponent();
+	UMeshComponent();
+	UMeshComponent(AActor* Owner, const std::string& Name);
+	virtual ~UMeshComponent();
 
 public:
 	ENGINE_FRAMEWORK_API void Draw(CommandList& CmdList);

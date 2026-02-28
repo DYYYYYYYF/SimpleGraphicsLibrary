@@ -1,20 +1,20 @@
 ﻿#include "Actor.h"
 #include "Framework/Components/BaseComponent.h"
 
-Actor::Actor() {
+AActor::AActor() {
 	Name_ = "UnnamedActor";
 }
 
-Actor::Actor(const std::string& Name) : Name_(Name) {
+AActor::AActor(const std::string& Name) : Name_(Name) {
 	// 添加必备的Transform组件
-	TransformComponent_ = CreateComponent<TransformComponent>(this, "TransformComponent");
+	TransformComponent_ = CreateComponent<UTransformComponent>(this, "TransformComponent");
 	if (!TransformComponent_) {
 		return;
 	}
 
 }
 
-Actor::~Actor() {
+AActor::~AActor() {
 	for (auto& Child : Children_) {
 		Child.reset();
 	}
@@ -24,50 +24,50 @@ Actor::~Actor() {
 	}
 }
 
-FVector3 Actor::GetActorLocation() const {
+FVector3 AActor::GetActorLocation() const {
 	if (!TransformComponent_) return FVector3();
 	return TransformComponent_->GetPosition();
 }
 
-void Actor::SetActorLocation(const FVector3& Location) {
+void AActor::SetActorLocation(const FVector3& Location) {
 	if (!TransformComponent_) return ;
 	TransformComponent_->SetPosition(Location);
 }
 
-FVector3 Actor::GetActorRotation() const {
+FVector3 AActor::GetActorRotation() const {
 	if (!TransformComponent_) return FVector3();
 	return TransformComponent_->GetRotationEuler();
 }
 
-void Actor::SetActorRotation(const FVector3& Rotation) {
+void AActor::SetActorRotation(const FVector3& Rotation) {
 	if (!TransformComponent_) return;
 	TransformComponent_->SetRotationEuler(Rotation);
 }
 
-FVector3 Actor::GetActorScale() const {
+FVector3 AActor::GetActorScale() const {
 	if (!TransformComponent_) return FVector3();
 	return TransformComponent_->GetScale();
 }
 
-void Actor::SetActorScale(const FVector3& Scale) {
+void AActor::SetActorScale(const FVector3& Scale) {
 	if (!TransformComponent_) return;
 	TransformComponent_->SetScale(Scale);
 }
 
-void Actor::RotateDegress(const FVector3& Axis, float Angle) {
+void AActor::RotateDegress(const FVector3& Axis, float Angle) {
 	if (!TransformComponent_) return;
 	TransformComponent_->RotateLocal(Axis, Angle);
 }
 
-void Actor::AddChild(std::unique_ptr<Actor> child) {
+void AActor::AddChild(std::unique_ptr<AActor> child) {
 	child->Parent_ = this;
 	Children_.push_back(std::move(child));
 }
 
-Actor* Actor::GetParent() const { return Parent_; }
-const std::vector<std::unique_ptr<Actor>>& Actor::GetChildren() const { return Children_; }
+AActor* AActor::GetParent() const { return Parent_; }
+const std::vector<std::unique_ptr<AActor>>& AActor::GetChildren() const { return Children_; }
 
-void Actor::Tick(float DeltaTime) {
+void AActor::Tick(float DeltaTime) {
 	if (!Active_) return;
 
 	// 更新所有组件
@@ -83,7 +83,7 @@ void Actor::Tick(float DeltaTime) {
 	}
 }
 
-void Actor::SetActive(bool Active) { Active_ = Active; }
-bool Actor::IsActive() const { return Active_; }
+void AActor::SetActive(bool Active) { Active_ = Active; }
+bool AActor::IsActive() const { return Active_; }
 
-const std::string& Actor::GetName() const { return Name_; }
+const std::string& AActor::GetName() const { return Name_; }

@@ -51,9 +51,19 @@ int main() {
 	JsonObject obj2(JsonObject::Type::eObject);
 	obj2.SetString("email", "test@example.com");
 	obj2.SetString("name", "新名字");  // 会覆盖原有的
-	obj.Merge(obj2);
 	std::cout << "合并后: " << obj.Dump(2) << std::endl;
 
+	obj2.SetArray("scores", std::vector<int>{90, 85, 88});
+	obj2.WriteInt("Window.Height", 100);
+	obj2.WriteString("Window.Title", "测试窗口");
+
+	obj2.SetVector3("Position", FVector3(1.0f, 2.0f, 3.0f));
+	obj2.SetMatrix4("Transform", FMatrix4::Identity());
+
+	int Hei = obj2.ReadInt("Window.Height", 0);
+	std::cout << "Window.Height: " << Hei << std::endl;
+
+	obj.Merge(obj2);
 	File WrittedFile("./JsonFile.json");
 	obj.SaveToFile(WrittedFile);
 

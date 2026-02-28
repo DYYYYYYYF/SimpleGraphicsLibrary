@@ -11,9 +11,9 @@
 #define DynmicCast std::dynamic_pointer_cast
 #endif
 
-MeshComponent::MeshComponent() : BaseComponent() {}
-MeshComponent::MeshComponent(Actor* Owner, const std::string& Name) : BaseComponent(Owner, Name) {}
-MeshComponent::~MeshComponent() {
+UMeshComponent::UMeshComponent() : UBaseComponent() {}
+UMeshComponent::UMeshComponent(AActor* Owner, const std::string& Name) : UBaseComponent(Owner, Name) {}
+UMeshComponent::~UMeshComponent() {
 	ResourceManager& RS = ResourceManager::Instance();
 	if (MeshAsset_) {
 		RS.Release(MeshAsset_->GetID());
@@ -21,14 +21,14 @@ MeshComponent::~MeshComponent() {
 	}
 }
 
-void MeshComponent::Draw(CommandList& CmdList) {
-	Actor* Owner = GetOwner();
+void UMeshComponent::Draw(CommandList& CmdList) {
+	AActor* Owner = GetOwner();
 	if (!Owner || !MeshAsset_) {
 		return;
 	}
 
 	FMatrix4 ModelMatrix = FMatrix4::Identity();
-	TransformComponent* TransformComp = Owner->GetComponent<TransformComponent>();
+	UTransformComponent* TransformComp = Owner->GetComponent<UTransformComponent>();
 	if (TransformComp) ModelMatrix = TransformComp->GetModelMatrix();
 
 	const std::vector<SubMeshDesc>& SubMeshes = MeshAsset_->GetSubMeshes();
@@ -42,7 +42,7 @@ void MeshComponent::Draw(CommandList& CmdList) {
 	}
 }
 
-bool MeshComponent::LoadFromFile(const std::string& FilePath) {
+bool UMeshComponent::LoadFromFile(const std::string& FilePath) {
 	
 	// 加载资产
 	ResourceManager& RS = ResourceManager::Instance();

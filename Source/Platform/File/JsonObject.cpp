@@ -32,6 +32,256 @@ JsonObject::JsonObject(const std::string& content) : Handle(std::make_shared<Jso
 		Handle->value = nlohmann::json(); 
 	}
 }
+// SetArray 模板实现
+template<typename T>
+void JsonObject::SetArray(const std::string& key, const std::vector<T>& values) {
+	nlohmann::json arr = nlohmann::json::array();
+	for (const auto& val : values) {
+		arr.push_back(val);
+	}
+	Handle->value[key] = arr;
+}
+
+// 显式实例化常用类型
+template ENGINE_PLATFORM_API void JsonObject::SetArray<int>(const std::string&, const std::vector<int>&);
+template ENGINE_PLATFORM_API void JsonObject::SetArray<float>(const std::string&, const std::vector<float>&);
+template ENGINE_PLATFORM_API void JsonObject::SetArray<double>(const std::string&, const std::vector<double>&);
+template ENGINE_PLATFORM_API void JsonObject::SetArray<bool>(const std::string&, const std::vector<bool>&);
+template ENGINE_PLATFORM_API void JsonObject::SetArray<std::string>(const std::string&, const std::vector<std::string>&);
+
+// SetArray for JsonObject
+template<>
+void JsonObject::SetArray<JsonObject>(const std::string& key, const std::vector<JsonObject>& values) {
+	nlohmann::json arr = nlohmann::json::array();
+	for (const auto& val : values) {
+		arr.push_back(val.Handle->value);
+	}
+	Handle->value[key] = arr;
+}
+
+// SetVector2
+void JsonObject::SetVector2(const std::string& key, const FVector2& value) {
+	nlohmann::json arr = nlohmann::json::array();
+	for (size_t i = 0; i < 2; ++i) {
+		arr.push_back(value[i]);
+	}
+	Handle->value[key] = arr;
+}
+
+// SetVector3
+void JsonObject::SetVector3(const std::string& key, const FVector3& value) {
+	nlohmann::json arr = nlohmann::json::array();
+	for (size_t i = 0; i < 3; ++i) {
+		arr.push_back(value[i]);
+	}
+	Handle->value[key] = arr;
+}
+
+// SetVector4
+void JsonObject::SetVector4(const std::string& key, const FVector4& value) {
+	nlohmann::json arr = nlohmann::json::array();
+	for (size_t i = 0; i < 4; ++i) {
+		arr.push_back(value[i]);
+	}
+	Handle->value[key] = arr;
+}
+
+// SetMatrix3
+void JsonObject::SetMatrix3(const std::string& key, const FMatrix3& value) {
+	nlohmann::json arr = nlohmann::json::array();
+	// 按行存储 3x3 矩阵
+	for (size_t i = 0; i < 9; ++i) {
+		arr.push_back(value.data()[i]);
+	}
+	Handle->value[key] = arr;
+}
+
+// SetMatrix4
+void JsonObject::SetMatrix4(const std::string& key, const FMatrix4& value) {
+	nlohmann::json arr = nlohmann::json::array();
+	// 按行存储 4x4 矩阵
+	for (size_t i = 0; i < 16; ++i) {
+		arr.push_back(value.data()[i]);
+	}
+	Handle->value[key] = arr;
+}
+
+// GetVector2
+FVector2 JsonObject::GetVector2(const std::string& key, const FVector2& defaultValue) const {
+	auto it = Handle->value.find(key);
+	if (it != Handle->value.end() && it->is_array() && it->size() >= 2) {
+		FVector2 result;
+		result[0] = (*it)[0].get<float>();
+		result[1] = (*it)[1].get<float>();
+		return result;
+	}
+	return defaultValue;
+}
+
+// GetVector3
+FVector3 JsonObject::GetVector3(const std::string& key, const FVector3& defaultValue) const {
+	auto it = Handle->value.find(key);
+	if (it != Handle->value.end() && it->is_array() && it->size() >= 3) {
+		FVector3 result;
+		result[0] = (*it)[0].get<float>();
+		result[1] = (*it)[1].get<float>();
+		result[2] = (*it)[2].get<float>();
+		return result;
+	}
+	return defaultValue;
+}
+
+// GetVector4
+FVector4 JsonObject::GetVector4(const std::string& key, const FVector4& defaultValue) const {
+	auto it = Handle->value.find(key);
+	if (it != Handle->value.end() && it->is_array() && it->size() >= 4) {
+		FVector4 result;
+		result[0] = (*it)[0].get<float>();
+		result[1] = (*it)[1].get<float>();
+		result[2] = (*it)[2].get<float>();
+		result[3] = (*it)[3].get<float>();
+		return result;
+	}
+	return defaultValue;
+}
+
+// GetMatrix3
+FMatrix3 JsonObject::GetMatrix3(const std::string& key, const FMatrix3& defaultValue) const {
+	auto it = Handle->value.find(key);
+	if (it != Handle->value.end() && it->is_array() && it->size() >= 9) {
+		FMatrix3 result;
+		for (size_t i = 0; i < 9; ++i) {
+			result.data()[i] = (*it)[i].get<float>();
+		}
+		return result;
+	}
+	return defaultValue;
+}
+
+// GetMatrix4
+FMatrix4 JsonObject::GetMatrix4(const std::string& key, const FMatrix4& defaultValue) const {
+	auto it = Handle->value.find(key);
+	if (it != Handle->value.end() && it->is_array() && it->size() >= 16) {
+		FMatrix4 result;
+		for (size_t i = 0; i < 16; ++i) {
+			result.data()[i] = (*it)[i].get<float>();
+		}
+		return result;
+	}
+	return defaultValue;
+}
+
+// Read - 支持路径访问
+JsonObject JsonObject::Read(const std::string& path) const {
+	JsonObject result;
+
+	if (path.empty()) {
+		result.Handle->value = Handle->value;
+		return result;
+	}
+
+	std::vector<std::string> tokens = SplitPath(path);
+	nlohmann::json current = Handle->value;
+
+	try {
+		for (const auto& token : tokens) {
+			if (current.is_object() && current.contains(token)) {
+				current = current[token];
+			}
+			else {
+				// 路径不存在，返回 null
+				result.Handle->value = nlohmann::json();
+				return result;
+			}
+		}
+
+		result.Handle->value = current;
+	}
+	catch (...) {
+		result.Handle->value = nlohmann::json();
+	}
+
+	return result;
+}
+
+std::string JsonObject::ReadString(const std::string& path, const std::string& defaultValue) const {
+	JsonObject obj = Read(path);
+	return obj.IsString() ? obj.GetString() : defaultValue;
+}
+
+int JsonObject::ReadInt(const std::string& path, int defaultValue) const {
+	JsonObject obj = Read(path);
+	return obj.IsNumber() ? obj.GetInt() : defaultValue;
+}
+
+float JsonObject::ReadFloat(const std::string& path, float defaultValue) const {
+	JsonObject obj = Read(path);
+	return obj.IsNumber() ? obj.GetFloat() : defaultValue;
+}
+
+bool JsonObject::ReadBool(const std::string& path, bool defaultValue) const {
+	JsonObject obj = Read(path);
+	return obj.IsBool() ? obj.GetBool() : defaultValue;
+}
+
+double JsonObject::ReadDouble(const std::string& path, double defaultValue) const {
+	JsonObject obj = Read(path);
+	return obj.IsNumber() ? obj.GetDouble() : defaultValue;
+}
+
+// Write - 支持路径写入，自动创建中间对象
+void JsonObject::Write(const std::string& path, const JsonObject& value) {
+	if (path.empty()) return;
+
+	std::vector<std::string> tokens = SplitPath(path);
+
+	if (tokens.empty()) return;
+
+	// 确保根是对象
+	if (!Handle->value.is_object()) {
+		Handle->value = nlohmann::json::object();
+	}
+
+	nlohmann::json* current = &Handle->value;
+
+	// 遍历路径，创建中间对象
+	for (size_t i = 0; i < tokens.size() - 1; ++i) {
+		const std::string& token = tokens[i];
+
+		if (!current->contains(token) || !(*current)[token].is_object()) {
+			(*current)[token] = nlohmann::json::object();
+		}
+
+		current = &(*current)[token];
+	}
+
+	// 设置最终值
+	(*current)[tokens.back()] = value.Handle->value;
+}
+
+void JsonObject::WriteString(const std::string& path, const std::string& value) {
+	JsonObject temp;
+	temp.Handle->value = value;
+	Write(path, temp);
+}
+
+void JsonObject::WriteInt(const std::string& path, int value) {
+	JsonObject temp;
+	temp.Handle->value = value;
+	Write(path, temp);
+}
+
+void JsonObject::WriteFloat(const std::string& path, float value) {
+	JsonObject temp;
+	temp.Handle->value = value;
+	Write(path, temp);
+}
+
+void JsonObject::WriteBool(const std::string& path, bool value) {
+	JsonObject temp;
+	temp.Handle->value = value;
+	Write(path, temp);
+}
 
 bool JsonObject::IsObject() const {
 	return Handle->value.is_object();
@@ -214,4 +464,18 @@ void JsonObject::Set(const std::string& key, const JsonObject& value) {
 
 void JsonObject::Clear() {
 	Handle->value = nlohmann::json();
+}
+
+std::vector<std::string> JsonObject::SplitPath(const std::string& path) const {
+	std::vector<std::string> tokens;
+	std::stringstream ss(path);
+	std::string token;
+
+	while (std::getline(ss, token, '.')) {
+		if (!token.empty()) {
+			tokens.push_back(token);
+		}
+	}
+
+	return tokens;
 }

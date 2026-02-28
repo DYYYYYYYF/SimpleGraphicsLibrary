@@ -3,7 +3,7 @@
 #include "BaseComponent.h"
 #include "Core/BaseMath.h"
 
-class CameraComponent : public BaseComponent {
+class UCameraComponent : public UBaseComponent {
 public:
 	enum class ProjectionType { Perspective, Orthographic };
 	enum class ControlMode {
@@ -13,9 +13,9 @@ public:
 	};
 
 public:
-	CameraComponent();
-	CameraComponent(Actor* Owner, const std::string& Name);
-	virtual ~CameraComponent();
+	UCameraComponent();
+	UCameraComponent(AActor* Owner, const std::string& Name);
+	virtual ~UCameraComponent();
 
 public:
 	// 获取视图矩阵（需要 Transform 组件的 position）

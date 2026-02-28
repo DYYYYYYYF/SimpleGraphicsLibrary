@@ -1,14 +1,16 @@
-﻿#include "Actor.h"
+﻿#pragma once
+
+#include "Actor.h"
 #include "Framework/Components/MeshComponent.h"
 
-class MeshActor : public Actor {
+class AMeshActor : public AActor {
 public:
-	ENGINE_FRAMEWORK_API MeshActor(const std::string& name);
+	ENGINE_FRAMEWORK_API AMeshActor(const std::string& name);
 
 public:
 	ENGINE_FRAMEWORK_API virtual void BeginPlay() override;
 	ENGINE_FRAMEWORK_API virtual void Tick(float DeltaTime) override;
 
-private:
-	MeshComponent* MeshComponent_;
+protected:
+	UMeshComponent* MeshComponent_;
 };

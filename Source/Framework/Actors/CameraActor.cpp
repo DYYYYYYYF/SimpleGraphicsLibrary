@@ -1,7 +1,7 @@
 ﻿#include "CameraActor.h"
 
-CameraActor::CameraActor(const std::string& name) : Actor(name) {
-	CameraComponent_ = CreateComponent<CameraComponent>(this, "CameraComponent");
+CameraActor::CameraActor(const std::string& name) : AActor(name) {
+	CameraComponent_ = CreateComponent<UCameraComponent>(this, "CameraComponent");
 	if (!CameraComponent_) { return; }
 }
 

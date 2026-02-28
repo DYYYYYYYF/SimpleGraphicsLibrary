@@ -3,14 +3,14 @@
 #include "Component.h"
 #include <string>
 
-class Actor;
+class AActor;
 
-class BaseComponent : public Component {
+class UBaseComponent : public UComponent {
 public:
-	BaseComponent() = default;
+	UBaseComponent() = default;
 
 public:
-	ENGINE_FRAMEWORK_API BaseComponent(Actor* Owner, const std::string& Name) : Name_(Name) { SetOwner(Owner); }
+	ENGINE_FRAMEWORK_API UBaseComponent(AActor* Owner, const std::string& Name) : Name_(Name) { SetOwner(Owner); }
 
 	ENGINE_FRAMEWORK_API virtual void OnAttach() override {}
 	ENGINE_FRAMEWORK_API virtual void OnDetach() override {}
@@ -19,8 +19,8 @@ public:
 
 	ENGINE_FRAMEWORK_API virtual void Tick(float DeltaTime) { (void)DeltaTime; };
 
-	ENGINE_FRAMEWORK_API Actor* GetOwner() const { return Owner_; }
-	ENGINE_FRAMEWORK_API void SetOwner(Actor* Owner) { Owner_ = Owner; }
+	ENGINE_FRAMEWORK_API AActor* GetOwner() const { return Owner_; }
+	ENGINE_FRAMEWORK_API void SetOwner(AActor* Owner) { Owner_ = Owner; }
 
 	ENGINE_FRAMEWORK_API bool IsEnabled() const { return IsEnabled_; }
 	ENGINE_FRAMEWORK_API void SetEnabled(bool Enabled) {
@@ -35,6 +35,6 @@ protected:
 	bool IsEnabled_ = true;
 
 private:
-	Actor* Owner_ = nullptr;
+	AActor* Owner_ = nullptr;
 
 };

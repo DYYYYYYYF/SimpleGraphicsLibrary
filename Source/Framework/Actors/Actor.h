@@ -10,11 +10,11 @@
 #include <typeindex>
 #include <unordered_map>
 
-class Actor : public BaseObject {
+class AActor : public ABaseObject {
 public:
-	ENGINE_FRAMEWORK_API Actor();
-	ENGINE_FRAMEWORK_API Actor(const std::string& Name);
-	ENGINE_FRAMEWORK_API virtual ~Actor();
+	ENGINE_FRAMEWORK_API AActor();
+	ENGINE_FRAMEWORK_API AActor(const std::string& Name);
+	ENGINE_FRAMEWORK_API virtual ~AActor();
 
 	// 虚函数
 public:
@@ -34,9 +34,9 @@ public:
 
 	// -------------------------- 通用函数 ------------------------------------
 public:
-	ENGINE_FRAMEWORK_API void AddChild(std::unique_ptr<Actor> Child);
-	ENGINE_FRAMEWORK_API Actor* GetParent() const;
-	ENGINE_FRAMEWORK_API const std::vector<std::unique_ptr<Actor>>& GetChildren() const;
+	ENGINE_FRAMEWORK_API void AddChild(std::unique_ptr<AActor> Child);
+	ENGINE_FRAMEWORK_API AActor* GetParent() const;
+	ENGINE_FRAMEWORK_API const std::vector<std::unique_ptr<AActor>>& GetChildren() const;
 	ENGINE_FRAMEWORK_API void SetActive(bool Active);
 	ENGINE_FRAMEWORK_API bool IsActive() const;
 	ENGINE_FRAMEWORK_API const std::string& GetName() const;
@@ -44,7 +44,7 @@ public:
 
 	template<typename T, typename... Args>
 	T* CreateComponent(Args&&... args) {
-		static_assert(std::is_base_of<Component, T>::value,
+		static_assert(std::is_base_of<UComponent, T>::value,
 			"T must derive from Component");
 
 		std::unique_ptr<T> component = std::make_unique<T>(std::forward<Args>(args)...);
@@ -57,7 +57,7 @@ public:
 
 	template<typename T, typename... Args>
 	void AddComponent(std::unique_ptr<T> Comp) {
-		static_assert(std::is_base_of<Component, T>::value,
+		static_assert(std::is_base_of<UComponent, T>::value,
 			"T must derive from Component");
 
 		T* ptr = Comp.get();
@@ -92,17 +92,17 @@ public:
 
 protected:
 	// 必备组件（每个Actor都有）
-	TransformComponent* TransformComponent_;
+	UTransformComponent* TransformComponent_;
 
 private:
 	std::string Name_;
 	bool Active_ = true;
 
 	// 组件存储（按类型索引）
-	std::unordered_map<std::type_index, std::unique_ptr<Component>> Components_;
+	std::unordered_map<std::type_index, std::unique_ptr<UComponent>> Components_;
 
 	// 层次结构
-	Actor* Parent_ = nullptr;
-	std::vector<std::unique_ptr<Actor>> Children_;
+	AActor* Parent_ = nullptr;
+	std::vector<std::unique_ptr<AActor>> Children_;
 
 };

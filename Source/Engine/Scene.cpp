@@ -10,11 +10,11 @@ bool Scene::Initialize() {
 	return true;
 }
 
-void Scene::AddToScene(std::shared_ptr<Actor> Act) { 
+void Scene::AddToScene(std::shared_ptr<AActor> Act) { 
 	AllActrors_.push_back(Act); 
 }
 
-std::vector<std::shared_ptr<Actor>> Scene::GetAllActors() const { 
+std::vector<std::shared_ptr<AActor>> Scene::GetAllActors() const { 
 	return AllActrors_; 
 }
 

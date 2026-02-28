@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Framework/Actors/MeshActor.h"
+#include "Framework/Actors/CubeActor.h"
 
-class RotateCubeActor : public MeshActor {
+class RotateCubeActor : public ACubeActor {
 public:
-	RotateCubeActor(const std::string& Name) : MeshActor(Name) {}
+	RotateCubeActor(const std::string& Name) : ACubeActor(Name) {}
 
 public:
 	void Tick(float DeltaTime) override;

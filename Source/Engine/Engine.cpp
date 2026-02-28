@@ -130,17 +130,17 @@ void Engine::Tick(float DeltaTime) {
 void Engine::Render() {
 	CommandList CmdList;
 	CoreRenderer->BeginCommand(CmdList);
-	std::vector<std::shared_ptr<Actor>> AllActors = Scene_->GetAllActors();
+	std::vector<std::shared_ptr<AActor>> AllActors = Scene_->GetAllActors();
 
 	// 先摄像机
 	for (auto& Act : AllActors) {
 		CameraActor* Camera = DynamicCast<CameraActor>(Act).get();
 		if (Camera) {
-			TransformComponent* TransformComp = Camera->GetComponent<TransformComponent>();
+			UTransformComponent* TransformComp = Camera->GetComponent<UTransformComponent>();
 			if (!TransformComp) continue;
 			const FVector3& Location = TransformComp->GetPosition();
 
-			CameraComponent* CameraComp = Camera->GetComponent<CameraComponent>();
+			UCameraComponent* CameraComp = Camera->GetComponent<UCameraComponent>();
 			if (!CameraComp) continue;
 			const FMatrix4& ViewMatrix = CameraComp->GetViewMatrix(Location);
 			const FMatrix4& ProjMatrix = CameraComp->GetProjectionMatrix();
@@ -152,7 +152,7 @@ void Engine::Render() {
 
 	// 后网格
 	for (auto& Act : AllActors) {
-		MeshComponent* MeshComp = Act.get()->GetComponent<MeshComponent>();
+		UMeshComponent* MeshComp = Act.get()->GetComponent<UMeshComponent>();
 		if (MeshComp) {
 			MeshComp->Draw(CmdList);
 		}

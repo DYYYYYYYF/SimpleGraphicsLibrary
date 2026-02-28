@@ -3,10 +3,10 @@
 #include "IObject.h"
 #include "Core/UniqueID.h"
 
-class BaseObject : public IObject {
+class ABaseObject : public IObject {
 public:
-	BaseObject() : UniqueID_(UUID::Generate()) {}
-	~BaseObject() = default;
+	ABaseObject() : UniqueID_(UUID::Generate()) {}
+	~ABaseObject() = default;
 
 public:
 	uint64_t GetID() const { return UniqueID_; }

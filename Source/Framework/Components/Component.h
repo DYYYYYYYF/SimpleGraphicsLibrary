@@ -2,11 +2,11 @@
 
 #include "Framework/EngineFrameworkAPI.h"
 
-class Actor;
+class AActor;
 
-class Component {
+class UComponent {
 public:
-	virtual ~Component() = default;
+	virtual ~UComponent() = default;
 
 	// 生命周期
 	virtual void OnAttach()  = 0;   // 组件添加到Actor时调用
@@ -18,8 +18,8 @@ public:
 	virtual void Tick(float deltaTime) = 0;
 
 	// 获取所属Actor
-	virtual Actor* GetOwner() const = 0;
-	virtual void SetOwner(Actor* owner) = 0;
+	virtual AActor* GetOwner() const = 0;
+	virtual void SetOwner(AActor* owner) = 0;
 	
 	// 启用/禁用
 	virtual bool IsEnabled() const = 0;
