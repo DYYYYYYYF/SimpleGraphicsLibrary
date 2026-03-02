@@ -46,7 +46,7 @@ public:
 		std::cout << "  其他键  - 键盘事件测试" << std::endl;
 		std::cout << "=========================" << std::endl;
 
-		auto& eventManager = EventManager::Instance();
+		auto& eventManager = AEventManager::Instance();
 		eventManager.SetLogging(true);
 
 		auto lastTime = std::chrono::steady_clock::now();
@@ -83,7 +83,7 @@ public:
 
 	void Shutdown() {
 		running_ = false;
-		EventManager::Instance().UnsubscribeAll();
+		AEventManager::Instance().UnsubscribeAll();
 		window_.Destroy();
 	}
 
@@ -119,7 +119,7 @@ private:
 	}
 
 	void SetupEventListeners() {
-		auto& eventManager = EventManager::Instance();
+		auto& eventManager = AEventManager::Instance();
 
 		// 注册键盘事件监听器
 		eventManager.On<KeyReleasedEvent>([this](KeyReleasedEvent& event) {
@@ -170,7 +170,7 @@ private:
 
 		case KeyCode::Space:
 			std::cout << "[KEY] 空格键按下 - 切换事件日志" << std::endl;
-			EventManager::Instance().SetLogging(!EventManager::Instance().IsLoggingEnabled());
+			AEventManager::Instance().SetLogging(!AEventManager::Instance().IsLoggingEnabled());
 			return true;
 
 		case KeyCode::R:

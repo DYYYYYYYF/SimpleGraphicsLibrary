@@ -53,8 +53,11 @@ bool Engine::Initialize(IApplication* app) {
 	Running_ = true;
 	Window_->Show();
 
+	// Input
+	RegisterInputCallbacks();
+
 	// Event
-	EventManager& eventManager = EventManager::Instance();
+	AEventManager& eventManager = AEventManager::Instance();
 	eventManager.SetLogging(false);
 	eventManager.Subscribe<KeyPressedEvent>([this](KeyPressedEvent& e) {
 		if (e.GetKeyCode() == KeyCode::Escape)
@@ -105,13 +108,20 @@ void Engine::Run() {
 			FixedTick(Frc.GetFixedDeltaTime());
 		}
 
+		// 清零帧增量（MouseDelta / ScrollDelta）
+		AInputManager::Instance().BeginFrame();
+
 		// 处理窗口消息
 		Window_->ProcessMessages();
 		// 处理全局事件队列
-		EventManager::Instance().ProcessEvents();
+		AEventManager::Instance().ProcessEvents();
 
 		Tick(Frc.GetDeltaTime());
 
+		// 备份鼠标位置（供 InputManager 下帧计算 delta）
+		AInputManager::Instance().EndFrame();
+
+		// 渲染
 		Render();
 
 		Frc.EndFrame();
@@ -136,14 +146,8 @@ void Engine::Render() {
 	for (auto& Act : AllActors) {
 		ACameraActor* Camera = DynamicCast<ACameraActor>(Act).get();
 		if (Camera) {
-			UTransformComponent* TransformComp = Camera->GetComponent<UTransformComponent>();
-			if (!TransformComp) continue;
-			const FVector3& Location = TransformComp->GetPosition();
-
-			UCameraComponent* CameraComp = Camera->GetComponent<UCameraComponent>();
-			if (!CameraComp) continue;
-			const FMatrix4& ViewMatrix = CameraComp->GetViewMatrix(Location);
-			const FMatrix4& ProjMatrix = CameraComp->GetProjectionMatrix();
+			const FMatrix4& ViewMatrix = Camera->GetViewMatrix();
+			const FMatrix4& ProjMatrix = Camera->GetProjectionMatrix();
 
 			CmdList.SetViewProjection(ViewMatrix, ProjMatrix);
 			break;
@@ -162,6 +166,53 @@ void Engine::Render() {
 	CoreRenderer->EndCommand(CmdList);
 }
 
+void Engine::RegisterInputCallbacks() {
+	Window_->SetEventCallback([](Event& e) {
+		AInputManager& IM = AInputManager::Instance();
+
+		// ---- 键盘 ----
+		if (e.GetEventType() == EventType::KeyPressed) {
+			auto& ke = static_cast<KeyPressedEvent&>(e);
+			IM.OnKeyPressed(ke.GetKeyCode(), ke.GetModifiers(), ke.IsRepeat());
+		}
+		else if (e.GetEventType() == EventType::KeyReleased) {
+			auto& ke = static_cast<KeyReleasedEvent&>(e);
+			IM.OnKeyReleased(ke.GetKeyCode(), ke.GetModifiers());
+		}
+
+		// ---- 鼠标移动 ----
+		else if (e.GetEventType() == EventType::MouseMoved) {
+			auto& me = static_cast<MouseMovedEvent&>(e);
+			IM.OnMouseMoved(me.GetX(), me.GetY());
+		}
+
+		// ---- 鼠标滚轮 ----
+		else if (e.GetEventType() == EventType::MouseScrolled) {
+			auto& me = static_cast<MouseScrolledEvent&>(e);
+			IM.OnMouseScrolled(me.GetXOffset(), me.GetYOffset());
+		}
+
+		// ---- 鼠标按键 ----
+		else if (e.GetEventType() == EventType::MouseButtonPressed) {
+			auto& me = static_cast<MouseButtonPressedEvent&>(e);
+			IM.OnMouseButtonPressed(me.GetMouseButton(), me.GetModifiers());
+		}
+		else if (e.GetEventType() == EventType::MouseButtonReleased) {
+			auto& me = static_cast<MouseButtonReleasedEvent&>(e);
+			IM.OnMouseButtonReleased(me.GetMouseButton(), me.GetModifiers());
+		}
+
+		// InputManager::On*() 内部已经 PostEvent 到 EventManager，
+		// 非 Input 事件（窗口 Resize 等）需要单独入队
+		else {
+			// 窗口事件直接转发（Resize、Close 等）
+			// 注意：这里无法 move unique_ptr，用 DispatchEvent 直接分发更合适
+			AEventManager::Instance().DispatchEvent(e);
+		}
+
+	});
+}
+
 void Engine::Shutdown() {
 	Scene_->Clear();
 
@@ -174,7 +225,7 @@ void Engine::Shutdown() {
 		CoreRenderer = nullptr;
 	}
 
-	EventManager::Instance().UnsubscribeAll();
+	AEventManager::Instance().UnsubscribeAll();
 
 	if (Window_) {
 		Window_->Destroy();

@@ -54,18 +54,18 @@ private:
 };
 
 // 主事件管理器
-class EventManager {
+class AEventManager {
 public:
-	ENGINE_CORE_API EventManager() = default;
-	ENGINE_CORE_API virtual ~EventManager() = default;
+	ENGINE_CORE_API AEventManager() = default;
+	ENGINE_CORE_API virtual ~AEventManager() = default;
 
 	// 禁用拷贝和赋值
-	ENGINE_CORE_API EventManager(const EventManager&) = delete;
-	ENGINE_CORE_API EventManager& operator=(const EventManager&) = delete;
+	ENGINE_CORE_API AEventManager(const AEventManager&) = delete;
+	ENGINE_CORE_API AEventManager& operator=(const AEventManager&) = delete;
 
 	// 单例模式
-	ENGINE_CORE_API static EventManager& Instance() {
-		static EventManager instance;
+	ENGINE_CORE_API static AEventManager& Instance() {
+		static AEventManager instance;
 		return instance;
 	}
 
@@ -155,11 +155,11 @@ protected:
 	// 便利函数 - 注册事件监听
 	template<typename EventType>
 	void Subscribe(std::function<bool(EventType&)> callback) {
-		EventManager::Instance().Subscribe<EventType>(callback);
+		AEventManager::Instance().Subscribe<EventType>(callback);
 	}
 
 	template<typename EventType, typename Func>
 	void On(Func&& func) {
-		EventManager::Instance().On<EventType>(std::forward<Func>(func));
+		AEventManager::Instance().On<EventType>(std::forward<Func>(func));
 	}
 };

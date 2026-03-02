@@ -224,7 +224,7 @@ void WindowsWindowImpl::DispatchEvent(Event& event) {
 		// 创建事件的副本并放入队列
 		std::unique_ptr<Event> eventCopy = CreateEventCopy(event);
 		if (eventCopy) {
-			EventManager::Instance().PostEvent(std::move(eventCopy));
+			AEventManager::Instance().PostEvent(std::move(eventCopy));
 		}
 	}
 }
@@ -339,6 +339,7 @@ KeyCode WindowsWindowImpl::VirtualKeyToKeyCode(WPARAM vkCode) {
 	case VK_DOWN: return KeyCode::Down;
 
 		// 修饰键
+	case VK_SHIFT: return KeyCode::Shift;
 	case VK_LSHIFT: return KeyCode::LeftShift;
 	case VK_RSHIFT: return KeyCode::RightShift;
 	case VK_LCONTROL: return KeyCode::LeftControl;
@@ -360,7 +361,7 @@ KeyCode WindowsWindowImpl::VirtualKeyToKeyCode(WPARAM vkCode) {
 	case VK_SNAPSHOT: return KeyCode::PrintScreen;
 	case VK_PAUSE: return KeyCode::Pause;
 
-	default: return KeyCode::A; // 默认返回A键，实际应用中可以定义Unknown键
+	default: return KeyCode::Unknown; // 默认返回A键，实际应用中可以定义Unknown键
 	}
 }
 

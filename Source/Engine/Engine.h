@@ -27,6 +27,9 @@ private:
 	// 渲染
 	void Render();
 
+	// 注册 Window → InputManager 的事件桥接
+	void RegisterInputCallbacks();
+
 protected:
 	Window* Window_;
 

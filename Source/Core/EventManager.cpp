@@ -3,7 +3,7 @@
 #include <chrono>
 #include <iomanip>
 
-void EventManager::PostEvent(std::unique_ptr<Event> event) {
+void AEventManager::PostEvent(std::unique_ptr<Event> event) {
 	if (!event) {
 		return;
 	}
@@ -16,7 +16,7 @@ void EventManager::PostEvent(std::unique_ptr<Event> event) {
 	eventQueue_.push(std::move(event));
 }
 
-void EventManager::DispatchEvent(Event& event) {
+void AEventManager::DispatchEvent(Event& event) {
 	if (loggingEnabled_) {
 		LogEvent(event);
 	}
@@ -24,7 +24,7 @@ void EventManager::DispatchEvent(Event& event) {
 	DispatchToListeners(event);
 }
 
-void EventManager::ProcessEvents() {
+void AEventManager::ProcessEvents() {
 	// 处理队列中的所有事件
 	while (!eventQueue_.empty()) {
 		MutexGuard Lock(Mutex_);
@@ -37,18 +37,18 @@ void EventManager::ProcessEvents() {
 	}
 }
 
-void EventManager::ClearEvents() {
+void AEventManager::ClearEvents() {
 	// 清空事件队列
 	std::queue<std::unique_ptr<Event>> empty;
 	MutexGuard Lock(Mutex_);
 	eventQueue_.swap(empty);
 }
 
-void EventManager::UnsubscribeAll() {
+void AEventManager::UnsubscribeAll() {
 	listeners_.clear();
 }
 
-void EventManager::DispatchToListeners(Event& event) {
+void AEventManager::DispatchToListeners(Event& event) {
 	// 获取事件类型对应的监听器
 	auto eventType = std::type_index(typeid(event));
 	auto it = listeners_.find(eventType);
@@ -76,7 +76,7 @@ void EventManager::DispatchToListeners(Event& event) {
 	}
 }
 
-void EventManager::LogEvent(const Event& event) {
+void AEventManager::LogEvent(const Event& event) {
 	// 获取当前时间
 	auto now = std::chrono::system_clock::now();
 	auto time_t = std::chrono::system_clock::to_time_t(now);

@@ -1,6 +1,7 @@
 ﻿#include "Editor.h"
 #include "Logger.hpp"
 
+#include "Core/EventManager.h"
 #include "Source/RotateCube.h"
 #include <Framework/Actors/CameraActor.h>
 
@@ -9,18 +10,20 @@ std::shared_ptr<ACameraActor> Camera = nullptr;
 
 bool Editor::Initialize()
 {
+	// 基础设置
 	AppName_ = "Editor";
 
-	Model = std::make_shared<ACubeActor>("Model");
+	// 模型
+	Model = std::make_shared<ACubeActor>("CubeModel");
 	if (!Model) {
 		LOG_ERROR << "Create model failed.";
 	}
 
-	Camera = std::make_shared<ACameraActor>("Camera");
+	// 摄像机
+	Camera = std::make_shared<ACameraActor>("DefaultCamera");
 	if (!Camera) {
 		LOG_ERROR << "Create camera failed.";
 	}
-
 	Camera->SetActorLocation(FVector(0, 0, -10));
 
 	LOG_INFO << "Editor init successfully.";
@@ -29,6 +32,7 @@ bool Editor::Initialize()
 
 void Editor::InitScene(Scene& Sce) {
 	Model->BeginPlay();
+	Camera->BeginPlay();
 
 	Sce.AddToScene(Model);
 	Sce.AddToScene(Camera);
@@ -37,6 +41,7 @@ void Editor::InitScene(Scene& Sce) {
 void Editor::Tick(float DeltaTime)
 {
 	Model->Tick(DeltaTime);
+	Camera->Tick(DeltaTime);
 }
 
 void Editor::Render()

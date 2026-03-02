@@ -91,6 +91,8 @@ inline EventCategory& operator^=(EventCategory& lhs, EventCategory rhs) {
 
 // 按键代码定义 (基于Virtual Key Codes)
 enum class KeyCode : uint16_t {
+	Unknown = 0,
+
 	// 字母键
 	A = 65, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
 
@@ -120,6 +122,7 @@ enum class KeyCode : uint16_t {
 	Down = 40,
 
 	// 修饰键
+	Shift = 16,
 	LeftShift = 160,
 	RightShift = 161,
 	LeftControl = 162,
